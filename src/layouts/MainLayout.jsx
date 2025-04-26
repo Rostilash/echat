@@ -7,7 +7,7 @@ export const MainLayout = () => {
     <>
       <Header />
       <main style={{ flex: "1" }}>
-        <Outlet /> {/* Тут рендеряться всі сторінки */}
+        <Outlet />
       </main>
       <Footer />
     </>

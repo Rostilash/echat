@@ -15,7 +15,7 @@ export const Header = () => {
           <Link to="/echat/news">Новини</Link>
           <Link to="/echat/top-places">Топ Закладів</Link>
           <Link to="/echat/movies">Фільми</Link>
-          <Link to="/echat/register" className="navbar__register-btn">
+          <Link to="/echat/register/r" className={style.navbar__register_btn}>
             Реєстрація
           </Link>
         </nav>

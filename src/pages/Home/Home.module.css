@@ -1,0 +1,11 @@
+.home {
+  min-height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); /* красивий фон */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}

@@ -21,6 +21,7 @@
 .navbar__links {
   display: flex;
   gap: 1.5rem;
+  align-items: center;
 }
 
 .navbar__links a {
@@ -34,7 +35,7 @@
   color: #ffffff;
 }
 
-.navbar__register-btn {
+.navbar__register_btn {
   background-color: #3b82f6;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -42,6 +43,6 @@
   transition: background-color 0.3s ease;
 }
 
-.navbar__register-btn:hover {
+.navbar__register_btn:hover {
   background-color: #2563eb;
 }
