@@ -8,24 +8,38 @@ import { News } from "../pages/News/News";
 import { TopPlaces } from "../pages/TopPlaces/TopPlaces";
 import { Movies } from "../pages/Movies/Movies";
 import { ProtectedRoute } from "./../components/ProtectedRoute/ProtectedRoute";
+import { PrivateRoute } from "./../components/ProtectedRoute/PrivateRoute";
 import { AdminPanel } from "./../pages/AdminPanel/AdminPanel";
+import { Profile } from "./../pages/Profile/Profile";
+import { PrePage } from "./../pages/PrePage/PrePage";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       {/* Main page */}
-      <Route path="/echat/" element={<MainLayout />}>
+      <Route
+        path="/echat/"
+        element={
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        }
+      >
         <Route index element={<Home />} />
         <Route path="news" element={<News />} />
         <Route path="top-places" element={<TopPlaces />} />
         <Route path="movies" element={<Movies />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* Loading page without header and footer  */}
       <Route path="/echat/register/" element={<AuthLayout />}>
+        <Route path="me/" element={<PrePage />} />
         <Route path="r/" element={<Register />} />
         <Route path="l/" element={<Login />} />
       </Route>
+
+      {/* Admin panel  */}
       <Route
         path="/echat/admin-panel"
         element={

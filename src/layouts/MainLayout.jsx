@@ -6,7 +6,7 @@ import { Rightbar } from "../components/Rightbar/Rightbar";
 import { useAuth } from "./../hooks/useAuth";
 
 export const MainLayout = () => {
-  const { currentUser, login, logout, register } = useAuth();
+  const { currentUser, logout } = useAuth();
   return (
     <div className={style.layout}>
       <Sidebar currentUser={currentUser} handleLogout={logout} />

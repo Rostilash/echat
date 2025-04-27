@@ -5,7 +5,7 @@ export const ProtectedRoute = ({ children, requiredRole }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   if (!currentUser) {
-    return <Navigate to="/echat/login" replace />;
+    return <Navigate to="/echat/register/me" replace />;
   }
 
   if (requiredRole && currentUser.role !== requiredRole) {

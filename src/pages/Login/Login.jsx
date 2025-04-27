@@ -1,28 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./Login.module.css";
+import { useAuth } from "./../../hooks/useAuth";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const { login, currentUser } = useAuth();
+
+  useEffect(() => {
+    if (currentUser && currentUser.isLoggedIn) {
+      navigate("/echat/", { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+
+    if (e.target.name === "email") {
+      setEmailError("");
+    }
+    if (e.target.name === "password") {
+      setPasswordError("");
+    }
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+
+    // Validation email
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(formData.email)) {
+      setEmailError("❌ Некоректний email");
+      isValid = false;
+    }
+
+    // Validation password
+    if (formData.password.length < 6) {
+      setPasswordError("❌ Пароль повинен бути не менше 6 символів");
+      isValid = false;
+    }
+
+    return isValid;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    if (!validateForm()) {
+      return;
+    }
 
-    const foundUser = users.find((user) => user.email === formData.email && user.password === formData.password);
+    console.log(formData.email);
+    console.log(formData.password);
 
-    if (foundUser) {
-      localStorage.setItem("currentUser", JSON.stringify(foundUser));
+    const isLoginSuccessful = login(formData.email, formData.password);
+
+    if (isLoginSuccessful) {
       navigate("/echat/", { replace: true });
     } else {
       setErrorMessage("❌ Password incorrect ");
@@ -34,7 +74,11 @@ export const Login = () => {
       <form className={style.login_form} onSubmit={handleSubmit}>
         <h2>Вхід</h2>
         <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+        {emailError && <p className={style.error_message}>{emailError}</p>}
+
         <input type="password" name="password" placeholder="Пароль" value={formData.password} onChange={handleChange} required />
+        {passwordError && <p className={style.error_message}>{passwordError}</p>}
+
         <button type="submit">Увійти</button>
 
         {errorMessage && <p className={style.error_message}>{errorMessage}</p>}

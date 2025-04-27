@@ -36,10 +36,13 @@
 
 @media (max-width: 768px) {
   .rightbar {
+    display: none;
+  }
+  /* .rightbar {
     width: 100%;
     height: auto;
     position: static;
     border-left: none;
     border-top: 1px solid var(--border-color);
-  }
+  } */
 }

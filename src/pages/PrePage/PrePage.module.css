@@ -1,0 +1,64 @@
+.wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f8fa;
+}
+
+.container {
+  text-align: center;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1da1f2;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #657786;
+  margin-bottom: 30px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.loginButton,
+.registerButton {
+  display: inline-block;
+  text-align: center;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.loginButton {
+  background-color: #1da1f2;
+}
+
+.loginButton:hover {
+  background-color: #0d8ecf;
+}
+
+.registerButton {
+  background-color: #ffad1f;
+}
+
+.registerButton:hover {
+  background-color: #e68a00;
+}
