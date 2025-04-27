@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  /* background: linear-gradient(135deg, #ffecd2 0%, #9ffcc9 100%); */
-  padding: 2rem;
+  /* background-color: var(--echat-color); */
+  /* padding: 2rem; */
 }
 
 .login_form {
@@ -13,37 +13,77 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 .login_form h2 {
+  color: rgb(59, 59, 59);
+  font-size: 32px;
   margin-bottom: 1rem;
   text-align: center;
 }
+.login_form div {
+  position: relative;
+}
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  padding: 8px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  border-right: 2px solid rgba(83, 83, 83, 0.281);
+}
+.icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
 
-.login_form input {
-  padding: 0.8rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
+input {
+  color: rgb(29, 29, 29);
+  width: 100%;
+  padding: 15px 40px 15px 30px;
+  border: 2px solid rgb(99, 99, 99);
+  border-radius: 4px;
+  padding-left: 64px;
+  font-size: 20px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border: 2px solid hsla(202, 73%, 61%, 0.774);
+}
+
+input::placeholder {
+  color: #999;
+  opacity: 1;
+}
+.inputWrapper:last-of-type {
+  margin-bottom: 20px;
 }
 
 .login_form button {
+  font-weight: 700;
   padding: 0.8rem 1rem;
-  background-color: #10b981; /* зелений */
+  background-color: var(--echat-color);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 30px;
+  font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
+  width: 320px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .login_form button:hover {
-  background-color: #059669;
+  background-color: #006caf;
 }
 
 .error_message {
@@ -52,4 +92,9 @@
   font-weight: bold;
   text-align: center;
   animation: fadeIn 0.5s ease-in;
+}
+@media (max-width: 768px) {
+  .login_wrapper {
+    padding: 0;
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import style from "./Login.module.css";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./../../hooks/useAuth";
 
 export const Login = () => {
@@ -56,10 +56,6 @@ export const Login = () => {
     if (!validateForm()) {
       return;
     }
-
-    console.log(formData.email);
-    console.log(formData.password);
-
     const isLoginSuccessful = login(formData.email, formData.password);
 
     if (isLoginSuccessful) {
@@ -73,10 +69,26 @@ export const Login = () => {
     <div className={style.login_wrapper}>
       <form className={style.login_form} onSubmit={handleSubmit}>
         <h2>Вхід</h2>
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+        <p>
+          Новий користувач?{" "}
+          <Link to="/echat/register/r" className={style.termsLink}>
+            Реєструйся прямо зараз!{" "}
+          </Link>{" "}
+        </p>
+        <div className={style.inputWrapper}>
+          <span className={style.icon}>
+            <img src="https://cdn-icons-png.flaticon.com/128/709/709699.png" alt="email" />
+          </span>
+          <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+        </div>
         {emailError && <p className={style.error_message}>{emailError}</p>}
 
-        <input type="password" name="password" placeholder="Пароль" value={formData.password} onChange={handleChange} required />
+        <div className={style.inputWrapper}>
+          <span className={style.icon}>
+            <img src="https://cdn-icons-png.flaticon.com/128/25/25239.png" alt="password" />
+          </span>
+          <input type="password" name="password" placeholder="Пароль" value={formData.password} onChange={handleChange} required />
+        </div>
         {passwordError && <p className={style.error_message}>{passwordError}</p>}
 
         <button type="submit">Увійти</button>

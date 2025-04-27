@@ -1,64 +1,229 @@
 .wrapper {
-  height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f8fa;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.container {
+.leftSide {
+  flex: 1;
+  background-color: var(--echat-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transform: translateX(-100%);
+  animation: slideInLeft 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.brandTitle {
+  font-size: 160px;
+  color: white;
+  font-weight: bold;
+}
+
+.rightSide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   text-align: center;
-  max-width: 400px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transform: translateX(100%);
+  animation: slideInRight 0.5s ease-out forwards;
+  overflow-y: auto;
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 .title {
   font-size: 32px;
   font-weight: bold;
-  color: #1da1f2;
   margin-bottom: 20px;
 }
 
 .subtitle {
-  font-size: 18px;
-  color: #657786;
-  margin-bottom: 30px;
+  font-size: 20px;
+  margin-bottom: 40px;
 }
 
-.buttons {
+.socialButtons {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.loginButton,
-.registerButton {
-  display: inline-block;
+.facebookButton,
+.googleButton,
+.registerButton,
+.loginLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 30px;
   text-align: center;
-  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #3b5998;
+  color: white;
+}
+
+.googleButton {
+  background-color: #db4437;
+  color: #f2f2f2;
+}
+
+.icon {
+  margin-left: 8px;
+  width: 22px;
+  height: 22px;
+}
+
+.hrWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 20px;
+}
+
+.hrLine {
+  border: 0;
+  border-top: 2px solid #24242450;
+  width: 100px;
+}
+
+.orText {
   font-size: 16px;
   font-weight: bold;
-  color: #fff;
-  border-radius: 30px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-}
-
-.loginButton {
-  background-color: #1da1f2;
-}
-
-.loginButton:hover {
-  background-color: #0d8ecf;
+  text-align: center;
 }
 
 .registerButton {
-  background-color: #ffad1f;
+  padding: 8px;
+  background-color: var(--echat-color);
+  border: 2px solid #b6b6b677;
+  margin-bottom: 20px;
+  text-decoration: none;
+  transition: all 0.3s;
 }
 
 .registerButton:hover {
-  background-color: #e68a00;
+  color: #f2f2f2;
+  background-color: #006caf;
+}
+
+.terms {
+  text-align: center;
+  font-size: 14px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}
+
+.termsLink {
+  color: var(--echat-color);
+  text-decoration: none;
+}
+
+.alreadyHaveAccount {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.loginLink {
+  background-color: #f2f2f2;
+  border: 2px solid rgba(0, 0, 0, 0.226);
+  padding: 6px;
+  max-width: 120px;
+  color: #0a0c0a50;
+  text-decoration: none;
+}
+.loginLink:hover {
+  color: #f2f2f2;
+  background-color: var(--echat-color);
+  border: 2px solid rgba(255, 255, 255, 0.541);
+}
+/* Адаптивність для мобільних пристроїв */
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .leftSide {
+    width: 100%;
+    max-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .brandTitle {
+    font-size: 48px;
+  }
+
+  .rightSide {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .socialButtons {
+    width: 100%;
+  }
+
+  .facebookButton,
+  .googleButton {
+    width: 100%;
+  }
+
+  .orText {
+    font-size: 14px;
+  }
+
+  .registerButton {
+    width: 100%;
+  }
+
+  .terms {
+    font-size: 12px;
+  }
 }

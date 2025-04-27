@@ -11,6 +11,17 @@
   height: 100vh;
   transition: background-color 0.3s, color 0.3s;
 }
+.logo {
+  font-size: 18px;
+  font-weight: 900;
+  padding-left: 5px;
+  color: var(--echat-color);
+}
+.icon {
+  margin-left: 8px;
+  width: 22px;
+  height: 22px;
+}
 
 .menu {
   display: flex;

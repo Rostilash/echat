@@ -11,7 +11,10 @@ export const Sidebar = () => {
   return (
     <aside className={style.sidebar}>
       <div className={style.menu}>
-        <div className={style.logo}>echat</div>
+        <div className={style.logo}>
+          <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/3665/3665930.png" />
+          chat
+        </div>
 
         <Link to="/echat/" className={style.menuItem}>
           🏠
