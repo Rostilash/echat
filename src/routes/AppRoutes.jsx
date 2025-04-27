@@ -1,12 +1,14 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { AuthLayout } from "../layouts/AuthLayout";
-
 import { Home } from "../pages/Home/Home";
 import { Register } from "../pages/Register/Register";
+import { Login } from "../pages/Login/Login";
 import { News } from "../pages/News/News";
 import { TopPlaces } from "../pages/TopPlaces/TopPlaces";
 import { Movies } from "../pages/Movies/Movies";
+import { ProtectedRoute } from "./../components/ProtectedRoute/ProtectedRoute";
+import { AdminPanel } from "./../pages/AdminPanel/AdminPanel";
 
 export const AppRoutes = () => {
   return (
@@ -22,8 +24,16 @@ export const AppRoutes = () => {
       {/* Loading page without header and footer  */}
       <Route path="/echat/register/" element={<AuthLayout />}>
         <Route path="r/" element={<Register />} />
+        <Route path="l/" element={<Login />} />
       </Route>
-
+      <Route
+        path="/echat/admin-panel"
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminPanel />
+          </ProtectedRoute>
+        }
+      />
       {/* Redirect to main page */}
       <Route path="*" element={<Navigate to="/echat/" />} />
     </Routes>
