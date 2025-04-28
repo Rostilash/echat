@@ -9,7 +9,7 @@ export const ProtectedRoute = ({ children, requiredRole }) => {
   }
 
   if (requiredRole && currentUser.role !== requiredRole) {
-    return <Navigate to="/echat/" replace />;
+    return <Navigate to="/echat/admin-panel" replace />;
   }
 
   return children;

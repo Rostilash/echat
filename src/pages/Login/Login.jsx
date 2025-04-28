@@ -3,7 +3,7 @@ import style from "./Login.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./../../hooks/useAuth";
 
-export const Login = () => {
+export const Login = ({ onClose, setRegisterForm }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
@@ -56,6 +56,7 @@ export const Login = () => {
     if (!validateForm()) {
       return;
     }
+
     const isLoginSuccessful = login(formData.email, formData.password);
 
     if (isLoginSuccessful) {
@@ -64,20 +65,26 @@ export const Login = () => {
       setErrorMessage("❌ Password incorrect ");
     }
   };
+  const handleCloseClick = () => {
+    navigate("/echat/register/me1");
+  };
 
   return (
     <div className={style.login_wrapper}>
       <form className={style.login_form} onSubmit={handleSubmit}>
+        <span className={style.close_button} onClick={onClose}>
+          x
+        </span>
         <h2>Вхід</h2>
         <p>
           Новий користувач?{" "}
-          <Link to="/echat/register/r" className={style.termsLink}>
+          <span className={style.termsLink} onClick={setRegisterForm}>
             Реєструйся прямо зараз!{" "}
-          </Link>{" "}
+          </span>{" "}
         </p>
         <div className={style.inputWrapper}>
           <span className={style.icon}>
-            <img src="https://cdn-icons-png.flaticon.com/128/709/709699.png" alt="email" />
+            <img src="https://cdn-icons-png.flaticon.com/128/2669/2669570.png" alt="email" />
           </span>
           <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
         </div>

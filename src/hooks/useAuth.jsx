@@ -30,6 +30,7 @@ export const useAuth = () => {
     const updatedUser = { ...currentUser, isLoggedIn: false };
     localStorage.setItem("currentUser", JSON.stringify(updatedUser));
     setCurrentUser(null);
+
     setTimeout(() => {
       navigate("/echat/register/me");
     }, 1000);
@@ -38,10 +39,13 @@ export const useAuth = () => {
   const register = (userData) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const newUser = { ...userData, isLoggedIn: true };
-
+    // adding new user
     users.push(newUser);
+    // update new array into localStorage
     localStorage.setItem("users", JSON.stringify(users));
+    // saving current user for automatic log in when you make registration
     localStorage.setItem("currentUser", JSON.stringify(newUser));
+    // update current user name
     setCurrentUser(newUser);
   };
 
