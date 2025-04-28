@@ -12,6 +12,7 @@ import { PrivateRoute } from "./../components/ProtectedRoute/PrivateRoute";
 import { AdminPanel } from "./../pages/AdminPanel/AdminPanel";
 import { Profile } from "./../pages/Profile/Profile";
 import { PrePage } from "./../pages/PrePage/PrePage";
+import { Weather } from "./../pages/Weather/Weather";
 
 export const AppRoutes = () => {
   return (
@@ -30,6 +31,7 @@ export const AppRoutes = () => {
         <Route path="top-places" element={<TopPlaces />} />
         <Route path="movies" element={<Movies />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="weather" element={<Weather />} />
       </Route>
 
       {/* Loading page without header and footer  */}

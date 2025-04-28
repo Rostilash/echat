@@ -2,7 +2,7 @@
   width: 300px;
   background-color: var(--bg-color);
   padding: 2rem 1rem;
-  border-left: 1px solid var(--border-color);
+  border-left: 2px solid var(--border-color);
   position: sticky;
   top: 0;
   height: 100vh;

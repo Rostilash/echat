@@ -71,7 +71,7 @@
   margin-bottom: 20px;
 }
 
-input {
+.login_form input {
   color: rgb(29, 29, 29);
   width: 100%;
   max-width: 450px;
@@ -84,11 +84,11 @@ input {
   transition: all 0.3s ease;
 }
 
-input:focus {
+.login_form input:focus {
   border: 2px solid hsla(202, 73%, 61%, 0.774);
 }
 
-input::placeholder {
+.login_form input::placeholder {
   color: #999;
   opacity: 1;
 }

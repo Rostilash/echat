@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import style from "./Sidebar.module.css";
+import { Link } from "react-router-dom";
 import { useMediaQuery } from "./../../hooks/useMediaQuery";
 import { useAuth } from "./../../hooks/useAuth";
 
@@ -17,24 +17,31 @@ export const Sidebar = () => {
         </div>
 
         <Link to="/echat/" className={style.menuItem}>
-          🏠
+          <img src="https://cdn-icons-png.flaticon.com/128/15527/15527317.png" alt="icon" />
+          <span>Головна</span>
         </Link>
         <Link to="/echat/top-places" className={style.menuItem}>
-          Топ місця
+          <img src="https://cdn-icons-png.flaticon.com/128/9908/9908202.png" alt="icon" /> <span>Топ місця</span>
         </Link>
         <Link to="/echat/movies" className={style.menuItem}>
-          Фільми
+          <img src="https://cdn-icons-png.flaticon.com/128/6815/6815074.png" alt="icon" />
+          <span>Фільми</span>
         </Link>
         <Link to="/echat/news" className={style.menuItem}>
-          Новини
+          <img src="https://cdn-icons-png.flaticon.com/128/10288/10288957.png" alt="icon" />
+          <span>Новини</span>
+        </Link>
+        <Link to="/echat/weather" className={style.menuItem}>
+          <img src="https://cdn-icons-png.flaticon.com/128/8918/8918108.png" alt="icon" /> <span>Погода</span>
         </Link>
         {!isMobile && (
           <>
             <Link to="/echat/profile" className={style.menuItem}>
-              Профіль
+              <img src="https://cdn-icons-png.flaticon.com/128/9068/9068871.png" alt="icon" /> <span>Профіль</span>
             </Link>
             <Link to="/echat/movies" className={style.menuItem}>
-              Більше
+              <img src="https://cdn-icons-png.flaticon.com/128/8106/8106905.png" alt="icon" />
+              <span>Інші дії</span>
             </Link>
           </>
         )}
@@ -43,7 +50,18 @@ export const Sidebar = () => {
       <div className={style.authLinks}>
         {currentUser ? (
           <>
-            <span>👋 {currentUser.name}</span>
+            <div>
+              <img
+                className={style.user_image}
+                src="https://yt3.ggpht.com/Le0J3JGewM6Jhbua8gMIcV3wjuXbuDjtRXVjsWdi38bjW1c5g9YxqU8bVlrjrpOZCATpLQcCow=s88-c-k-c0x00ffffff-no-rj"
+                alt="icon"
+              />{" "}
+              <div className={style.user_info}>
+                <span className={style.info_name}>{currentUser.name}</span>
+                <span className={style.info_address}>@AcrossFear</span>
+              </div>
+            </div>
+
             <button onClick={logout} className={style.logoutBtn}>
               Вийти
             </button>

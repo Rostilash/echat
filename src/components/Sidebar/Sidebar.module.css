@@ -2,7 +2,7 @@
   width: 250px;
   background-color: var(--bg-color);
   padding: 2rem 1rem;
-  border-right: 1px solid var(--border-color);
+  border-right: 2px solid var(--border-color);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -19,24 +19,82 @@
 }
 .icon {
   margin-left: 8px;
-  width: 22px;
-  height: 22px;
+  width: 38px;
+  height: 38px;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .menuItem {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  gap: 5px;
+  padding: 10px 15px;
   text-decoration: none;
-  font-size: 1.7rem;
-  text-align: center;
   color: var(--text-color);
-  transition: color 0.3s;
+  font-size: 18px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
 }
-
+.menuItem:hover {
+  background-color: #d3d3d3;
+}
+.menuItem img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+}
+.menuItem span {
+  padding-left: 5px;
+  line-height: 24px;
+}
+.user_image {
+  border: 1px solid grey;
+  height: 35px;
+  width: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.user_image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.authLinks div {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 18px;
+}
+.user_info {
+  display: flex;
+  flex-direction: column;
+}
+.info_name {
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #313131;
+}
+.info_address {
+  color: #858585;
+  width: 100%;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 400;
+}
 .authLinks {
   display: flex;
   flex-direction: column;
@@ -45,16 +103,10 @@
   text-align: center;
 }
 
-.authLink {
-  text-decoration: none;
-  color: #2563eb;
-  font-weight: 500;
-}
-
 .logoutBtn {
   background-color: transparent;
   border: none;
-  color: #ef4444;
+  color: rgba(107, 107, 107, 0.651);
   font-weight: 600;
   cursor: pointer;
 }

@@ -8,9 +8,15 @@
 
 .content {
   flex: 1;
-  padding: 2rem;
   overflow-y: auto;
   height: 100vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+/* Chrome, Safari, Opera */
+.main_page::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 768px) {
