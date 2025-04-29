@@ -1,0 +1,87 @@
+.sendButton {
+  border-radius: 20px;
+  color: #f2f2f2;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* COLOR OPTIONS */
+.default {
+  background-color: var(--echat-color);
+}
+.white {
+  background-color: #f2f2f2;
+  border: 2px solid rgba(0, 0, 0, 0.226);
+  margin-left: auto;
+  margin-right: auto;
+  color: #0a0c0a50;
+}
+.google {
+  background-color: #db4437;
+  color: #f2f2f2;
+}
+.facebook {
+  background-color: #3b5998;
+  color: white;
+}
+.danger {
+  background-color: #e63946;
+}
+.success {
+  background-color: #38b000;
+}
+.secondary {
+  background-color: #6c757d;
+}
+
+/* Position  */
+.center {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  justify-content: center;
+}
+
+/* SIZES */
+.small {
+  padding: 10px 10px;
+  font-size: 12px;
+}
+.medium {
+  padding: 12px 25px;
+  font-size: 14px;
+}
+.large {
+  padding: 16px 35px;
+  font-size: 16px;
+}
+.extra-large {
+  max-width: 320px;
+  padding: 12px 60px;
+  font-size: 16px;
+  white-space: nowrap;
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+}
+
+/* HOVERS */
+.default:hover {
+  color: #f2f2f2;
+  background-color: #006caf;
+}
+
+.white:hover {
+  color: #f2f2f2;
+  background-color: #006caf;
+  border: 2px solid rgba(255, 255, 255, 0.541);
+}
+
+@media (max-width: 768px) {
+  .extra-large {
+    width: 100%;
+  }
+}

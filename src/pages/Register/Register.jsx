@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./Register.module.css";
 import { useAuth } from "./../../hooks/useAuth";
+import { Button } from "../../components/Button/Button";
+import { Input } from "../../components/Input/Input";
+import { CloseButton } from "./../../components/Button/CloseButton";
 
 export const Register = ({ onClose, setLoginForm }) => {
   const [successMessage, setSuccessMessage] = useState("");
@@ -52,16 +55,16 @@ export const Register = ({ onClose, setLoginForm }) => {
     setSuccessMessage("");
 
     if (formData.name.length < 4) {
-      newErrors.name = "❌ Ім'я повинно містити щонайменше 4 символи";
+      newErrors.name = "Ім'я повинно містити щонайменше 4 символи";
     }
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(formData.email)) {
-      newErrors.email = "❌ Введіть коректний Email";
+      newErrors.email = "Введіть коректний Email";
     }
 
     if (formData.password.length < 6) {
-      newErrors.password = "❌ Пароль повинен містити щонайменше 6 символів";
+      newErrors.password = "Пароль повинен містити щонайменше 6 символів";
     }
 
     return newErrors;
@@ -82,11 +85,14 @@ export const Register = ({ onClose, setLoginForm }) => {
     const userExists = users.some((user) => user.email === formData.email);
 
     if (userExists) {
-      setSuccessMessage("❌ Користувач з таким Email вже існує...");
+      setSuccessMessage("Користувач з таким Email вже існує...");
       return;
     }
 
+    // register the user
     register(formData);
+
+    // if register successfully log in
     login(formData.email, formData.password);
     setSuccessMessage("Реєстрація успішна!");
 
@@ -99,65 +105,57 @@ export const Register = ({ onClose, setLoginForm }) => {
   return (
     <div className={style.register_wrapper}>
       <form className={style.register_form} onSubmit={handleSubmit}>
-        <span className={style.close_button} onClick={onClose}>
-          x
-        </span>
+        <CloseButton onClose={onClose} />
+
         <h2>Реєстрація</h2>
-        {successMessage && <p className="success-message">{successMessage}</p>}
+        {!successMessage && <p className={style.success_message}>{successMessage}</p>}
+        {successMessage && <p className={style.error_message}>{successMessage}</p>}
 
-        <div className={style.inputWrapper}>
-          <span className={style.icon}>
-            <img src="https://cdn-icons-png.flaticon.com/128/709/709699.png" alt="name" />
-          </span>
-          <input
-            type="text"
-            name="name"
-            placeholder="Ім'я"
-            value={formData.name}
-            onChange={handleChange}
-            className={errors.name ? style.errorInput : ""}
-            required
-          />
-          {errors.name && <p className={style.errorMessage}>{errors.name}</p>}
-        </div>
+        <Input
+          name="name"
+          type="text"
+          placeholder="Ім'я"
+          value={formData.name}
+          onChange={handleChange}
+          error={errors.name}
+          icon="https://cdn-icons-png.flaticon.com/128/709/709699.png"
+          alt="Ім'я"
+          required
+        />
 
-        <div className={style.inputWrapper}>
-          <span className={style.icon}>
-            <img src="https://cdn-icons-png.flaticon.com/128/2669/2669570.png" alt="email" />
-          </span>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className={errors.email ? style.errorInput : ""}
-            required
-          />
-          {errors.email && <p className={style.errorMessage}>{errors.email}</p>}
-        </div>
+        <Input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          error={errors.email}
+          icon="https://cdn-icons-png.flaticon.com/128/2669/2669570.png"
+          alt="email"
+          required
+        />
 
-        <div className={style.inputWrapper}>
-          <span className={style.icon}>
-            <img src="https://cdn-icons-png.flaticon.com/128/25/25239.png" alt="password" />
-          </span>
-          <input
-            type="password"
-            name="password"
-            placeholder="Пароль"
-            value={formData.password}
-            onChange={handleChange}
-            className={errors.password ? style.errorInput : ""}
-            required
-          />
-          {errors.password && <p className={style.errorMessage}>{errors.password}</p>}
-        </div>
+        <Input
+          name="password"
+          type="password"
+          placeholder="Пароль"
+          value={formData.password}
+          onChange={handleChange}
+          error={errors.password}
+          icon="https://cdn-icons-png.flaticon.com/128/25/25239.png"
+          alt="password"
+          required
+        />
 
         {/* <select name="role" value={formData.role} onChange={handleChange} required>
           <option value="user">Користувач</option>
           <option value="admin">Адмін</option>
         </select> */}
-        <button type="submit">Зареєструватись</button>
+
+        <Button type="submit" size="large">
+          Зареєструватись
+        </Button>
+
         <p>
           У мене вже є сторінка{" "}
           <span className={style.enter} onClick={setLoginForm}>

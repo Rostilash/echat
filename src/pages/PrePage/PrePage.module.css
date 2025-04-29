@@ -76,37 +76,10 @@
   margin-right: auto;
 }
 
-.facebookButton,
-.googleButton,
-.registerButton,
-.loginLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  border-radius: 30px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  width: 100%;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #3b5998;
-  color: white;
-}
-
-.googleButton {
-  background-color: #db4437;
-  color: #f2f2f2;
-}
-
 .icon {
   margin-left: 8px;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
 }
 
 .hrWrapper {
@@ -129,20 +102,6 @@
   text-align: center;
 }
 
-.registerButton {
-  padding: 8px;
-  background-color: var(--echat-color);
-  border: 2px solid #b6b6b677;
-  margin-bottom: 20px;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-
-.registerButton:hover {
-  color: #f2f2f2;
-  background-color: #006caf;
-}
-
 .terms {
   text-align: center;
   font-size: 14px;
@@ -163,25 +122,13 @@
   margin-bottom: 20px;
 }
 
-.loginLink {
-  background-color: #f2f2f2;
-  border: 2px solid rgba(0, 0, 0, 0.226);
-  padding: 6px;
-  max-width: 120px;
-  color: #0a0c0a50;
-  text-decoration: none;
-}
-.loginLink:hover {
-  color: #f2f2f2;
-  background-color: var(--echat-color);
-  border: 2px solid rgba(255, 255, 255, 0.541);
-}
-/* Адаптивність для мобільних пристроїв */
 @media (max-width: 768px) {
   .wrapper {
     flex-direction: column;
   }
-
+  .socialButtons {
+    width: 100%;
+  }
   .leftSide {
     width: 100%;
     max-height: 100px;
@@ -195,6 +142,7 @@
   }
 
   .rightSide {
+    display: block;
     padding: 20px;
   }
 
@@ -204,15 +152,6 @@
 
   .subtitle {
     font-size: 18px;
-  }
-
-  .socialButtons {
-    width: 100%;
-  }
-
-  .facebookButton,
-  .googleButton {
-    width: 100%;
   }
 
   .orText {

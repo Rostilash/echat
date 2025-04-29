@@ -2,20 +2,32 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari, Opera */
+.main_page::-webkit-scrollbar {
+  display: none;
 }
 
 :root {
   line-height: 1.5;
   font-weight: 400;
   --bg-color: #f2f2f2;
+  --bg-error: #ffe6e6;
+  --bg-theme: rgb(228, 228, 228);
   --text-color: #111827;
+  --text-low: #666666de;
   --border-color: #e5e7eb;
   --echat-color: #1da0f2;
 }
 [data-theme="dark"] {
   --bg-color: #111827;
+  --bg-theme: rgb(44 44 44 / 39%);
   --text-color: #f9fafb;
   --border-color: #374151;
+  --text-low: #575757de;
 }
 
 html,

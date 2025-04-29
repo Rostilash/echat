@@ -3,6 +3,7 @@ import style from "./PrePage.module.css";
 import { Link } from "react-router-dom";
 import { Login } from "./../Login/Login";
 import { Register } from "./../Register/Register";
+import { Button } from "./../../components/Button/Button";
 
 export const PrePage = () => {
   const [isRightSideHidden, setIsRightSideHidden] = useState(null);
@@ -25,28 +26,30 @@ export const PrePage = () => {
           <h1 className={style.title}>Вітаємо вас в Echat</h1>
           <p className={style.subtitle}>Приєднуйтеся сьогодні.</p>
 
+          {/* Social buttons */}
           <div className={style.socialButtons}>
-            <button className={style.facebookButton}>
+            <Button size="extra-large" position="center" variant="facebook">
               Увійти через Facebook
               <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/15047/15047435.png" />
-            </button>
+            </Button>
 
-            <button className={style.googleButton}>
+            <Button size="extra-large" position="center" variant="google">
               Увійти через Google
               <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/720/720255.png" />
-            </button>
+            </Button>
           </div>
 
+          {/* Or hr lines*/}
           <div className={style.hrWrapper}>
             <hr className={style.hrLine} />
             <p className={style.orText}>АБО</p>
             <hr className={style.hrLine} />
           </div>
 
-          <div className={style.registerButton} onClick={handleRegisterClick}>
+          <Button size="extra-large" position="center" onClick={handleRegisterClick}>
             Створити профіль
             <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/3665/3665930.png" />
-          </div>
+          </Button>
 
           <p className={style.terms}>
             Реєструючись, ви погоджуєтеся з{" "}
@@ -65,17 +68,19 @@ export const PrePage = () => {
           </p>
 
           <p className={style.alreadyHaveAccount}>У вас вже є профіль?</p>
-          <div className={style.loginLink} onClick={handleLoginClick}>
+          <Button size="medium" onClick={handleLoginClick} variant="white">
             Увійти
-          </div>
+          </Button>
         </div>
       )}
+
       {/* login page */}
       {isRightSideHidden === "login" && (
         <div className={style.rightSide}>
           <Login onClose={() => setIsRightSideHidden(null)} setRegisterForm={() => setIsRightSideHidden("register")} />
         </div>
       )}
+
       {/* register page */}
       {isRightSideHidden === "register" && (
         <div className={style.rightSide}>

@@ -1,0 +1,26 @@
+.close_button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.close_button:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.close_button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

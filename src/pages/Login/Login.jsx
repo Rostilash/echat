@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import style from "./Login.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./../../hooks/useAuth";
+import { Button } from "../../components/Button/Button";
+import { Input } from "./../../components/Input/Input";
+import { CloseButton } from "../../components/Button/CloseButton";
 
 export const Login = ({ onClose, setRegisterForm }) => {
   const navigate = useNavigate();
@@ -65,16 +68,11 @@ export const Login = ({ onClose, setRegisterForm }) => {
       setErrorMessage("❌ Password incorrect ");
     }
   };
-  const handleCloseClick = () => {
-    navigate("/echat/register/me1");
-  };
 
   return (
     <div className={style.login_wrapper}>
       <form className={style.login_form} onSubmit={handleSubmit}>
-        <span className={style.close_button} onClick={onClose}>
-          x
-        </span>
+        <CloseButton onClose={onClose} />
         <h2>Вхід</h2>
         <p>
           Новий користувач?{" "}
@@ -82,23 +80,32 @@ export const Login = ({ onClose, setRegisterForm }) => {
             Реєструйся прямо зараз!{" "}
           </span>{" "}
         </p>
-        <div className={style.inputWrapper}>
-          <span className={style.icon}>
-            <img src="https://cdn-icons-png.flaticon.com/128/2669/2669570.png" alt="email" />
-          </span>
-          <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-        </div>
-        {emailError && <p className={style.error_message}>{emailError}</p>}
 
-        <div className={style.inputWrapper}>
-          <span className={style.icon}>
-            <img src="https://cdn-icons-png.flaticon.com/128/25/25239.png" alt="password" />
-          </span>
-          <input type="password" name="password" placeholder="Пароль" value={formData.password} onChange={handleChange} required />
-        </div>
-        {passwordError && <p className={style.error_message}>{passwordError}</p>}
+        <Input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          error={emailError}
+          icon="https://cdn-icons-png.flaticon.com/128/2669/2669570.png"
+          required
+        />
 
-        <button type="submit">Увійти</button>
+        <Input
+          name="password"
+          type="password"
+          placeholder="Пароль"
+          value={formData.password}
+          onChange={handleChange}
+          error={passwordError}
+          icon="https://cdn-icons-png.flaticon.com/128/25/25239.png"
+          required
+        />
+
+        <Button position="center" type="submit" size="large">
+          Увійти
+        </Button>
 
         {errorMessage && <p className={style.error_message}>{errorMessage}</p>}
       </form>

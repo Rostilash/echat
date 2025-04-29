@@ -1,5 +1,6 @@
 import React from "react";
 import style from "./Home.module.css";
+import { Button } from "../../components/Button/Button";
 
 export const Home = () => {
   return (
@@ -45,7 +46,7 @@ export const Home = () => {
                 </span>
               </div>
               <div className={style.send_news}>
-                <button>Надіслати</button>
+                <Button size="medium">Надіслати</Button>
               </div>
             </div>
           </div>
@@ -66,7 +67,7 @@ export const Home = () => {
               <div className={style.user_name}>
                 <p>Lofi Everyday</p>
                 <span>@Lofi_vofi</span>
-                <div class={style.dot_wrapper}>
+                <div className={style.dot_wrapper}>
                   <span className={style.dot}>.</span>
                 </div>
                 <span>3m</span>
@@ -112,7 +113,7 @@ export const Home = () => {
                   Avity <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
                 </p>
                 <span>@sktch_ComedyFan</span>
-                <div class={style.dot_wrapper}>
+                <div className={style.dot_wrapper}>
                   <span className={style.dot}>.</span>
                 </div>
                 <span>15m</span>
@@ -162,7 +163,7 @@ export const Home = () => {
                   <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
                 </p>
                 <span>@Vach_Cana</span>
-                <div class={style.dot_wrapper}>
+                <div className={style.dot_wrapper}>
                   <span className={style.dot}>.</span>
                 </div>
                 <span>1.23h</span>

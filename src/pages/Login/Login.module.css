@@ -5,21 +5,8 @@
   min-height: 100vh;
 }
 
-.close_button {
-  position: absolute;
-  top: 15px;
-  right: 25px;
-  font-size: 24px;
-  height: 30px;
-  width: 30px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .login_form {
-  background: white;
+  background: var(--bg-color);
   padding: 2rem 3rem;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -43,82 +30,6 @@
   cursor: pointer;
 }
 
-.login_form div {
-  position: relative;
-}
-
-.icon {
-  position: absolute;
-  top: 55%;
-  left: 10px;
-  padding: 8px;
-  transform: translateY(-50%);
-  pointer-events: none;
-  border-right: 2px solid rgba(83, 83, 83, 0.281);
-}
-.icon img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-.inputWrapper {
-  max-width: 320px;
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-}
-.inputWrapper:last-of-type {
-  margin-bottom: 20px;
-}
-
-.login_form input {
-  color: rgb(29, 29, 29);
-  width: 100%;
-  max-width: 450px;
-  padding: 10px 30px 10px 30px;
-  border: 2px solid rgb(99, 99, 99);
-  border-radius: 30px;
-  padding-left: 64px;
-  font-size: 20px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.login_form input:focus {
-  border: 2px solid hsla(202, 73%, 61%, 0.774);
-}
-
-.login_form input::placeholder {
-  color: #999;
-  opacity: 1;
-}
-
-.login_form button {
-  font-weight: 700;
-  padding: 0.8rem 1rem;
-  background-color: var(--echat-color);
-  color: white;
-  border: none;
-  border-radius: 30px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-  width: 180px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.login_form button:hover {
-  background-color: #006caf;
-}
-
-.error_message {
-  margin-top: 1rem;
-  color: #dc2626;
-  font-weight: bold;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in;
-}
 @media (max-width: 768px) {
   .login_wrapper {
     padding: 0;
