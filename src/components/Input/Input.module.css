@@ -7,24 +7,34 @@
 
 /* size */
 .default {
-  padding: 12px 30px 12px 30px;
+  padding: 12px 30px 12px 60px;
   font-size: 20px;
-  padding-left: 60px;
+  border-radius: 30px;
+}
+.no_left_padding {
+  padding: 15px;
+  font-size: 18px;
 }
 .small {
-  padding: 8px 15px 8px 15px;
+  padding: 8px 15px 8px 55px;
   font-size: 18px;
-  padding-left: 55px;
 }
-.inputWrapper input {
+
+.input {
   color: var(--text-color);
   background-color: var(--bg-color);
   width: 100%;
   border: 2px solid rgb(99, 99, 99);
-  border-radius: 30px;
   transition: all 0.3s ease;
 }
 
+.inputWrapper:has(input.bordRadLow) {
+  border-radius: 15px;
+}
+/* changed border radius */
+.bordRadLow {
+  border-radius: 10px;
+}
 /* error message */
 .inputWrapper p {
   position: absolute;

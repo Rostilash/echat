@@ -12,9 +12,11 @@ export const Input = ({
   showIcon = true,
   focusIcon,
   size,
+  border,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const sizeClass = style[size] || style.default;
+  const borderRadius = style[border] || style.default;
 
   return (
     <div className={style.inputWrapper}>
@@ -31,7 +33,7 @@ export const Input = ({
         onChange={onChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className={`${style.input} ${error ? style.errorInput : ""} ${sizeClass}`}
+        className={`${style.input} ${error ? style.errorInput : ""} ${sizeClass} ${borderRadius}`}
         required
       />
 

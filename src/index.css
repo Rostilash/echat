@@ -21,6 +21,9 @@
   --text-low: #666666de;
   --border-color: #e5e7eb;
   --echat-color: #1da0f2;
+  --echat-color-agree: #00e8b6;
+  --echat-color-stop: #f9f871;
+  --echat-color-false: #f27450;
 }
 [data-theme="dark"] {
   --bg-color: #111827;
