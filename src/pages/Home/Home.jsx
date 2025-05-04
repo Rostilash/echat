@@ -1,59 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import style from "./Home.module.css";
 import { Button } from "../../components/Button/Button";
+import { PostForm } from "./PostForm";
+import { useAuth } from "../../hooks/useAuth";
+import { PostList } from "./PostList";
 
 export const Home = () => {
+  const { currentUser } = useAuth();
+
+  const handleCreatePost = (text, mediaData) => {
+    const posts = JSON.parse(localStorage.getItem("posts")) || [];
+    const newPost = {
+      id: Date.now().toString(),
+      text,
+      media: mediaData,
+      timestamp: new Date().toISOString(),
+      likes: 0,
+      reposts: 0,
+      comments: [],
+      author: {
+        name: currentUser.name,
+        username: currentUser.username || currentUser.email,
+        profileImage: currentUser.profileImage || "",
+      },
+    };
+
+    localStorage.setItem("posts", JSON.stringify([newPost, ...posts]));
+  };
+
   return (
     <div className={style.main_page}>
       {/* Your massage */}
-      <div className={style.home}>
-        <div className={style.top_cart}>
-          <div>
-            <h3>Головна сторінка</h3>
-          </div>
-          <div>
-            <span className={style.icon_image}>
-              <img src="https://cdn-icons-png.flaticon.com/128/899/899531.png" alt="icon" />
-            </span>
-          </div>
-        </div>
-
-        <div className={style.bottom_cart}>
-          <div className={style.user_image}>
-            <img
-              src="https://yt3.ggpht.com/Le0J3JGewM6Jhbua8gMIcV3wjuXbuDjtRXVjsWdi38bjW1c5g9YxqU8bVlrjrpOZCATpLQcCow=s88-c-k-c0x00ffffff-no-rj"
-              alt="icon"
-            />
-          </div>
-          <div className={style.user_info}>
-            <div className={style.home_text}>
-              <input type="text" placeholder="Що відбувається ?" />
-            </div>
-
-            <div className={style.home_actions}>
-              <div className={style.icons}>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/13123/13123917.png" alt="icon" />
-                </span>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/11633/11633511.png" alt="icon" />
-                </span>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/11846/11846979.png" alt="icon" />
-                </span>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/1182/1182408.png" alt="icon" />
-                </span>
-              </div>
-              <div className={style.send_news}>
-                <Button size="medium">Надіслати</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PostForm onCreatePost={handleCreatePost} />
 
       {/* People messages  */}
+      <PostList />
+
       <div className={style.messages}>
         <div className={style.bottom_cart}>
           <div className={style.user_image}>

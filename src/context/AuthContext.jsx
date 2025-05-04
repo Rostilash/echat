@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = (userData) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    const newUser = { ...userData, isLoggedIn: true };
+    const newUser = { ...userData, isLoggedIn: true, profileImage: userData.profileImage || "" };
     users.push(newUser);
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("currentUser", JSON.stringify(newUser));

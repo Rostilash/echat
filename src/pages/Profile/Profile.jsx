@@ -5,6 +5,7 @@ import { useAuth } from "./../../hooks/useAuth";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
 import { ChangePasswordModal } from "./../ChangePasswordModal/ChangePasswordModal";
+import { compressImage } from "../../utils/imageUtils";
 
 export const Profile = () => {
   const [showModal, setShowModal] = useState(false);
@@ -15,6 +16,7 @@ export const Profile = () => {
   const nameLocalStore = currentUser?.name;
   const passwordLocalStore = currentUser?.password;
   const emailLocalStore = currentUser?.email;
+  const profileImage = currentUser?.profileImage;
 
   const [nameValue, setNameValue] = useState({ name: nameLocalStore, password: "" });
   const [successMessage, setSuccessMessage] = useState(null);
@@ -46,15 +48,43 @@ export const Profile = () => {
     }
   };
 
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const base64Image = await compressImage(file, 100); // стискання до 100KB
+
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      const updatedUser = { ...currentUser, profileImage: base64Image };
+
+      updateUser(updatedUser);
+    } catch (err) {
+      console.error("Помилка стиснення зображення", err);
+      alert("Не вдалося обробити зображення.");
+    }
+  };
+
   return (
     <div className={style.profile}>
       <h1>Редагувати профіль</h1>
+
+      <span className={style.user_image} onClick={() => document.getElementById("image-upload").click()}>
+        <span className={style.user_image_upload_icon}>
+          <img src="https://cdn-icons-png.flaticon.com/128/6538/6538673.png" alt="icon" />
+        </span>
+        {profileImage && <img src={profileImage} alt="Profile" />}
+      </span>
+
       <h3>Вітаю, бажаєш змінити імя?</h3>
+
       <div className={style.themeSwitcher}>
         <button onClick={toggleTheme} className={style.themeButton}>
           {theme === "light" ? "🌙 Ніч" : "☀️ День"}
         </button>
       </div>
+
+      <input id="image-upload" type="file" style={{ display: "none" }} onChange={handleImageUpload} />
 
       <div className={style.change_user_info}>
         <h3 style={{ color: "red" }}>{errorMessage}</h3>
