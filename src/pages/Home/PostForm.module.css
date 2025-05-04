@@ -1,7 +1,7 @@
 .home {
-  min-height: 100%;
+  /* min-height: 100%; */
   width: 100%;
-  max-width: 1200px;
+  max-width: 1360px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,15 +15,6 @@
   width: 100%;
   padding: 10px 10px 10px 12px;
   border-bottom: 2px solid var(--border-color);
-}
-.icon_image {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-.icon_image img {
-  height: 22px;
-  width: 22px;
 }
 
 /* bottom cart */
@@ -68,16 +59,24 @@
   border: 1px solid var(--border-color);
   border-radius: 0px;
 }
-.home_text input:focus {
-  border: none;
+
+.gif_picker_container {
+  /* position: absolute;
+  top: 0px;
+  left: 100px; */
 }
-.home_text input:active {
-  border: none;
+.gif_picker_container input {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 5px 15px;
+  border-radius: 5px;
 }
+/* bottom icons */
 .home_actions {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: relative;
 }
 .icons {
   padding: 10px;
@@ -86,16 +85,51 @@
   justify-content: space-between;
   gap: 10px;
 }
-
-.send_news button {
-  border-radius: 30px;
-  padding: 5px 15px;
-  color: #f2f2f2;
-  background-color: var(--echat-color);
-  font-size: 14px;
-  font-weight: 600;
-  width: 100%;
+.icon_image {
   height: 100%;
-  border: none;
+  display: flex;
+  align-items: center;
+}
+.icon_image img {
+  height: 22px;
+  width: 22px;
   cursor: pointer;
+}
+.emoji_block {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  z-index: 1000;
+}
+
+/* Image loader */
+.preview_block {
+  position: relative;
+  margin-top: 10px;
+  max-width: 300px;
+}
+
+.preview_content {
+  position: relative;
+  display: inline-block;
+}
+
+.preview_image {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.remove_button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 20px;
 }

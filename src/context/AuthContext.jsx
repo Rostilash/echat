@@ -1,9 +1,11 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -28,6 +30,10 @@ export const AuthProvider = ({ children }) => {
     const updatedUser = { ...currentUser, isLoggedIn: false };
     localStorage.setItem("currentUser", JSON.stringify(updatedUser));
     setCurrentUser(null);
+
+    setInterval(() => {
+      navigate("echat/register/me");
+    }, 1000);
   };
 
   const register = (userData) => {

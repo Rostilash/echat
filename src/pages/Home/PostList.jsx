@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import style from "./Home.module.css";
 import { timeAgo } from "./../../utils/timeAgo";
 import { useAuth } from "../../hooks/useAuth";
 
-export const PostList = () => {
-  const [posts, setPosts] = useState(JSON.parse(localStorage.getItem("posts")) || []);
+export const PostList = ({ posts, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
+  const [visibleCount, setVisibleCount] = useState(5);
+  const containerRef = useRef(null);
+
+  // const handleLoadMore = () => {
+  //   setVisibleCount((prev) => prev + 5);
+  // };
 
   const handleLike = (postId) => {
     // Find the post the user wants to like or unlike
@@ -36,8 +41,7 @@ export const PostList = () => {
 
   const handleDeletePost = (postId) => {
     const updatedPosts = posts.filter((post) => post.id !== postId);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts)); // Remove post from localStorage
-    // Optionally, you can also update the state or notify the user
+    setPosts(updatedPosts);
   };
 
   const handleEditPost = (postId) => {
@@ -47,9 +51,28 @@ export const PostList = () => {
     // Here, you would likely want to update the post and save it back to localStorage
   };
 
+  // Функція для обробки скролу
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
+      setVisibleCount((prev) => Math.min(prev + 1, posts.length)); // Завантажуємо ще 5 постів
+    }
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const visiblePosts = posts.slice(0, visibleCount);
+  console.log(posts);
   return (
-    <>
-      {posts.map((post) => (
+    <div ref={containerRef} className={style.post_list_container}>
+      {visiblePosts.map((post) => (
         <div key={post.id} className={style.messages}>
           <div className={style.bottom_cart}>
             <div className={style.user_image}>
@@ -79,7 +102,7 @@ export const PostList = () => {
               </div>
               <div className={style.message_content}>
                 <p>{post.text}</p>
-                {post.id && <img src={post.media} alt="image" />}
+                {post.media && post.id && <img src={post.media} alt="image" loading="lazy" />}
               </div>
 
               <div className={style.message_actions}>
@@ -117,6 +140,11 @@ export const PostList = () => {
           </div>
         </div>
       ))}
-    </>
+      {/* {visibleCount < posts.length && (
+        <div className={style.load_more}>
+          <button onClick={handleLoadMore}>Показати ще</button>
+        </div>
+      )} */}
+    </div>
   );
 };

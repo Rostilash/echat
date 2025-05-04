@@ -8,7 +8,6 @@ export const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { logout, currentUser } = useAuth();
 
-  console.log(currentUser);
   return (
     <aside className={style.sidebar}>
       <div className={style.menu}>

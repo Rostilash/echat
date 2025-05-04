@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./Home.module.css";
 import { Button } from "../../components/Button/Button";
 import { PostForm } from "./PostForm";
@@ -8,8 +8,16 @@ import { PostList } from "./PostList";
 export const Home = () => {
   const { currentUser } = useAuth();
 
+  const [posts, setPosts] = useState(() => {
+    return JSON.parse(localStorage.getItem("posts")) || [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("posts", JSON.stringify(posts));
+  }, [posts]);
+
+  //Function for creating a new post
   const handleCreatePost = (text, mediaData) => {
-    const posts = JSON.parse(localStorage.getItem("posts")) || [];
     const newPost = {
       id: Date.now().toString(),
       text,
@@ -25,7 +33,9 @@ export const Home = () => {
       },
     };
 
-    localStorage.setItem("posts", JSON.stringify([newPost, ...posts]));
+    const updatedPosts = [newPost, ...posts];
+    setPosts(updatedPosts); // Updating the status
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
   return (
@@ -33,54 +43,13 @@ export const Home = () => {
       {/* Your massage */}
       <PostForm onCreatePost={handleCreatePost} />
 
-      {/* People messages  */}
-      <PostList />
-
-      <div className={style.messages}>
-        <div className={style.bottom_cart}>
-          <div className={style.user_image}>
-            <img
-              src="https://yt3.ggpht.com/wEvA-cYzqYPx6Tg7P8-9AMUALcm_33aQ5gdy5BPfnpVofctZhFq6pgj1-IlH6R6rtoNDP-puJwo=s68-c-k-c0x00ffffff-no-rj"
-              alt="icon"
-            />
-          </div>
-          <div className={style.user_info}>
-            <div className={style.messages_text}>
-              <div className={style.user_name}>
-                <p>Lofi Everyday</p>
-                <span>@Lofi_vofi</span>
-                <div className={style.dot_wrapper}>
-                  <span className={style.dot}>.</span>
-                </div>
-                <span>3m</span>
-              </div>
-              <div>
-                <img src="https://cdn-icons-png.flaticon.com/128/18557/18557107.png" alt="icon" style={{ height: "18px", width: "18px" }} />
-              </div>
-            </div>
-            <div>useEffect - це хук React, який дозволяє синхронізувати компонент із зовнішньою системою .</div>
-
-            <div className={style.message_actions}>
-              <div className={style.message_icons}>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/16689/16689811.png" alt="icon" /> <span>1</span>
-                </span>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/13951/13951393.png" alt="icon" /> <span></span>
-                </span>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/17217/17217096.png" alt="icon" /> <span>1</span>
-                </span>
-                <span className={style.icon_image}>
-                  <img src="https://cdn-icons-png.flaticon.com/128/18166/18166719.png" alt="icon" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className={style.posts_wrapper}>
+        <PostList posts={posts} setPosts={setPosts} />
       </div>
+      {/* People messages  */}
+      {/* <PostList posts={posts} setPosts={setPosts} /> */}
 
-      <div className={style.messages}>
+      {/* <div className={style.messages}>
         <div className={style.bottom_cart}>
           <div className={style.user_image}>
             <img
@@ -177,7 +146,7 @@ export const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
