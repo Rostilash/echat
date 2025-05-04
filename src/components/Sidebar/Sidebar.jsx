@@ -8,6 +8,7 @@ export const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { logout, currentUser } = useAuth();
 
+  console.log(currentUser);
   return (
     <aside className={style.sidebar}>
       <div className={style.menu}>
@@ -51,11 +52,7 @@ export const Sidebar = () => {
         {currentUser ? (
           <>
             <div>
-              <img
-                className={style.user_image}
-                src="https://yt3.ggpht.com/Le0J3JGewM6Jhbua8gMIcV3wjuXbuDjtRXVjsWdi38bjW1c5g9YxqU8bVlrjrpOZCATpLQcCow=s88-c-k-c0x00ffffff-no-rj"
-                alt="icon"
-              />{" "}
+              <img className={style.user_image} src={currentUser.profileImage} alt="icon" />{" "}
               <div className={style.user_info}>
                 <span className={style.info_name}>{currentUser.name}</span>
                 <span className={style.info_address}>@AcrossFear</span>

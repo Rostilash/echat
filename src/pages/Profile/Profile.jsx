@@ -50,15 +50,39 @@ export const Profile = () => {
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
+
     if (!file) return;
 
     try {
-      const base64Image = await compressImage(file, 100); // стискання до 100KB
+      const base64Image = await compressImage(file, 100); // Compress to 100KB
 
+      // Get the current user
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+      // Update the user's profile image
       const updatedUser = { ...currentUser, profileImage: base64Image };
 
+      // Update the user in localStorage
       updateUser(updatedUser);
+
+      // Update the posts, if it's the current user's post
+      let posts = JSON.parse(localStorage.getItem("posts")) || [];
+      posts = posts.map((post) => {
+        // If this is the current user's post, update their profile image
+        if (post.author.username === currentUser.email) {
+          return {
+            ...post,
+            author: {
+              ...post.author,
+              profileImage: base64Image, // Update the profile image in the post
+            },
+          };
+        }
+        return post; // If the post doesn't belong to the user, leave it unchanged
+      });
+
+      // Update the posts in localStorage
+      localStorage.setItem("posts", JSON.stringify(posts));
     } catch (err) {
       console.error("Помилка стиснення зображення", err);
       alert("Не вдалося обробити зображення.");

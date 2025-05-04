@@ -8,31 +8,43 @@ export const PostList = () => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
 
   const handleLike = (postId) => {
-    // Знайдемо пост, на який користувач хоче поставити або зняти лайк
+    // Find the post the user wants to like or unlike
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
-        // Якщо користувач вже поставив лайк, знімаємо лайк
+        // If the user has already liked the post, remove the like
         if (post.likedBy && post.likedBy.includes(currentUser.email)) {
           return {
             ...post,
-            likes: post.likes - 1, // Зменшуємо кількість лайків
-            likedBy: post.likedBy.filter((email) => email !== currentUser.email), // Видаляємо email з масиву likedBy
+            likes: post.likes - 1, // Decrease the number of likes
+            likedBy: post.likedBy.filter((email) => email !== currentUser.email), // Remove the email from the likedBy array
           };
         }
 
-        // Якщо лайк не був поставлений, збільшуємо лічильник лайків і додаємо користувача в список лайкнувших
-
+        // If the post hasn't been liked, increase the like count and add the user to the likedBy list
         return {
           ...post,
-          likes: post.likes + 1, // Збільшуємо кількість лайків
-          likedBy: [...(post.likedBy || []), currentUser.email], // Додаємо email користувача в масив likedBy
+          likes: post.likes + 1, // Increase the number of likes
+          likedBy: [...(post.likedBy || []), currentUser.email], // Add the user's email to the likedBy array
         };
       }
-      return post; // Якщо це не той пост, не змінюємо його
+      return post; // If this is not the post, do not modify it
     });
 
-    setPosts(updatedPosts); // Оновлюємо список постів у стані
-    localStorage.setItem("posts", JSON.stringify(updatedPosts)); // Зберігаємо оновлені пости в localStorage
+    setPosts(updatedPosts); // Update the posts list in state
+    localStorage.setItem("posts", JSON.stringify(updatedPosts)); // Save the updated posts in localStorage
+  };
+
+  const handleDeletePost = (postId) => {
+    const updatedPosts = posts.filter((post) => post.id !== postId);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts)); // Remove post from localStorage
+    // Optionally, you can also update the state or notify the user
+  };
+
+  const handleEditPost = (postId) => {
+    // Logic to handle editing the post (e.g. open a modal with a form)
+    const postToEdit = posts.find((post) => post.id === postId);
+    console.log(postToEdit);
+    // Here, you would likely want to update the post and save it back to localStorage
   };
 
   return (
@@ -41,7 +53,14 @@ export const PostList = () => {
         <div key={post.id} className={style.messages}>
           <div className={style.bottom_cart}>
             <div className={style.user_image}>
-              <img src={post.author.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"} alt="user" />
+              <img
+                src={
+                  post.author.email === currentUser.email
+                    ? currentUser.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
+                    : post.author.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
+                }
+                alt="user"
+              />
             </div>
 
             <div className={style.user_info}>
@@ -75,8 +94,8 @@ export const PostList = () => {
                     <img
                       src={
                         post.likedBy && post.likedBy.includes(currentUser.email)
-                          ? "https://cdn-icons-png.flaticon.com/128/210/210545.png" // Іконка для лайкнутого посту
-                          : "https://cdn-icons-png.flaticon.com/128/1077/1077035.png" // Стандартна іконка лайка
+                          ? "https://cdn-icons-png.flaticon.com/128/210/210545.png" // Icon for a liked post
+                          : "https://cdn-icons-png.flaticon.com/128/1077/1077035.png" // Standard like icon
                       }
                       alt="icon"
                     />
@@ -86,6 +105,13 @@ export const PostList = () => {
                     <img src="https://cdn-icons-png.flaticon.com/128/18166/18166719.png" alt="icon" />
                   </span>
                 </div>
+                {/* Check if post belongs to the current user */}
+                {post.author.username === currentUser.email && (
+                  <div className={style.edit_delete_buttons}>
+                    <button onClick={() => handleEditPost(post.id)}>Edit</button>
+                    <button onClick={() => handleDeletePost(post.id)}>Delete</button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

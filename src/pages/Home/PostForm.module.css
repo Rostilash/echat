@@ -36,7 +36,7 @@
 }
 .user_image {
   border: 1px solid grey;
-  height: 35px;
+  height: 40px;
   width: 40px;
   border-radius: 50%;
   overflow: hidden;
@@ -45,14 +45,14 @@
   align-items: center;
 }
 .user_image img {
-  height: 100%;
-  width: 100%;
+  height: 40px;
+  width: 40px;
   object-fit: cover;
 }
 
 /* info */
 .user_info {
-  width: 100%;
+  width: 90%;
 }
 .home_text {
   font-size: 16px;
