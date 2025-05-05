@@ -21,7 +21,7 @@ export const PostForm = ({ onCreatePost }) => {
   const emojiIconRef = useRef(null);
   const gifIconRef = useRef(null);
 
-  //close emoji & gif window
+  //close emoji & gif window dropdowns
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (pickerRef.current && !pickerRef.current.contains(event.target) && emojiIconRef.current && !emojiIconRef.current.contains(event.target)) {

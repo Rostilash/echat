@@ -2,16 +2,18 @@ import React, { useState, useRef, useEffect } from "react";
 import style from "./Home.module.css";
 import { timeAgo } from "./../../utils/timeAgo";
 import { useAuth } from "../../hooks/useAuth";
+import { useDropdown } from "../../hooks/useDropdown";
+import { LoaderSmall } from "../../components/Loader/LoaderSmall";
 
 export const PostList = ({ posts, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
   const [visibleCount, setVisibleCount] = useState(5);
+  const [deletingPostIds, setDeletingPostIds] = useState([]);
   const containerRef = useRef(null);
 
-  // const handleLoadMore = () => {
-  //   setVisibleCount((prev) => prev + 5);
-  // };
+  const { openId: postOpenOptions, handleToggle: handleOpenSelection, dropdownRef, toggleRef } = useDropdown();
 
+  // like post
   const handleLike = (postId) => {
     // Find the post the user wants to like or unlike
     const updatedPosts = posts.map((post) => {
@@ -39,11 +41,24 @@ export const PostList = ({ posts, setPosts }) => {
     localStorage.setItem("posts", JSON.stringify(updatedPosts)); // Save the updated posts in localStorage
   };
 
+  // delete post
   const handleDeletePost = (postId) => {
-    const updatedPosts = posts.filter((post) => post.id !== postId);
-    setPosts(updatedPosts);
+    // Request for confirmation of deletion
+    const isConfirmed = window.confirm("Ви впевнені, що хочете видалити цю публікацію?");
+
+    if (isConfirmed) {
+      setDeletingPostIds((prev) => [...prev, postId]);
+
+      setTimeout(() => {
+        const updatedPosts = posts.filter((post) => post.id !== postId);
+        setPosts(updatedPosts);
+        setDeletingPostIds((prev) => prev.filter((id) => id !== postId));
+        localStorage.setItem("posts", JSON.stringify(updatedPosts));
+      }, 500);
+    }
   };
 
+  // edit post Workong on it
   const handleEditPost = (postId) => {
     // Logic to handle editing the post (e.g. open a modal with a form)
     const postToEdit = posts.find((post) => post.id === postId);
@@ -51,11 +66,11 @@ export const PostList = ({ posts, setPosts }) => {
     // Here, you would likely want to update the post and save it back to localStorage
   };
 
-  // Функція для обробки скролу
+  // Scroll function
   const handleScroll = () => {
     const container = containerRef.current;
     if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
-      setVisibleCount((prev) => Math.min(prev + 1, posts.length)); // Завантажуємо ще 5 постів
+      setVisibleCount((prev) => Math.min(prev + 5, posts.length)); // add +5 post
     }
   };
 
@@ -69,11 +84,11 @@ export const PostList = ({ posts, setPosts }) => {
   }, []);
 
   const visiblePosts = posts.slice(0, visibleCount);
-  console.log(posts);
+  // console.log(posts);
   return (
     <div ref={containerRef} className={style.post_list_container}>
       {visiblePosts.map((post) => (
-        <div key={post.id} className={style.messages}>
+        <div key={post.id} className={`${style.messages} ${deletingPostIds.includes(post.id) ? style.deleting : ""}`}>
           <div className={style.bottom_cart}>
             <div className={style.user_image}>
               <img
@@ -89,16 +104,35 @@ export const PostList = ({ posts, setPosts }) => {
             <div className={style.user_info}>
               <div className={style.messages_text}>
                 <div className={style.user_name}>
-                  <p>{post.author.name}</p>
-                  <span>@{post.author.username}</span>
+                  <p>
+                    {post.author.name}{" "}
+                    <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
+                  </p>
+                  <span>@{post.author.username} </span>
                   <div className={style.dot_wrapper}>
                     <span className={style.dot}>.</span>
                   </div>
                   <span>{timeAgo(post.timestamp)}</span>
                 </div>
-                <div>
-                  <img src="https://cdn-icons-png.flaticon.com/128/18557/18557107.png" alt="icon" style={{ height: "18px", width: "18px" }} />
+                <div ref={toggleRef} onClick={(e) => handleOpenSelection(e, post.id)} className={style.post_edit_selection}>
+                  <img
+                    className={`${style.icon_transition} ${postOpenOptions === post.id ? style.icon_rotate : ""}`}
+                    src="https://cdn-icons-png.flaticon.com/128/18557/18557107.png"
+                    alt="icon"
+                    style={{ height: "18px", width: "18px" }}
+                  />
                 </div>
+                {postOpenOptions === post.id && (
+                  <div className={style.edit_delete_buttons} ref={dropdownRef}>
+                    <button>Відкрити інформацію</button>
+                    {post.author.username === currentUser.email && (
+                      <>
+                        {/* <button onClick={() => handleEditPost(post.id)}>Редагувати</button> */}
+                        <button onClick={() => handleDeletePost(post.id)}>Видалити</button>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
               <div className={style.message_content}>
                 <p>{post.text}</p>
@@ -128,23 +162,11 @@ export const PostList = ({ posts, setPosts }) => {
                     <img src="https://cdn-icons-png.flaticon.com/128/18166/18166719.png" alt="icon" />
                   </span>
                 </div>
-                {/* Check if post belongs to the current user */}
-                {post.author.username === currentUser.email && (
-                  <div className={style.edit_delete_buttons}>
-                    <button onClick={() => handleEditPost(post.id)}>Edit</button>
-                    <button onClick={() => handleDeletePost(post.id)}>Delete</button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </div>
       ))}
-      {/* {visibleCount < posts.length && (
-        <div className={style.load_more}>
-          <button onClick={handleLoadMore}>Показати ще</button>
-        </div>
-      )} */}
     </div>
   );
 };

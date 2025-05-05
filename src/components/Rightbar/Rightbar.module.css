@@ -67,7 +67,7 @@
 .recommended_info {
   display: flex;
   flex-direction: row;
-  text-align: center;
+  text-align: left;
   gap: 5px;
   overflow: hidden;
   max-width: 255px;
