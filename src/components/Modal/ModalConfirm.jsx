@@ -1,7 +1,7 @@
 import React from "react";
-import style from "./Modal.module.css"; // стилі для модального вікна (створи цей файл або адаптуй під свій проект)
+import style from "./Modal.module.css";
 
-const Modal = ({ message, onConfirm, onCancel }) => {
+export const Modal = ({ message, onConfirm, onCancel }) => {
   return (
     <div className={style.modal}>
       <div className={style.modalContent}>
@@ -14,5 +14,3 @@ const Modal = ({ message, onConfirm, onCancel }) => {
     </div>
   );
 };
-
-export default Modal;

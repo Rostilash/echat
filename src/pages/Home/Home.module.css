@@ -45,24 +45,30 @@
 .post_edit_selection {
   cursor: pointer;
 }
-/* dropdown meny */
+/* dropdown menu */
 .edit_delete_buttons {
   position: absolute;
   top: 30px;
   right: 0px;
   display: flex;
   flex-direction: column;
-  /* gap: 10px; */
-  background-color: var(--bg-color);
-  /* border: 1px solid rgba(0, 0, 0, 0.185); */
-  border-radius: 5px;
+
   min-width: 100px;
-  /* padding: 10px; */
 }
 .edit_delete_buttons button {
-  padding: 5px;
-  border-bottom: 1px solid gray;
-  border: none;
+  color: var(--text-color);
+  padding: 8px 15px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-color);
+  cursor: pointer;
+}
+.edit_delete_buttons button:hover {
+  background-color: var(--hover);
+}
+.edit_delete_buttons img {
+  height: 14px;
+  width: 14px;
 }
 /* bottom cart */
 .bottom_cart {
@@ -143,10 +149,10 @@
   margin-bottom: 10px;
 }
 .message_content img {
-  width: 100%;
+  /* width: 100%; */
   height: auto;
   max-height: 400px;
-  max-width: 1100px;
+  min-width: 500px;
   object-fit: cover;
   display: block;
   border-radius: 15px;

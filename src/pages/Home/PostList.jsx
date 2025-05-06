@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import style from "./Home.module.css";
 import { timeAgo } from "./../../utils/timeAgo";
-import { useAuth } from "../../hooks/useAuth";
 import { useDropdown } from "../../hooks/useDropdown";
-import { LoaderSmall } from "../../components/Loader/LoaderSmall";
+import { Modal } from "../../components/Modal/ModalConfirm";
 
 export const PostList = ({ posts, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
   const [visibleCount, setVisibleCount] = useState(5);
   const [deletingPostIds, setDeletingPostIds] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
   const containerRef = useRef(null);
 
   const { openId: postOpenOptions, handleToggle: handleOpenSelection, dropdownRef, toggleRef } = useDropdown();
@@ -42,23 +43,32 @@ export const PostList = ({ posts, setPosts }) => {
   };
 
   // delete post
-  const handleDeletePost = (postId) => {
-    // Request for confirmation of deletion
-    const isConfirmed = window.confirm("Ви впевнені, що хочете видалити цю публікацію?");
-
-    if (isConfirmed) {
-      setDeletingPostIds((prev) => [...prev, postId]);
+  const handleDeletePost = () => {
+    if (postToDelete) {
+      setDeletingPostIds((prev) => [...prev, postToDelete]);
 
       setTimeout(() => {
-        const updatedPosts = posts.filter((post) => post.id !== postId);
+        const updatedPosts = posts.filter((post) => post.id !== postToDelete);
         setPosts(updatedPosts);
-        setDeletingPostIds((prev) => prev.filter((id) => id !== postId));
+        setDeletingPostIds((prev) => prev.filter((id) => id !== postToDelete));
         localStorage.setItem("posts", JSON.stringify(updatedPosts));
       }, 500);
     }
+    setShowModal(false);
   };
 
-  // edit post Workong on it
+  // open confirmation modal
+  const openModal = (postId) => {
+    setPostToDelete(postId);
+    setShowModal(true);
+  };
+
+  // cancel delete
+  const cancelDelete = () => {
+    setShowModal(false);
+  };
+
+  // edit post Working on it
   const handleEditPost = (postId) => {
     // Logic to handle editing the post (e.g. open a modal with a form)
     const postToEdit = posts.find((post) => post.id === postId);
@@ -128,7 +138,10 @@ export const PostList = ({ posts, setPosts }) => {
                     {post.author.username === currentUser.email && (
                       <>
                         {/* <button onClick={() => handleEditPost(post.id)}>Редагувати</button> */}
-                        <button onClick={() => handleDeletePost(post.id)}>Видалити</button>
+                        <button onClick={() => openModal(post.id)}>
+                          <img src="https://cdn-icons-png.flaticon.com/128/17780/17780343.png" alt="delete" />
+                          {"   "} Видалити
+                        </button>
                       </>
                     )}
                   </div>
@@ -167,6 +180,8 @@ export const PostList = ({ posts, setPosts }) => {
           </div>
         </div>
       ))}
+      {/* Модальне вікно для підтвердження видалення */}
+      {showModal && <Modal message="Are you sure you want to delete this post?" onConfirm={handleDeletePost} onCancel={cancelDelete} />}
     </div>
   );
 };

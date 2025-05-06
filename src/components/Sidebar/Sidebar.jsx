@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import style from "./Sidebar.module.css";
 import { Link } from "react-router-dom";
 import { useMediaQuery } from "./../../hooks/useMediaQuery";
@@ -7,7 +7,11 @@ import { useAuth } from "./../../hooks/useAuth";
 export const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { logout, currentUser } = useAuth();
+  const [openQuitMenu, setOpenQuitMenu] = useState(false);
 
+  const handleOpenQuitOption = () => {
+    setOpenQuitMenu((prev) => !prev);
+  };
   return (
     <aside className={style.sidebar}>
       <div className={style.menu}>
@@ -50,17 +54,18 @@ export const Sidebar = () => {
       <div className={style.authLinks}>
         {currentUser ? (
           <>
-            <div>
+            <div style={{ cursor: "pointer" }} onClick={handleOpenQuitOption}>
               <img className={style.user_image} src={currentUser.profileImage} alt="icon" />{" "}
               <div className={style.user_info}>
                 <span className={style.info_name}>{currentUser.name}</span>
                 <span className={style.info_address}>@AcrossFear</span>
               </div>
+              {openQuitMenu && (
+                <button onClick={logout} className={style.logoutBtn}>
+                  Вийти
+                </button>
+              )}
             </div>
-
-            <button onClick={logout} className={style.logoutBtn}>
-              Вийти
-            </button>
           </>
         ) : (
           <>
