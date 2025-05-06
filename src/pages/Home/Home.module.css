@@ -156,6 +156,15 @@
   object-fit: cover;
   display: block;
   border-radius: 15px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.zoomed {
+  transform: scale(1.5);
+  transition: transform 0.3s ease;
+  z-index: 100;
+  position: relative;
 }
 
 .message_actions {

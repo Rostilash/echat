@@ -85,9 +85,14 @@ export function TopPlaces() {
   return (
     <>
       {loading ? (
-        <LoaderSmall />
+        <div className={style.loader}>
+          <LoaderSmall />
+        </div>
       ) : (
         <div className={style.top_places}>
+          <h1>
+            <img alt="icon" src="https://cdn-icons-png.flaticon.com/128/9908/9908202.png" style={{ height: "30px", width: "30px" }} /> Топ місця
+          </h1>
           {renderList(places.historic, "historic", "Історичні місця", "🏛️")}
           {renderList(places.pubs, "pubs", "Паби", "🍺")}
           {renderList(places.restaurants, "restaurants", "Ресторани", "🍽️")}

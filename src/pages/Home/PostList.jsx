@@ -10,6 +10,8 @@ export const PostList = ({ posts, setPosts }) => {
   const [deletingPostIds, setDeletingPostIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [zoomedImageId, setZoomedImageId] = useState(null);
+
   const containerRef = useRef(null);
 
   const { openId: postOpenOptions, handleToggle: handleOpenSelection, dropdownRef, toggleRef } = useDropdown();
@@ -149,7 +151,17 @@ export const PostList = ({ posts, setPosts }) => {
               </div>
               <div className={style.message_content}>
                 <p>{post.text}</p>
-                {post.media && post.id && <img src={post.media} alt="image" loading="lazy" />}
+
+                {/* Post image */}
+                {post.media && post.id && (
+                  <img
+                    src={post.media}
+                    alt="image"
+                    loading="lazy"
+                    className={zoomedImageId === post.id ? style.zoomed : ""}
+                    onClick={() => setZoomedImageId(zoomedImageId === post.id ? null : post.id)}
+                  />
+                )}
               </div>
 
               <div className={style.message_actions}>
@@ -180,7 +192,7 @@ export const PostList = ({ posts, setPosts }) => {
           </div>
         </div>
       ))}
-      {/* Модальне вікно для підтвердження видалення */}
+      {/* Modal success window */}
       {showModal && <Modal message="Are you sure you want to delete this post?" onConfirm={handleDeletePost} onCancel={cancelDelete} />}
     </div>
   );
