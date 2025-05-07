@@ -49,8 +49,35 @@ export const Home = () => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
 
+  function extractTags(text) {
+    if (!text) return [];
+    const matches = text.match(/#[\p{L}\p{N}_]+/gu);
+    return matches ? matches.map((tag) => tag.toLowerCase()) : [];
+  }
+
+  function detectScheduledDate(text) {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const formatDate = (date) => date.toISOString().split("T")[0]; // YYYY-MM-DD
+
+    const lowercaseText = text.toLowerCase();
+
+    if (lowercaseText.includes("завтра")) {
+      return formatDate(tomorrow);
+    }
+
+    // Можна розширити перевірку на інші слова, напр. "08 травня" тощо
+    // Для цього треба парсити текст і порівнювати з реальними датами
+
+    return null; // Якщо немає згадки про майбутнє
+  }
+
   //Function for creating a new post
   const handleCreatePost = (text, mediaData) => {
+    const scheduledDate = detectScheduledDate(text);
+
     const newPost = {
       id: Date.now().toString(),
       text,
@@ -58,7 +85,10 @@ export const Home = () => {
       timestamp: new Date().toISOString(),
       likes: 0,
       reposts: 0,
+      region: "Україна",
       comments: [],
+      tags: extractTags(text),
+      scheduledFor: scheduledDate,
       author: {
         name: currentUser.name,
         username: currentUser.username || currentUser.email,

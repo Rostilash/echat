@@ -9,14 +9,13 @@
 .show_block {
   min-width: 300px;
   width: 65%;
-  border: 1px solid var(--border-color);
+  border: 3px solid var(--border-color);
 }
 
 ul {
   padding: 10px;
   max-width: 400px;
   list-style-type: none;
-  border-bottom: 1px solid var(--border-color);
 }
 
 h2 {

@@ -10,7 +10,7 @@
   flex: 1;
   overflow-y: auto;
   height: 100vh;
-  min-width: 500px;
+  min-width: 680px;
 }
 
 @media (max-width: 768px) {

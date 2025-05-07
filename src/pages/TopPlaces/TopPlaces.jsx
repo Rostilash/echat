@@ -22,7 +22,7 @@ export function TopPlaces() {
 
   const [loading, setLoading] = useState(true);
 
-  // Завантаження даних
+  // Load data from fetchPlaces, only that have names.
   useEffect(() => {
     fetchPlaces().then((data) => {
       const filteredData = {};
@@ -48,7 +48,7 @@ export function TopPlaces() {
     }));
   };
 
-  // Рендер списку
+  // Render HTML
   const renderList = (items, type, label, emoji) => (
     <div className={style.show_block}>
       <h2>
@@ -66,19 +66,20 @@ export function TopPlaces() {
             </a>
           </li>
         ))}
-
+      </ul>
+      <div className={style.buttons}>
         {items.length > visible[type] && (
-          <div className={style.buttons}>
+          <>
             <button className={style.show_more_button} onClick={() => showMore(type)}>
               Показати ще
             </button>
             {" / "}
-            <button className={style.show_more_button} onClick={() => hideShow(type)}>
-              Приховати
-            </button>
-          </div>
+          </>
         )}
-      </ul>
+        <button className={style.show_more_button} onClick={() => hideShow(type)}>
+          Приховати
+        </button>
+      </div>
     </div>
   );
 

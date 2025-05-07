@@ -71,12 +71,12 @@ export const PostList = ({ posts, setPosts }) => {
   };
 
   // edit post Working on it
-  const handleEditPost = (postId) => {
-    // Logic to handle editing the post (e.g. open a modal with a form)
-    const postToEdit = posts.find((post) => post.id === postId);
-    console.log(postToEdit);
-    // Here, you would likely want to update the post and save it back to localStorage
-  };
+  // const handleEditPost = (postId) => {
+  //   // Logic to handle editing the post (e.g. open a modal with a form)
+  //   const postToEdit = posts.find((post) => post.id === postId);
+  //   console.log(postToEdit);
+  //   // Here, you would likely want to update the post and save it back to localStorage
+  // };
 
   // Scroll function
   const handleScroll = () => {
@@ -96,7 +96,7 @@ export const PostList = ({ posts, setPosts }) => {
   }, []);
 
   const visiblePosts = posts.slice(0, visibleCount);
-  // console.log(posts);
+  console.log(posts);
   return (
     <div ref={containerRef} className={style.post_list_container}>
       {visiblePosts.map((post) => (
