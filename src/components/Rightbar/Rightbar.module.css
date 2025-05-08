@@ -1,5 +1,5 @@
 .rightbar {
-  max-width: 500px;
+  min-width: 380px;
   background-color: var(--bg-color);
   padding: 0.5rem 1rem;
   border-left: 2px solid var(--border-color);
@@ -14,16 +14,7 @@
   gap: 15px;
   position: relative;
 }
-.suggestions {
-  position: fixed;
-  top: 50px;
-  right: 0;
-}
-.suggestionItem {
-  padding: 10px 30px;
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-}
+
 .news_block {
   border: 1px solid var(--border-color);
   border-radius: 15px;
