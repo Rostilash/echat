@@ -6,7 +6,7 @@ import { Modal } from "../../components/Modal/ModalConfirm";
 
 export const PostList = ({ posts, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
-  const [visibleCount, setVisibleCount] = useState(5);
+  const [visibleCount, setVisibleCount] = useState(10);
   const [deletingPostIds, setDeletingPostIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);

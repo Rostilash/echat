@@ -3,64 +3,61 @@ import style from "./Home.module.css";
 import { PostForm } from "./PostForm";
 import { useAuth } from "../../hooks/useAuth";
 import { PostList } from "./PostList";
+import { useOutletContext } from "react-router-dom";
+
+const monthNames = {
+  січня: 0,
+  лютого: 1,
+  березня: 2,
+  квітня: 3,
+  травня: 4,
+  червня: 5,
+  липня: 6,
+  серпня: 7,
+  вересня: 8,
+  жовтня: 9,
+  листопада: 10,
+  грудня: 11,
+};
+
+const formatDate = (date) => date.toISOString().split("T")[0]; // "YYYY-MM-DD"
 
 export const Home = () => {
   const { currentUser } = useAuth();
-  const [posts, setPosts] = useState(() => {
-    const saved = localStorage.getItem("posts");
-    if (saved) return JSON.parse(saved);
+  const { posts, setPosts, selectedFilter } = useOutletContext();
 
-    //Default State
-    return [
-      {
-        id: "1",
-        text: "Я роблю один і той же знімок двічі. Спочатку серцем, потім камерою",
-        media:
-          "https://images.unsplash.com/photo-1745450432714-f403f3fac945?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw1fHx8ZW58MHx8fHx8",
-        timestamp: new Date().toISOString(),
-        likes: 23,
-        reposts: 5,
-        comments: [],
-        author: {
-          name: "Avity",
-          username: "@sktch_ComedyFan",
-          profileImage: "https://yt3.ggpht.com/cBjl6YDbv6639q6ELLETZhW3nOqAUhWIr9cx4fHUKjrmhs2YcfiHQ9KkNgGHU_psIfdw_aSt=s88-c-k-c0x00ffffff-no-rj",
-        },
-      },
-      {
-        id: "2",
-        text: "ARTISTIC RESIDENCY LIVE SESSION We bring the vibes you need Loading in progress… . Follow. Message. MADD's profile picture.",
-        media:
-          "https://images.unsplash.com/photo-1745800227130-f61ca9d6bcb1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyNXx8fGVufDB8fHx8fA%3D%3D",
-        timestamp: new Date().toISOString(),
-        likes: 123,
-        reposts: 50,
-        comments: [],
-        author: {
-          name: "Aloha Vibes",
-          username: "@Vach_Cana",
-          profileImage: "https://yt3.ggpht.com/SmANtx6ituy1f16EKHUruhfal5oXhW8FhWVBb9oxvqAZ1oVDYnWlF8GfiiIyS2JC7G9bYlYqiA=s68-c-k-c0x00ffffff-no-rj",
-        },
-      },
-    ];
-  });
+  const today = new Date();
+  const formattedToday = formatDate(today);
 
-  useEffect(() => {
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }, [posts]);
+  // Filter posts
+  const getFilteredPosts = () => {
+    switch (selectedFilter) {
+      case "Сьогодні":
+        return posts.filter((p) => formatDate(new Date(p.timestamp || p.scheduledFor)) === formattedToday);
 
+      case "Завтра":
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return posts.filter((p) => formatDate(new Date(p.scheduledFor || p.timestamp)) === formatDate(tomorrow));
+
+      default:
+        if (selectedFilter?.startsWith("#")) {
+          return posts.filter((p) => Array.isArray(p.tags) && p.tags.map((tag) => tag.toLowerCase()).includes(selectedFilter.toLowerCase()));
+        }
+        return posts;
+    }
+  };
+
+  // matches tags to localStorage
   function extractTags(text) {
     if (!text) return [];
-    const matches = text.match(/#[\p{L}\p{N}_]+/gu);
+    const matches = text.match(/#[\p{L}\p{N}_-]+/gu);
     return matches ? matches.map((tag) => tag.toLowerCase()) : [];
   }
 
   function detectScheduledDate(text) {
-    const today = new Date();
-    const tomorrow = new Date(today);
+    const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
-
-    const formatDate = (date) => date.toISOString().split("T")[0]; // YYYY-MM-DD
 
     const lowercaseText = text.toLowerCase();
 
@@ -68,13 +65,29 @@ export const Home = () => {
       return formatDate(tomorrow);
     }
 
-    // Можна розширити перевірку на інші слова, напр. "08 травня" тощо
-    // Для цього треба парсити текст і порівнювати з реальними датами
+    if (lowercaseText.includes("сьогодні")) {
+      return formattedToday;
+    }
 
-    return null; // Якщо немає згадки про майбутнє
+    const datePattern = /(\d{1,2})\s+(січня|лютого|березня|квітня|травня|червня|липня|серпня|вересня|жовтня|листопада|грудня)/iu;
+    const match = lowercaseText.match(datePattern);
+
+    if (match) {
+      const day = parseInt(match[1], 10);
+      const month = monthNames[match[2]];
+      const targetDate = new Date(today.getFullYear(), month, day, 12); // avoiding UTC offset
+
+      if (formatDate(targetDate) < formattedToday) {
+        targetDate.setFullYear(today.getFullYear() + 1);
+      }
+
+      return formatDate(targetDate);
+    }
+
+    return null;
   }
 
-  //Function for creating a new post
+  // Function for creating a new post
   const handleCreatePost = (text, mediaData) => {
     const scheduledDate = detectScheduledDate(text);
 
@@ -87,8 +100,8 @@ export const Home = () => {
       reposts: 0,
       region: "Україна",
       comments: [],
-      tags: extractTags(text),
-      scheduledFor: scheduledDate,
+      tags: extractTags(text) || [],
+      scheduledFor: scheduledDate || formattedToday,
       author: {
         name: currentUser.name,
         username: currentUser.username || currentUser.email,
@@ -104,12 +117,12 @@ export const Home = () => {
 
   return (
     <div className={style.main_page}>
-      {/* Your massage */}
+      {/* Your message */}
       <PostForm onCreatePost={handleCreatePost} />
 
-      {/* People messages  */}
+      {/* People messages */}
       <div className={style.posts_wrapper}>
-        <PostList posts={posts} setPosts={setPosts} />
+        <PostList posts={getFilteredPosts()} setPosts={setPosts} />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useMediaQuery } from "./../../hooks/useMediaQuery";
 import { useAuth } from "./../../hooks/useAuth";
 
-export const Sidebar = () => {
+export const Sidebar = ({ posts = [] }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { logout, currentUser } = useAuth();
   const [openQuitMenu, setOpenQuitMenu] = useState(false);
