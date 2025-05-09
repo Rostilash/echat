@@ -3,14 +3,21 @@ import style from "./Home.module.css";
 import { timeAgo } from "./../../utils/timeAgo";
 import { useDropdown } from "../../hooks/useDropdown";
 import { Modal } from "../../components/Modal/ModalConfirm";
+import { Comments } from "./Comments/Comments";
+import { Input } from "./../../components/Input/Input";
+import { Button } from "./../../components/Button/Button";
+import { handleLikeItem } from "../../utils/handleLikeItem";
+import { deleteItemById } from "../../utils/deleteItem";
 
 export const PostList = ({ posts, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
   const [visibleCount, setVisibleCount] = useState(10);
   const [deletingPostIds, setDeletingPostIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [postToDelete, setPostToDelete] = useState(null);
   const [zoomedImageId, setZoomedImageId] = useState(null);
+  const [commentValue, setCommentValue] = useState("");
 
   const containerRef = useRef(null);
 
@@ -18,56 +25,36 @@ export const PostList = ({ posts, setPosts }) => {
 
   // like post
   const handleLike = (postId) => {
-    // Find the post the user wants to like or unlike
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
-        // If the user has already liked the post, remove the like
-        if (post.likedBy && post.likedBy.includes(currentUser.email)) {
-          return {
-            ...post,
-            likes: post.likes - 1, // Decrease the number of likes
-            likedBy: post.likedBy.filter((email) => email !== currentUser.email), // Remove the email from the likedBy array
-          };
-        }
-
-        // If the post hasn't been liked, increase the like count and add the user to the likedBy list
-        return {
-          ...post,
-          likes: post.likes + 1, // Increase the number of likes
-          likedBy: [...(post.likedBy || []), currentUser.email], // Add the user's email to the likedBy array
-        };
+        return handleLikeItem(post, currentUser.email);
       }
-      return post; // If this is not the post, do not modify it
+      return post;
     });
 
-    setPosts(updatedPosts); // Update the posts list in state
-    localStorage.setItem("posts", JSON.stringify(updatedPosts)); // Save the updated posts in localStorage
+    setPosts(updatedPosts);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
   // delete post
   const handleDeletePost = () => {
-    if (postToDelete) {
-      setDeletingPostIds((prev) => [...prev, postToDelete]);
-
-      setTimeout(() => {
-        const updatedPosts = posts.filter((post) => post.id !== postToDelete);
-        setPosts(updatedPosts);
-        setDeletingPostIds((prev) => prev.filter((id) => id !== postToDelete));
-        localStorage.setItem("posts", JSON.stringify(updatedPosts));
-      }, 500);
-    }
-    setShowModal(false);
+    deleteItemById({
+      items: posts,
+      idToDelete: postToDelete,
+      setItems: setPosts,
+      setDeletingIds: setDeletingPostIds,
+      storageKey: "posts",
+      onFinish: () => setPostToDelete(null), // Hide modal
+    });
   };
 
   // open confirmation modal
   const openModal = (postId) => {
     setPostToDelete(postId);
-    setShowModal(true);
   };
-
   // cancel delete
   const cancelDelete = () => {
-    setShowModal(false);
+    setPostToDelete(null);
   };
 
   // edit post Working on it
@@ -96,7 +83,43 @@ export const PostList = ({ posts, setPosts }) => {
   }, []);
 
   const visiblePosts = posts.slice(0, visibleCount);
-  console.log(posts);
+  // console.log(posts);
+
+  // comments
+  const handleClickComment = (postId) => {
+    setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+  };
+
+  const handleAddComment = (postId) => {
+    const newComment = {
+      id: Date.now(),
+      text: commentValue.trim(),
+      timestamp: new Date().toISOString(),
+      author: {
+        name: currentUser.name || "Guest",
+        email: currentUser.email,
+        profileImage: currentUser.profileImage || "",
+      },
+      likes: 0,
+      likedBy: [],
+      replies: [],
+    };
+
+    const updatedPosts = posts.map((post) => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          comments: [...(post.comments || []), newComment],
+        };
+      }
+      return post;
+    });
+
+    setPosts(updatedPosts);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
+    setCommentValue(""); // Очистити поле
+  };
+
   return (
     <div ref={containerRef} className={style.post_list_container}>
       {visiblePosts.map((post) => (
@@ -166,7 +189,7 @@ export const PostList = ({ posts, setPosts }) => {
 
               <div className={style.message_actions}>
                 <div className={style.message_icons}>
-                  <span className={style.icon_image}>
+                  <span className={style.icon_image} onClick={() => handleClickComment(post.id)}>
                     <img src="https://cdn-icons-png.flaticon.com/128/16689/16689811.png" alt="icon" /> <span>{post.comments.length}</span>
                   </span>
                   <span className={style.icon_image}>
@@ -188,12 +211,41 @@ export const PostList = ({ posts, setPosts }) => {
                   </span>
                 </div>
               </div>
+
+              {/* Показати коментарі  */}
+              {activeCommentPostId === post.id && post.comments && (
+                <div className={style.comments_item}>
+                  <div className={style.add_comment_block}>
+                    <Input
+                      value={commentValue}
+                      onChange={(e) => setCommentValue(e.target.value)}
+                      placeholder="Написати коментар"
+                      size="comment"
+                      border="bordRadLow"
+                    />
+
+                    <Button size="small" onClick={() => handleAddComment(post.id)}>
+                      Коментувати
+                    </Button>
+                  </div>
+
+                  {post.comments.length > 0 ? (
+                    post.comments.map((comment) => (
+                      <Comments key={comment.id} comment={comment} currentUser={currentUser} posts={posts} setPosts={setPosts} postId={post.id} />
+                    ))
+                  ) : (
+                    <p className={style.no_comments_text}>Коментарі відсутні...</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
+          {/* Modal success window */}
+          {postToDelete === post.id && (
+            <Modal message="Ви впевнені, що хочете видалити цей пост?" onConfirm={handleDeletePost} onCancel={cancelDelete} />
+          )}
         </div>
       ))}
-      {/* Modal success window */}
-      {showModal && <Modal message="Are you sure you want to delete this post?" onConfirm={handleDeletePost} onCancel={cancelDelete} />}
     </div>
   );
 };

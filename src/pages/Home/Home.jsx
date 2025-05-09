@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import style from "./Home.module.css";
 import { PostForm } from "./PostForm";
 import { useAuth } from "../../hooks/useAuth";
@@ -55,6 +54,7 @@ export const Home = () => {
     return matches ? matches.map((tag) => tag.toLowerCase()) : [];
   }
 
+  // add filter with date like tomorrow or 10 march (will add post on that date)
   function detectScheduledDate(text) {
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
@@ -115,6 +115,7 @@ export const Home = () => {
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
+  // Function for creating a new post
   return (
     <div className={style.main_page}>
       {/* Your message */}
@@ -122,7 +123,7 @@ export const Home = () => {
 
       {/* People messages */}
       <div className={style.posts_wrapper}>
-        <PostList posts={getFilteredPosts()} setPosts={setPosts} />
+        <PostList posts={getFilteredPosts()} setPosts={setPosts} currentUser={currentUser} />
       </div>
     </div>
   );

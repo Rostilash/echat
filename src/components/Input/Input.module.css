@@ -10,21 +10,30 @@
   padding: 12px 30px 12px 60px;
   font-size: 20px;
   border-radius: 30px;
+  border: 2px solid rgb(99, 99, 99);
 }
 .no_left_padding {
   padding: 15px;
   font-size: 18px;
+  border: 2px solid rgb(99, 99, 99);
 }
 .small {
   padding: 8px 15px 8px 55px;
   font-size: 18px;
+  border: 2px solid rgb(99, 99, 99);
+}
+.comment {
+  padding: 6px;
+  border: none;
+}
+.inputWrapper .comment input:focus {
+  border: none;
 }
 
 .input {
   color: var(--text-color);
   background-color: var(--bg-color);
   width: 100%;
-  border: 2px solid rgb(99, 99, 99);
   transition: all 0.3s ease;
 }
 

@@ -12,15 +12,18 @@
 }
 
 .modalContent {
-  background: white;
+  background: var(--bg-color);
+  color: var(--text-color);
   padding: 20px;
   border-radius: 10px;
-  text-align: center;
 }
-
-.buttons button {
-  margin: 5px;
-  padding: 10px;
-  font-size: 14px;
-  cursor: pointer;
+.modalContent p {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
 }
