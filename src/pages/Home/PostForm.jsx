@@ -71,7 +71,13 @@ export const PostForm = ({ onCreatePost }) => {
     if (!text.trim() && !imageFile && !gifPreview) return;
 
     const mediaData = gifPreview || imagePreview || null;
-    onCreatePost(text, mediaData); // this one
+
+    const intervalId = setInterval(() => {
+      onCreatePost(text, mediaData); // this one make post
+      //clear interval
+      clearInterval(intervalId);
+    }, 300);
+
     // refresh
     setText("");
     setImageFile(null);
@@ -101,7 +107,19 @@ export const PostForm = ({ onCreatePost }) => {
         <div className={style.user_image}>{profileImage && <img src={profileImage} alt="Profile" />}</div>
         <div className={style.user_info}>
           <div className={style.home_text}>
-            <input type="text" placeholder="Що відбувається ?" value={text} onChange={(e) => setText(e.target.value)} />
+            {/* main post text */}
+            <input
+              type="text"
+              placeholder="Що відбувається ?"
+              value={text}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+              onChange={(e) => setText(e.target.value)}
+            />
           </div>
           {(imagePreview || gifPreview) && (
             <div className={style.preview_block}>

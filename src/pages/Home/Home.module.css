@@ -199,6 +199,8 @@
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  padding: 5px;
 }
 .no_comments_text {
   font-size: 14px;

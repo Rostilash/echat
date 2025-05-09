@@ -54,7 +54,7 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
   };
 
   return (
-    <div className={style.messages}>
+    <div className={style.messages} style={{ borderBottom: "1px solid var(--border-color)" }}>
       <div className={style.bottom_cart}>
         <div className={style.user_image}>
           <img

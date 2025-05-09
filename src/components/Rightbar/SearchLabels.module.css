@@ -5,3 +5,11 @@
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
 }
+
+.suggestionItem:hover {
+  background-color: var(--hover);
+  cursor: pointer;
+}
+.suggestionItem.selected {
+  background-color: var(--hover);
+}
