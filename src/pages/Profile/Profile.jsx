@@ -1,5 +1,5 @@
 import style from "./Profile.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Posts } from "./Tabs/Posts";
 import { Media } from "./Tabs/Media";
 import { Likes } from "./Tabs/Likes";
@@ -7,25 +7,39 @@ import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
 import { EditProfileForm } from "./EditProfile/EditProfileForm";
 import { Tabs } from "../../components/Tabs/Tabs";
 import { useAuth } from "../../hooks/useAuth";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { formatDateWithCapitalMonth } from "../../utils/dateUtils";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
 
 export const Profile = () => {
+  // URL params
+  const { nickname: routeNickname } = useParams();
   // load user from localStorage
   const { currentUser } = useAuth();
   const { posts } = useOutletContext();
+  const [user, setUser] = useState(null);
   const [tab, setTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
+  console.log(currentUser);
 
-  if (!currentUser) {
+  useEffect(() => {
+    if (!routeNickname || currentUser?.nickname === routeNickname) {
+      setUser(currentUser); // if Own profile.
+    } else {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const found = users.find((u) => u.nickname === routeNickname);
+      setUser(found || null);
+    }
+  }, [routeNickname, currentUser]);
+
+  if (!user) {
     return (
-      <div className={style.loader}>
+      <div className="loader_center">
         <LoaderSmall />
       </div>
     );
   }
-  console.log(currentUser);
+
   const {
     name,
     profileImage,
@@ -42,13 +56,16 @@ export const Profile = () => {
     location,
     region,
     website,
-  } = currentUser || {};
+  } = user || {};
 
   // Change the first letter of the month to uppercase
   const formattedDate = formatDateWithCapitalMonth(createdAt);
 
   // Posts OutletContent
   const userPosts = (posts || []).filter((post) => post.author.email === email);
+
+  // filter users if own profile we can see
+  const isOwner = currentUser?.email === user?.email;
 
   return (
     <div className={style.profileWrapper}>
@@ -63,11 +80,13 @@ export const Profile = () => {
         date={formattedDate}
         nickname={nickname}
         region={region}
-        location={location}
+        website={website}
+        followers={followers.length || "0"}
+        following={following.length || "0"}
+        isOwner={isOwner}
       />
-
-      {isEditing ? (
-        <EditProfileForm onClose={() => setIsEditing(false)} />
+      {isEditing && isOwner ? (
+        <EditProfileForm />
       ) : (
         <>
           <Tabs

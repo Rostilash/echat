@@ -41,7 +41,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
         </Link>
         {!isMobile && (
           <>
-            <Link to="/echat/profile" className={style.menuItem}>
+            <Link to={`/echat/profile/${currentUser?.nickname}`} className={style.menuItem}>
               <img src="https://cdn-icons-png.flaticon.com/128/9068/9068871.png" alt="icon" /> <span>Профіль</span>
             </Link>
             <Link to="/echat/movies" className={style.menuItem}>

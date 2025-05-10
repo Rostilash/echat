@@ -8,6 +8,7 @@ import { Input } from "./../../components/Input/Input";
 import { Button } from "./../../components/Button/Button";
 import { handleLikeItem } from "../../utils/handleLikeItem";
 import { deleteItemById } from "../../utils/deleteItem";
+import { Link } from "react-router-dom";
 
 export const PostList = ({ posts, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
@@ -126,14 +127,16 @@ export const PostList = ({ posts, setPosts }) => {
         <div key={post.id} className={`${style.messages} ${deletingPostIds.includes(post.id) ? style.deleting : ""}`}>
           <div className={style.bottom_cart}>
             <div className={style.user_image}>
-              <img
-                src={
-                  post.author.email === currentUser.email
-                    ? currentUser.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
-                    : post.author.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
-                }
-                alt="user"
-              />
+              <Link to={`/echat/profile/${post?.nickname}`}>
+                <img
+                  src={
+                    post.author.email === currentUser.email
+                      ? currentUser.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
+                      : post.author.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
+                  }
+                  alt="user"
+                />
+              </Link>
             </div>
 
             <div className={style.user_info}>

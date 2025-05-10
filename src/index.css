@@ -35,7 +35,7 @@
   --bg-theme: rgb(44 44 44 / 39%);
   --text-color: #f9fafb;
   --border-color: #374151;
-  --text-low: #575757de;
+  --text-low: #999999;
   --hover: #292929;
 }
 
@@ -55,4 +55,38 @@ body,
 #root {
   display: flex;
   flex-direction: column;
+}
+
+/* global class loader for LoadingSmall */
+.loader_center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #888;
+  height: 100vh;
+}
+
+.error,
+.success {
+  position: absolute;
+  top: 0;
+  left: 50px;
+  font-size: 14px;
+  margin-bottom: 5px;
+  text-align: center;
+  transition: all 0.5s;
+  opacity: 0.8;
+  transition: opacity 3s ease;
+  z-index: 10;
+}
+.error {
+  color: var(--echat-color-false);
+}
+.success {
+  color: var(--echat-color-agree);
+}
+.fadeOut {
+  opacity: 0;
 }

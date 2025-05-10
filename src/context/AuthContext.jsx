@@ -36,10 +36,18 @@ export const AuthProvider = ({ children }) => {
     }, 1000);
   };
 
-  const generateUniqueNickname = (name) => {
-    const base = name.toLowerCase().replace(/\s+/g, "_");
-    const random = Math.floor(Math.random() * 1000);
-    return `${base}_${random}`;
+  const generateUniqueNickname = (baseName) => {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const slug = baseName.trim().toLowerCase().replace(/\s+/g, "");
+    let nickname = `@${slug}`;
+    let counter = 1;
+
+    while (users.some((user) => user.nickname === nickname)) {
+      nickname = `@${slug}${counter}`;
+      counter++;
+    }
+
+    return nickname;
   };
 
   const register = (userData) => {
@@ -55,7 +63,8 @@ export const AuthProvider = ({ children }) => {
 
       // profile details
       username: userData.name, // display name (full name)
-      nickname: "@" + generateUniqueNickname(userData.name), // unique Twitter-style handle
+      nickname: generateUniqueNickname(userData.name), // unique
+
       bio: "", // short user bio
       location: "", // city or country
       website: "", // personal website or link

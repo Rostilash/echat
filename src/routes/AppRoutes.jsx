@@ -30,7 +30,7 @@ export const AppRoutes = () => {
         <Route path="news" element={<News />} />
         <Route path="top-places" element={<TopPlaces />} />
         <Route path="movies" element={<Movies />} />
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile/:nickname" element={<Profile />} />
         <Route path="weather" element={<Weather />} />
       </Route>
 

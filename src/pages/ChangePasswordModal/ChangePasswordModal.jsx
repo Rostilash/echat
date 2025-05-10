@@ -73,9 +73,6 @@ export const ChangePasswordModal = ({ onClose }) => {
               <Button onClick={handleVerifyOldPassword} variant="success">
                 Підтвердити
               </Button>
-              {/* <Button onClick={onClose} variant="google">
-                Скасувати
-              </Button> */}
             </div>
           </>
         ) : (
@@ -106,8 +103,8 @@ export const ChangePasswordModal = ({ onClose }) => {
             />
 
             <div className={style.buttons}>
-              <Button onClick={handleVerifyOldPassword} variant="success">
-                Підтвердити
+              <Button onClick={handleChangePassword} variant="success">
+                Змінити пароль
               </Button>
               {/* <Button onClick={onClose} variant="google">
                 Скасувати

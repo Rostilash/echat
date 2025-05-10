@@ -24,8 +24,9 @@
 }
 .comment {
   padding: 6px;
-  border: none;
+  border: 2px solid transparent;
 }
+
 .inputWrapper .comment input:focus {
   border: none;
 }
@@ -44,6 +45,7 @@
 .bordRadLow {
   border-radius: 10px;
 }
+
 /* error message */
 .inputWrapper p {
   position: absolute;
@@ -53,7 +55,7 @@
   transform: translateY(-50%);
   pointer-events: none;
   height: 30px;
-  color: #dc2626;
+  color: var(--echat-color-false);
   font-weight: bold;
   text-align: center;
   animation: fadeIn 0.5s ease-in;
