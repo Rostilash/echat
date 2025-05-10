@@ -1,138 +1,73 @@
-import React, { useState } from "react";
 import style from "./Profile.module.css";
-import { useTheme } from "./../../hooks/useTheme";
-import { useAuth } from "./../../hooks/useAuth";
-import { Input } from "../../components/Input/Input";
-import { Button } from "../../components/Button/Button";
-import { ChangePasswordModal } from "./../ChangePasswordModal/ChangePasswordModal";
-import { compressImage } from "../../utils/imageUtils";
+import { useState } from "react";
+import { Posts } from "./Tabs/Posts";
+import { Media } from "./Tabs/Media";
+import { Likes } from "./Tabs/Likes";
+import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
+import { EditProfileForm } from "./EditProfile/EditProfileForm";
+import { Tabs } from "../../components/Tabs/Tabs";
+import { useAuth } from "../../hooks/useAuth";
+import { useOutletContext } from "react-router-dom";
 
 export const Profile = () => {
-  const [showModal, setShowModal] = useState(false);
-  const { theme, toggleTheme } = useTheme();
-  // Auth hook functions
-  const { currentUser, setCurrentUser, updateUser, changePassword } = useAuth();
+  const { currentUser } = useAuth(); // useContext
 
-  const nameLocalStore = currentUser?.name;
-  const passwordLocalStore = currentUser?.password;
-  const emailLocalStore = currentUser?.email;
-  const profileImage = currentUser?.profileImage;
+  const userName = currentUser?.name;
+  const userImage = currentUser?.profileImage;
+  const userEmail = currentUser?.email;
 
-  const [nameValue, setNameValue] = useState({ name: nameLocalStore, password: "" });
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const { posts, setPosts, selectedFilter } = useOutletContext(); // posts OutletContent
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNameValue((prev) => ({ ...prev, [name]: value }));
-  };
+  const userPosts = (posts || []).filter((post) => post.author.email === userEmail);
 
-  const handleClickChangeName = () => {
-    if (!nameValue.name || nameValue.name === nameLocalStore) {
-      setErrorMessage(`Ви нічого не змінили`);
-      return;
-    }
-    const updatedData = { ...currentUser, name: nameValue.name };
-
-    updateUser(updatedData);
-    setErrorMessage(null);
-  };
-
-  const handlePasswordChange = () => {
-    const result = changePassword(currentUser.email, passwordLocalStore, nameValue.password);
-    console.log("clicked");
-    if (!result.success) {
-      setErrorMessage(result.message);
-    } else {
-      setSuccessMessage(result.message);
-    }
-  };
-
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-
-    if (!file) return;
-
-    try {
-      const base64Image = await compressImage(file, 100); // Compress to 100KB
-
-      // Get the current user
-      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-      // Update the user's profile image
-      const updatedUser = { ...currentUser, profileImage: base64Image };
-
-      // Update the user in localStorage
-      updateUser(updatedUser);
-
-      // Update the posts, if it's the current user's post
-      let posts = JSON.parse(localStorage.getItem("posts")) || [];
-      posts = posts.map((post) => {
-        // If this is the current user's post, update their profile image
-        if (post.author.username === currentUser.email) {
-          return {
-            ...post,
-            author: {
-              ...post.author,
-              profileImage: base64Image, // Update the profile image in the post
-            },
-          };
-        }
-        return post; // If the post doesn't belong to the user, leave it unchanged
-      });
-
-      // Update the posts in localStorage
-      localStorage.setItem("posts", JSON.stringify(posts));
-    } catch (err) {
-      console.error("Помилка стиснення зображення", err);
-      alert("Не вдалося обробити зображення.");
-    }
-  };
+  console.log(userPosts);
+  const [tab, setTab] = useState("posts");
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className={style.profile}>
-      <h1>Редагувати профіль</h1>
+    <div className={style.profileWrapper}>
+      <ProfileHeader
+        onEditClick={() => setIsEditing((prev) => !prev)}
+        posts={posts}
+        userName={userName}
+        postsCount={userPosts.length}
+        setIsEditing={setIsEditing}
+        isEditing={isEditing}
+        userImage={userImage}
+      />
 
-      <span className={style.user_image} onClick={() => document.getElementById("image-upload").click()}>
-        <span className={style.user_image_upload_icon}>
-          <img src="https://cdn-icons-png.flaticon.com/128/6538/6538673.png" alt="icon" />
-        </span>
-        {profileImage && <img src={profileImage} alt="Profile" />}
-      </span>
+      {isEditing ? (
+        <EditProfileForm onClose={() => setIsEditing(false)} />
+      ) : (
+        <>
+          <Tabs
+            current={tab}
+            onChange={setTab}
+            tabs={[
+              {
+                key: "posts",
+                label: "Пости",
+                icon: "https://cdn-icons-png.flaticon.com/128/2099/2099085.png",
+              },
+              {
+                key: "media",
+                label: "Медіа",
+                icon: "https://cdn-icons-png.flaticon.com/128/3313/3313887.png",
+              },
+              {
+                key: "likes",
+                label: "Уподобання",
+                icon: "https://cdn-icons-png.flaticon.com/128/833/833472.png",
+              },
+            ]}
+          />
 
-      <h3>Вітаю, бажаєш змінити імя?</h3>
-
-      <div className={style.themeSwitcher}>
-        <button onClick={toggleTheme} className={style.themeButton}>
-          {theme === "light" ? "🌙 Ніч" : "☀️ День"}
-        </button>
-      </div>
-
-      <input id="image-upload" type="file" style={{ display: "none" }} onChange={handleImageUpload} />
-
-      <div className={style.change_user_info}>
-        <h3 style={{ color: "red" }}>{errorMessage}</h3>
-        <Input
-          type="name"
-          name="name"
-          value={nameValue.name || nameLocalStore}
-          placeholder={nameLocalStore}
-          onChange={handleChange}
-          border="bordRadLow"
-          size="no_left_padding"
-        />
-        <Button size="medium" onClick={handleClickChangeName}>
-          Змінити
-        </Button>
-      </div>
-      <div>
-        <h3>Змінити пароль?</h3>
-        <Button onClick={() => setShowModal(true)}>Змінити пароль</Button>
-
-        {showModal && (
-          <ChangePasswordModal onClose={() => setShowModal(false)} onChangePassword={handlePasswordChange} setSuccessMessage={setSuccessMessage} />
-        )}
-      </div>
+          {/* Tab content rendering */}
+          {tab === "posts" && <Posts posts={posts} />}
+          {tab === "media" && <Media posts={posts} />}
+          {tab === "likes" && <Likes posts={posts} />}
+        </>
+      )}
     </div>
   );
 };

@@ -14,18 +14,22 @@
 :root {
   line-height: 1.5;
   font-weight: 400;
-  --hover: #e3e3e3;
-  --bg-color: #f2f2f2;
-  --bg-error: #ffe6e6;
-  --bg-theme: rgb(228, 228, 228);
-  --text-color: #111827;
-  --text-low: #666666de;
-  --border-color: #e5e7eb;
   --echat-color: #1da0f2;
+  --bg-error: #ffe6e6;
   --echat-color-agree: #00e8b6;
   --echat-color-stop: #f9f871;
   --echat-color-false: #f27450;
 }
+
+[data-theme="light"] {
+  --bg-color: #f2f2f2;
+  --hover: #e3e3e3;
+  --bg-theme: rgb(228, 228, 228);
+  --text-color: #111827;
+  --border-color: #e5e7eb;
+  --text-low: #666666de;
+}
+
 [data-theme="dark"] {
   --bg-color: #111827;
   --bg-theme: rgb(44 44 44 / 39%);

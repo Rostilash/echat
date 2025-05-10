@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 import { useMediaQuery } from "./../../hooks/useMediaQuery";
 import { useAuth } from "./../../hooks/useAuth";
 
-export const Sidebar = ({ posts = [] }) => {
+export const Sidebar = ({ selectedPostFilter }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
+
   const { logout, currentUser } = useAuth();
   const [openQuitMenu, setOpenQuitMenu] = useState(false);
 
@@ -20,7 +21,7 @@ export const Sidebar = ({ posts = [] }) => {
           chat
         </div>
 
-        <Link to="/echat/" className={style.menuItem}>
+        <Link to="/echat/" className={style.menuItem} onClick={() => selectedPostFilter(null)}>
           <img src="https://cdn-icons-png.flaticon.com/128/15527/15527317.png" alt="icon" />
           <span>Головна</span>
         </Link>

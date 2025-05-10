@@ -36,9 +36,55 @@ export const AuthProvider = ({ children }) => {
     }, 1000);
   };
 
+  const generateUniqueNickname = (name) => {
+    const base = name.toLowerCase().replace(/\s+/g, "_");
+    const random = Math.floor(Math.random() * 1000);
+    return `${base}_${random}`;
+  };
+
   const register = (userData) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    const newUser = { ...userData, isLoggedIn: true, profileImage: userData.profileImage || "" };
+
+    const newUser = {
+      ...userData,
+      isLoggedIn: true,
+      profileImage: userData.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837645.png" || "",
+      headerImage: "",
+      createdAt: new Date().toISOString(), // account creation date
+      region: "", // user's region (can be updated later)
+
+      // profile details
+      username: userData.name, // display name (full name)
+      nickname: "@" + generateUniqueNickname(userData.name), // unique Twitter-style handle
+      bio: "", // short user bio
+      location: "", // city or country
+      website: "", // personal website or link
+      birthdate: "", // date of birth
+
+      // social activity
+      followers: [], // users who follow this user
+      following: [], // users this user follows
+
+      // interactions
+      posts: [], // array of post IDs created by this user
+      likes: [], // array of post IDs liked by this user
+      bookmarks: [], // array of post IDs saved/bookmarked
+
+      // settings
+      emailVerified: false, // whether the email is verified
+      theme: "light", // light or dark UI theme
+      language: "uk", // UI language
+      notifications: {
+        mentions: true, // notify when mentioned
+        follows: true, // notify when followed
+        likes: true, // notify on likes
+      },
+
+      // timestamps
+      lastLogin: null, // last login date
+      updatedAt: null, // last profile update date
+    };
+
     users.push(newUser);
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("currentUser", JSON.stringify(newUser));
