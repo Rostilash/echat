@@ -59,7 +59,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
               <img className={style.user_image} src={currentUser.profileImage} alt="icon" />{" "}
               <div className={style.user_info}>
                 <span className={style.info_name}>{currentUser.name}</span>
-                <span className={style.info_address}>@AcrossFear</span>
+                <span className={style.info_address}>{currentUser.nickname}</span>
               </div>
               {openQuitMenu && (
                 <button onClick={logout} className={style.logoutBtn}>

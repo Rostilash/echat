@@ -8,32 +8,62 @@ import { EditProfileForm } from "./EditProfile/EditProfileForm";
 import { Tabs } from "../../components/Tabs/Tabs";
 import { useAuth } from "../../hooks/useAuth";
 import { useOutletContext } from "react-router-dom";
+import { formatDateWithCapitalMonth } from "../../utils/dateUtils";
+import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
 
 export const Profile = () => {
-  const { currentUser } = useAuth(); // useContext
-
-  const userName = currentUser?.name;
-  const userImage = currentUser?.profileImage;
-  const userEmail = currentUser?.email;
-
-  const { posts, setPosts, selectedFilter } = useOutletContext(); // posts OutletContent
-
-  const userPosts = (posts || []).filter((post) => post.author.email === userEmail);
-
-  console.log(userPosts);
+  // load user from localStorage
+  const { currentUser } = useAuth();
+  const { posts } = useOutletContext();
   const [tab, setTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
+
+  if (!currentUser) {
+    return (
+      <div className={style.loader}>
+        <LoaderSmall />
+      </div>
+    );
+  }
+  console.log(currentUser);
+  const {
+    name,
+    profileImage,
+    headerImage,
+    email,
+    createdAt,
+    lastLogin,
+    nickname,
+    likes,
+    bio,
+    birthdate,
+    followers,
+    following,
+    location,
+    region,
+    website,
+  } = currentUser || {};
+
+  // Change the first letter of the month to uppercase
+  const formattedDate = formatDateWithCapitalMonth(createdAt);
+
+  // Posts OutletContent
+  const userPosts = (posts || []).filter((post) => post.author.email === email);
 
   return (
     <div className={style.profileWrapper}>
       <ProfileHeader
         onEditClick={() => setIsEditing((prev) => !prev)}
         posts={posts}
-        userName={userName}
+        userName={name}
         postsCount={userPosts.length}
         setIsEditing={setIsEditing}
         isEditing={isEditing}
-        userImage={userImage}
+        userImage={profileImage}
+        date={formattedDate}
+        nickname={nickname}
+        region={region}
+        location={location}
       />
 
       {isEditing ? (
@@ -63,7 +93,8 @@ export const Profile = () => {
           />
 
           {/* Tab content rendering */}
-          {tab === "posts" && <Posts posts={posts} />}
+          {tab === "posts" &&
+            (userPosts.length === 0 ? <p className={style.no_posts_message}>Ви ще не створили жодного поста...</p> : <Posts posts={userPosts} />)}
           {tab === "media" && <Media posts={posts} />}
           {tab === "likes" && <Likes posts={posts} />}
         </>

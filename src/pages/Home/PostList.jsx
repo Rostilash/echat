@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import style from "./Home.module.css";
 import { timeAgo } from "./../../utils/timeAgo";
 import { useDropdown } from "../../hooks/useDropdown";

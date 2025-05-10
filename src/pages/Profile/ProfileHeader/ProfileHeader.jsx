@@ -2,7 +2,7 @@ import s from "./ProfileHeader.module.css";
 import { Button } from "../../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
 
-export const ProfileHeader = ({ onEditClick, userName, postsCount, setIsEditing, isEditing, userImage }) => {
+export const ProfileHeader = ({ onEditClick, userName, postsCount, setIsEditing, isEditing, userImage, date, nickname, region, location }) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -36,7 +36,7 @@ export const ProfileHeader = ({ onEditClick, userName, postsCount, setIsEditing,
             <div className={s.head_user_info}>
               <img src={userImage} alt="user-image" style={{ marginBottom: "10px" }} />
               <span className={s.user_name}>{userName}</span>
-              <span className={s.post_count}>@SomeNickName </span>
+              <span className={s.post_count}>{nickname} </span>
             </div>
           </div>
           <div className={s.body_right}>
@@ -48,13 +48,13 @@ export const ProfileHeader = ({ onEditClick, userName, postsCount, setIsEditing,
       </div>
       <div className={s.footer}>
         <div className={s.user_from}>
-          <span>Regeon</span>
-          <span>link</span>
-          <span className="">Joined: December 2</span>
+          <span>{region || ""}</span>
+          <span>{location || ""}</span>
+          <span>Зареєстрований: {date}</span>
         </div>
         <div className={s.followers}>
-          <span>Following</span>
-          <span>Followers</span>
+          <span>Підписаний</span>
+          <span>Підписалося </span>
         </div>
       </div>
     </div>
