@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button } from "../../components/Button/Button";
+import { Button } from "../../../components/Button/Button";
 import style from "./PostForm.module.css";
-import { useAuth } from "../../hooks/useAuth";
-import { compressImage } from "../../utils/imageUtils";
+import { useAuth } from "../../../hooks/useAuth";
+import { compressImage } from "../../../utils/imageUtils";
 import EmojiPicker from "emoji-picker-react";
 
 export const PostForm = ({ onCreatePost }) => {
@@ -138,6 +138,7 @@ export const PostForm = ({ onCreatePost }) => {
               </div>
             </div>
           )}
+
           <div className={style.home_actions}>
             <div className={style.icons}>
               {/* photo icon */}
@@ -172,23 +173,6 @@ export const PostForm = ({ onCreatePost }) => {
               </span>
             </div>
 
-            {/* gif block */}
-            {showGifPicker && (
-              <div ref={gifRef} className={style.gif_picker_container}>
-                <input
-                  type="text"
-                  placeholder="Вставте посилання на GIF"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      setGifPreview(e.target.value); // вставка GIF через URL
-                      setShowGifPicker(false);
-                    }
-                  }}
-                />
-                <p>Натисніть Enter для додавання</p>
-              </div>
-            )}
-
             {/* Emoji block */}
             {showPicker && (
               <div ref={pickerRef} className={style.emoji_block}>
@@ -205,6 +189,23 @@ export const PostForm = ({ onCreatePost }) => {
               </Button>
             </div>
           </div>
+
+          {/* gif block */}
+          {showGifPicker && (
+            <div ref={gifRef} className={style.gif_picker_container}>
+              <input
+                type="text"
+                placeholder="Вставте посилання на GIF"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setGifPreview(e.target.value); // вставка GIF через URL
+                    setShowGifPicker(false);
+                  }
+                }}
+              />
+              <p>Натисніть Enter для додавання</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

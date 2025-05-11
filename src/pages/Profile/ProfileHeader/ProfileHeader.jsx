@@ -59,7 +59,7 @@ export const ProfileHeader = ({
                 <div className={s.head_user_info}>
                   <img src={userImage} alt="user-image" style={{ marginBottom: "10px" }} />
                   <span className={s.user_name}>{userName}</span>
-                  <span className={s.post_count}>{nickname} </span>
+                  <span className={s.post_count}>@{nickname}</span>
                 </div>
               </div>
               <div className={s.body_right}>

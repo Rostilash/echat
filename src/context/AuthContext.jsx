@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { mergeUserData } from "../utils/mergeUserData";
 
 export const AuthContext = createContext();
-
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
@@ -39,12 +39,15 @@ export const AuthProvider = ({ children }) => {
   const generateUniqueNickname = (baseName) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const slug = baseName.trim().toLowerCase().replace(/\s+/g, "");
-    let nickname = `@${slug}`;
-    let counter = 1;
+    const generateRandomSuffix = () => Math.random().toString(36).slice(-5);
 
-    while (users.some((user) => user.nickname === nickname)) {
-      nickname = `@${slug}${counter}`;
-      counter++;
+    let nickname;
+    let isUnique = false;
+
+    while (!isUnique) {
+      const suffix = generateRandomSuffix();
+      nickname = `${slug}${suffix}`;
+      isUnique = !users.some((user) => user.nickname === nickname);
     }
 
     return nickname;
@@ -79,7 +82,7 @@ export const AuthProvider = ({ children }) => {
       likes: [], // array of post IDs liked by this user
       bookmarks: [], // array of post IDs saved/bookmarked
 
-      // settings
+      // Settings
       emailVerified: false, // whether the email is verified
       theme: "light", // light or dark UI theme
       language: "uk", // UI language
@@ -103,11 +106,32 @@ export const AuthProvider = ({ children }) => {
   const updateUser = (newUserData) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
-    const updatedUsers = users.map((user) => (user.email === newUserData.email ? { ...user, ...newUserData } : user));
+    const updatedUsers = users.map((user) => (user.email === newUserData.email ? mergeUserData(user, newUserData) : user));
+
+    const updatedCurrentUser = updatedUsers.find((u) => u.email === newUserData.email);
+
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
+    setCurrentUser(updatedCurrentUser);
+  };
+
+  const updatePost = (newUserData) => {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const updatedUsers = users.map((user) => (user.email === newUserData.email ? newUserData : user));
 
     localStorage.setItem("users", JSON.stringify(updatedUsers));
     localStorage.setItem("currentUser", JSON.stringify(newUserData));
     setCurrentUser(newUserData);
+  };
+
+  const verifyOldPassword = (email, oldPassword) => {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find((user) => user.email === email);
+    if (!user) return { success: false, message: "Користувача не знайдено" };
+    if (user.password !== oldPassword) return { success: false, message: "Старий пароль невірний" };
+
+    return { success: true };
   };
 
   const changePassword = (email, oldPassword, newPassword) => {
@@ -116,6 +140,10 @@ export const AuthProvider = ({ children }) => {
     const userIndex = users.findIndex((user) => user.email === email);
 
     if (userIndex === -1) return { success: false, message: "Користувача не знайдено" };
+
+    if (newPassword.length < 6) {
+      return { success: false, message: "Пароль надто короткий" };
+    }
 
     if (users[userIndex].password !== oldPassword) {
       return { success: false, message: "Старий пароль невірний" };
@@ -135,7 +163,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, register, updateUser, setCurrentUser, changePassword }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, verifyOldPassword, register, updateUser, updatePost, setCurrentUser, changePassword }}>
       {children}
     </AuthContext.Provider>
   );

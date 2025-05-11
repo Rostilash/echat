@@ -5,6 +5,8 @@ import { Input } from "../../../components/Input/Input";
 import { Button } from "../../../components/Button/Button";
 import { ChangePasswordModal } from "../../ChangePasswordModal/ChangePasswordModal";
 import { compressImage } from "../../../utils/imageUtils";
+import { mergeUserData } from "../../../utils/mergeUserData";
+import { useNavigate } from "react-router-dom";
 
 export const EditProfileForm = () => {
   // useContext our user
@@ -34,10 +36,16 @@ export const EditProfileForm = () => {
       </div>
     );
   }
+
+  const navigate = useNavigate();
   const { profileImage } = currentUser;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "nickname") {
+      const allowed = /^[a-zA-Z0-9_]*$/;
+      if (!allowed.test(value)) return;
+    }
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrorMessage(null);
   };
@@ -59,7 +67,13 @@ export const EditProfileForm = () => {
       return;
     }
 
+    if (!/^[a-zA-Z0-9_]+$/.test(form.nickname)) {
+      setErrorMessage("Нікнейм може містити лише латинські літери, цифри та символ _");
+      return;
+    }
+
     const users = JSON.parse(localStorage.getItem("users")) || [];
+
     const nicknameTaken = users.some((user) => user.nickname === form.nickname && user.email !== currentUser.email);
 
     if (nicknameTaken) {
@@ -67,11 +81,9 @@ export const EditProfileForm = () => {
       return;
     }
 
-    const updatedData = {
-      ...currentUser,
-      ...form,
-    };
-
+    //Save old userData info of user
+    const updatedData = mergeUserData(currentUser, form);
+    //update User
     updateUser(updatedData);
 
     setSuccessMessage("Профіль оновлено успішно");
@@ -86,6 +98,8 @@ export const EditProfileForm = () => {
       setSuccessMessage(null);
       setFadeOut(false);
     }, 3100);
+
+    navigate(`/echat/profile/${encodeURIComponent(form.nickname)}`);
   };
 
   const handleImageUpload = async (event) => {
@@ -141,13 +155,14 @@ export const EditProfileForm = () => {
         </span>
         <input id="image-upload" type="file" style={{ display: "none" }} onChange={handleImageUpload} />
       </div>
+
       {/* Пароль */}
       <div className={style.passwordBlock}>
         <Button onClick={() => setShowModal(true)}>Змінити пароль</Button>
         {showModal && <ChangePasswordModal onClose={() => setShowModal(false)} setSuccessMessage={setSuccessMessage} />}
       </div>
 
-      <form className={style.form} onSubmit={handleSubmit}>
+      <form className={style.form} onSubmit={handleSubmit} noValidate>
         {errorMessage && <p className={`error ${fadeOut ? "fadeOut" : ""}`}>{errorMessage}</p>}
         {successMessage && <p className={`success ${fadeOut ? "fadeOut" : ""}`}>{successMessage}</p>}
 

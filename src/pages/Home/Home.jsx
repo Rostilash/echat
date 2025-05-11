@@ -1,5 +1,5 @@
 import style from "./Home.module.css";
-import { PostForm } from "./PostForm";
+import { PostForm } from "./PostForm/PostForm";
 import { useAuth } from "../../hooks/useAuth";
 import { PostList } from "./PostList";
 import { useOutletContext } from "react-router-dom";
@@ -22,7 +22,7 @@ const monthNames = {
 const formatDate = (date) => date.toISOString().split("T")[0]; // "YYYY-MM-DD"
 
 export const Home = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, updateUser } = useAuth();
   const { posts, setPosts, selectedFilter } = useOutletContext();
 
   const today = new Date();
@@ -98,24 +98,32 @@ export const Home = () => {
       timestamp: new Date().toISOString(),
       likes: 0,
       reposts: 0,
-      region: "Україна",
+      region: currentUser.region || "",
       comments: [],
       tags: extractTags(text) || [],
       scheduledFor: scheduledDate || formattedToday,
       author: {
+        id: currentUser.id,
         name: currentUser.name,
-        username: currentUser.username || currentUser.email,
+        nickname: currentUser.nickname || currentUser.id,
         profileImage: currentUser.profileImage || "",
         email: currentUser.email,
       },
     };
 
     const updatedPosts = [newPost, ...posts];
-    setPosts(updatedPosts); // Updating the status
+    setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
+
+    // Оновлення користувача через твою функцію
+    const updatedCurrentUser = {
+      ...currentUser,
+      posts: [...(currentUser.posts || []), newPost.id],
+      updatedAt: new Date().toISOString(),
+    };
+    updateUser(updatedCurrentUser);
   };
 
-  // Function for creating a new post
   return (
     <div className={style.main_page}>
       {/* Your message */}
@@ -123,7 +131,7 @@ export const Home = () => {
 
       {/* People messages */}
       <div className={style.posts_wrapper}>
-        <PostList posts={getFilteredPosts()} setPosts={setPosts} currentUser={currentUser} />
+        <PostList posts={getFilteredPosts()} setPosts={setPosts} />
       </div>
     </div>
   );

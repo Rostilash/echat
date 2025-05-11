@@ -9,12 +9,13 @@ import { Button } from "./../../components/Button/Button";
 import { handleLikeItem } from "../../utils/handleLikeItem";
 import { deleteItemById } from "../../utils/deleteItem";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
 
 export const PostList = ({ posts, setPosts }) => {
-  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "guest@example.com" };
+  const { currentUser, updatePost } = useAuth();
   const [visibleCount, setVisibleCount] = useState(10);
   const [deletingPostIds, setDeletingPostIds] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [postToDelete, setPostToDelete] = useState(null);
   const [zoomedImageId, setZoomedImageId] = useState(null);
@@ -23,6 +24,17 @@ export const PostList = ({ posts, setPosts }) => {
   const containerRef = useRef(null);
 
   const { openId: postOpenOptions, handleToggle: handleOpenSelection, dropdownRef, toggleRef } = useDropdown();
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return; // Don't do anything if the ref is not yet set
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // like post
   const handleLike = (postId) => {
@@ -35,6 +47,14 @@ export const PostList = ({ posts, setPosts }) => {
 
     setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
+
+    // Update user's liked posts
+    const updatedCurrentUser = {
+      ...currentUser,
+      likes: currentUser.likes.includes(postId) ? currentUser.likes : [...currentUser.likes, postId], // Add postId to likes if not already in the list
+      updatedAt: new Date().toISOString(),
+    };
+    updatePost(updatedCurrentUser);
   };
 
   // delete post
@@ -47,6 +67,14 @@ export const PostList = ({ posts, setPosts }) => {
       storageKey: "posts",
       onFinish: () => setPostToDelete(null), // Hide modal
     });
+
+    // Remove the post from the current user's posts
+    const updatedCurrentUser = {
+      ...currentUser,
+      posts: currentUser.posts.filter((postId) => postId !== postToDelete),
+      updatedAt: new Date().toISOString(),
+    };
+    updatePost(updatedCurrentUser);
   };
 
   // open confirmation modal
@@ -74,17 +102,7 @@ export const PostList = ({ posts, setPosts }) => {
     }
   };
 
-  useEffect(() => {
-    const container = containerRef.current;
-    container.addEventListener("scroll", handleScroll);
-
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   const visiblePosts = posts.slice(0, visibleCount);
-  // console.log(posts);
 
   // comments
   const handleClickComment = (postId) => {
@@ -99,6 +117,7 @@ export const PostList = ({ posts, setPosts }) => {
       author: {
         name: currentUser.name || "Guest",
         email: currentUser.email,
+        nickname: currentUser.nickname || currentUser.id,
         profileImage: currentUser.profileImage || "",
       },
       likes: 0,
@@ -118,9 +137,39 @@ export const PostList = ({ posts, setPosts }) => {
 
     setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
-    setCommentValue(""); // Очистити поле
+
+    // Optional: track commented posts in user activity
+    const updatedCurrentUser = {
+      ...currentUser,
+      posts: currentUser.posts.includes(postId) ? currentUser.posts : [...currentUser.posts, postId], // Add postId to posts if not already in the list
+      updatedAt: new Date().toISOString(),
+    };
+    updatePost(updatedCurrentUser);
+
+    setCommentValue(""); // Clear input
+  };
+  // add for bookmarks
+  const handleBookmark = (postId) => {
+    const isBookmarked = currentUser.bookmarks.includes(postId);
+    const updatedBookmarks = isBookmarked ? currentUser.bookmarks.filter((id) => id !== postId) : [...currentUser.bookmarks, postId];
+
+    const updatedCurrentUser = {
+      ...currentUser,
+      bookmarks: updatedBookmarks,
+      updatedAt: new Date().toISOString(),
+    };
+
+    updatePost(updatedCurrentUser);
   };
 
+  console.log(currentUser);
+  if (!currentUser) {
+    return (
+      <div className="loader_center">
+        <LoaderSmall />
+      </div>
+    );
+  }
   return (
     <div ref={containerRef} className={style.post_list_container}>
       {visiblePosts.map((post) => (
@@ -146,7 +195,7 @@ export const PostList = ({ posts, setPosts }) => {
                     {post.author.name}{" "}
                     <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
                   </p>
-                  <span>@{post.author.username} </span>
+                  <span>@{post.author.nickname}</span>
                   <div className={style.dot_wrapper}>
                     <span className={style.dot}>.</span>
                   </div>
@@ -163,7 +212,7 @@ export const PostList = ({ posts, setPosts }) => {
                 {postOpenOptions === post.id && (
                   <div className={style.edit_delete_buttons} ref={dropdownRef}>
                     <button>Відкрити інформацію</button>
-                    {post.author.username === currentUser.email && (
+                    {post.author.email === currentUser.email && (
                       <>
                         {/* <button onClick={() => handleEditPost(post.id)}>Редагувати</button> */}
                         <button onClick={() => openModal(post.id)}>
@@ -195,8 +244,15 @@ export const PostList = ({ posts, setPosts }) => {
                   <span className={style.icon_image} onClick={() => handleClickComment(post.id)}>
                     <img src="https://cdn-icons-png.flaticon.com/128/16689/16689811.png" alt="icon" /> <span>{post.comments.length}</span>
                   </span>
-                  <span className={style.icon_image}>
-                    <img src="https://cdn-icons-png.flaticon.com/128/13951/13951393.png" alt="icon" /> <span>{post.reposts}</span>
+                  <span className={style.icon_image} onClick={() => handleBookmark(post.id)}>
+                    <img
+                      src={
+                        currentUser.bookmarks.includes(post.id)
+                          ? "https://cdn-icons-png.flaticon.com/128/4208/4208443.png" // Active bookmark icon
+                          : "https://cdn-icons-png.flaticon.com/128/13951/13951393.png" // Default bookmark icon
+                      }
+                      alt="bookmark"
+                    />
                   </span>
                   <span className={style.icon_image} onClick={() => handleLike(post.id)}>
                     <img

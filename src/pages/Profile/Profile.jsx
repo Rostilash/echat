@@ -20,7 +20,6 @@ export const Profile = () => {
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
-  console.log(currentUser);
 
   useEffect(() => {
     if (!routeNickname || currentUser?.nickname === routeNickname) {

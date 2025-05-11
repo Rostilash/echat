@@ -9,8 +9,6 @@ import { Modal } from "../../../components/Modal/ModalConfirm";
 export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
   const [showModal, setShowModal] = useState(false);
   const [commentIdToDelete, setCommentIdToDelete] = useState(null);
-  // console.log(currentUser);
-  // console.log(comment);
 
   const { openId: commentOpenOptions, handleToggle: handleOpenCommentOptions, dropdownRef, toggleRef } = useDropdown();
 
@@ -27,6 +25,7 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
+  console.log(comment);
   const openDeleteCommentModal = (id) => {
     setCommentIdToDelete(id);
     setShowModal(true);
@@ -74,7 +73,7 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
                 {comment.author.name}{" "}
                 <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
               </p>
-              <span>@{comment.author.email} </span>
+              <span>@{comment.author.nickname} </span>
               <div className={style.dot_wrapper}>
                 <span className={style.dot}>.</span>
               </div>

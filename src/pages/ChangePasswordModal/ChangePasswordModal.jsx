@@ -6,7 +6,7 @@ import { CloseButton } from "./../../components/Button/CloseButton";
 import { Button } from "./../../components/Button/Button";
 
 export const ChangePasswordModal = ({ onClose }) => {
-  const { currentUser, changePassword } = useContext(AuthContext);
+  const { currentUser, changePassword, verifyOldPassword } = useContext(AuthContext);
 
   const [step, setStep] = useState(1);
   const [oldPassword, setOldPassword] = useState("");
@@ -15,9 +15,9 @@ export const ChangePasswordModal = ({ onClose }) => {
   const [error, setError] = useState("");
 
   const handleVerifyOldPassword = () => {
-    const result = changePassword(currentUser.email, oldPassword, oldPassword); // check for old password
+    const result = verifyOldPassword(currentUser.email, oldPassword);
 
-    if (!result.success && result.message === "Старий пароль невірний") {
+    if (!result.success) {
       setError(result.message);
       return;
     }
@@ -29,6 +29,37 @@ export const ChangePasswordModal = ({ onClose }) => {
   const handleChangePassword = () => {
     if (!newPassword || !confirmPassword) {
       setError("Усі поля обов’язкові");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Паролі не співпадають");
+      return;
+    }
+
+    if (!newPassword || !confirmPassword) {
+      setError("Усі поля обов’язкові");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Новий пароль має містити щонайменше 6 символів");
+      return;
+    }
+
+    if (!/[A-Z]/.test(newPassword)) {
+      setError("Пароль має містити хоча б одну велику літеру");
+      return;
+    }
+
+    if (!/[a-z]/.test(newPassword)) {
+      9;
+      setError("Пароль має містити хоча б одну малу літеру");
+      return;
+    }
+
+    if (!/[0-9]/.test(newPassword)) {
+      setError("Пароль має містити хоча б одну цифру");
       return;
     }
 

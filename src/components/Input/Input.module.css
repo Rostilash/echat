@@ -98,3 +98,17 @@
 .inputWrapper:has(input.errorInput) span {
   border-color: rgb(255, 207, 207);
 }
+
+.eyeIcon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  opacity: 0.7;
+}
+.eyeIcon img {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+
+  transform: translateY(-50%);
+}
