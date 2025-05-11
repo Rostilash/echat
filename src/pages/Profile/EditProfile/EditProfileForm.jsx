@@ -121,9 +121,10 @@ export const EditProfileForm = () => {
 
       // Update the posts, if it's the current user's post
       let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
       posts = posts.map((post) => {
         // If this is the current user's post, update their profile image
-        if (post.author.username === currentUser.email) {
+        if (post.author.email === currentUser.email) {
           return {
             ...post,
             author: {

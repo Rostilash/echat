@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import { Posts } from "./Tabs/Posts";
 import { Media } from "./Tabs/Media";
 import { Likes } from "./Tabs/Likes";
+import { Bookmarks } from "./Tabs/Bookmarks";
 import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
 import { EditProfileForm } from "./EditProfile/EditProfileForm";
 import { Tabs } from "../../components/Tabs/Tabs";
 import { useAuth } from "../../hooks/useAuth";
 import { useOutletContext, useParams } from "react-router-dom";
-import { formatDateWithCapitalMonth } from "../../utils/dateUtils";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
 
 export const Profile = () => {
@@ -16,7 +16,7 @@ export const Profile = () => {
   const { nickname: routeNickname } = useParams();
   // load user from localStorage
   const { currentUser } = useAuth();
-  const { posts } = useOutletContext();
+  const { posts, setPosts } = useOutletContext();
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
@@ -39,51 +39,25 @@ export const Profile = () => {
     );
   }
 
-  const {
-    name,
-    profileImage,
-    headerImage,
-    email,
-    createdAt,
-    lastLogin,
-    nickname,
-    likes,
-    bio,
-    birthdate,
-    followers,
-    following,
-    location,
-    region,
-    website,
-  } = user || {};
-
-  // Change the first letter of the month to uppercase
-  const formattedDate = formatDateWithCapitalMonth(createdAt);
+  const { email } = user || {};
 
   // Posts OutletContent
   const userPosts = (posts || []).filter((post) => post.author.email === email);
 
-  // filter users if own profile we can see
+  // If user email = current user = you are the owner
   const isOwner = currentUser?.email === user?.email;
 
   return (
     <div className={style.profileWrapper}>
       <ProfileHeader
+        user={user}
         onEditClick={() => setIsEditing((prev) => !prev)}
-        posts={posts}
-        userName={name}
         postsCount={userPosts.length}
-        setIsEditing={setIsEditing}
         isEditing={isEditing}
-        userImage={profileImage}
-        date={formattedDate}
-        nickname={nickname}
-        region={region}
-        website={website}
-        followers={followers.length || "0"}
-        following={following.length || "0"}
+        setIsEditing={setIsEditing}
         isOwner={isOwner}
       />
+
       {isEditing && isOwner ? (
         <EditProfileForm />
       ) : (
@@ -103,6 +77,11 @@ export const Profile = () => {
                 icon: "https://cdn-icons-png.flaticon.com/128/3313/3313887.png",
               },
               {
+                key: "bookmarks",
+                label: "Репости",
+                icon: "https://cdn-icons-png.flaticon.com/128/3313/3313887.png",
+              },
+              {
                 key: "likes",
                 label: "Уподобання",
                 icon: "https://cdn-icons-png.flaticon.com/128/833/833472.png",
@@ -111,10 +90,10 @@ export const Profile = () => {
           />
 
           {/* Tab content rendering */}
-          {tab === "posts" &&
-            (userPosts.length === 0 ? <p className={style.no_posts_message}>Ви ще не створили жодного поста...</p> : <Posts posts={userPosts} />)}
-          {tab === "media" && <Media posts={posts} />}
-          {tab === "likes" && <Likes posts={posts} />}
+          {tab === "posts" && <Posts posts={posts} user={user} userPosts={userPosts} />}
+          {tab === "media" && <Media posts={posts} user={user} />}
+          {tab === "bookmarks" && <Bookmarks posts={posts} user={user} />}
+          {tab === "likes" && <Likes posts={posts} user={user} setPosts={setPosts} />}
         </>
       )}
     </div>

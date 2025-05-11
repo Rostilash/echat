@@ -2,23 +2,15 @@ import s from "./ProfileHeader.module.css";
 import { Button } from "../../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../../hooks/useTheme";
+import { formatDateWithCapitalMonth } from "../../../utils/dateUtils";
 
-export const ProfileHeader = ({
-  onEditClick,
-  userName,
-  postsCount,
-  setIsEditing,
-  isEditing,
-  userImage,
-  date,
-  nickname,
-  region,
-  website,
-  followers,
-  following,
-  isOwner,
-}) => {
+export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsEditing, isOwner }) => {
   const navigate = useNavigate();
+
+  const { name, profileImage, nickname, region, website, followers = [], following = [], createdAt } = user;
+
+  // Change the first letter of the month to uppercase
+  const date = formatDateWithCapitalMonth(createdAt);
 
   const { theme, toggleTheme } = useTheme();
 
@@ -41,7 +33,7 @@ export const ProfileHeader = ({
           &#8592;
         </span>
         <div className={s.head_user_info}>
-          <span className={s.user_name}>{userName}</span>
+          <span className={s.user_name}>{name}</span>
           <span className={s.post_count}>Eчатнув: {postsCount} </span>
         </div>
       </div>
@@ -57,8 +49,8 @@ export const ProfileHeader = ({
             <div className={s.user_body_info}>
               <div className={s.body_left}>
                 <div className={s.head_user_info}>
-                  <img src={userImage} alt="user-image" style={{ marginBottom: "10px" }} />
-                  <span className={s.user_name}>{userName}</span>
+                  <img src={profileImage} alt="user-image" style={{ marginBottom: "10px" }} />
+                  <span className={s.user_name}>{name}</span>
                   <span className={s.post_count}>@{nickname}</span>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import style from "./Home.module.css";
 import { timeAgo } from "./../../utils/timeAgo";
 import { useDropdown } from "../../hooks/useDropdown";
 import { Modal } from "../../components/Modal/ModalConfirm";
-import { Comments } from "./Comments/Comments";
+import { Comments } from "./comments/Comments";
 import { Input } from "./../../components/Input/Input";
 import { Button } from "./../../components/Button/Button";
 import { handleLikeItem } from "../../utils/handleLikeItem";
@@ -162,7 +162,7 @@ export const PostList = ({ posts, setPosts }) => {
     updatePost(updatedCurrentUser);
   };
 
-  console.log(currentUser);
+  // console.log(currentUser);
   if (!currentUser) {
     return (
       <div className="loader_center">
@@ -170,13 +170,14 @@ export const PostList = ({ posts, setPosts }) => {
       </div>
     );
   }
+
   return (
     <div ref={containerRef} className={style.post_list_container}>
       {visiblePosts.map((post) => (
         <div key={post.id} className={`${style.messages} ${deletingPostIds.includes(post.id) ? style.deleting : ""}`}>
           <div className={style.bottom_cart}>
             <div className={style.user_image}>
-              <Link to={`/echat/profile/${post?.nickname}`}>
+              <Link to={`/echat/profile/${post?.author.nickname}`}>
                 <img
                   src={
                     post.author.email === currentUser.email

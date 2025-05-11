@@ -79,18 +79,14 @@
   gap: 5px;
 }
 .user_image {
-  border: 1px solid grey;
-  height: 40px;
-  min-width: 40px;
-  border-radius: 50%;
-  overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 .user_image img {
   height: 40px;
   width: 40px;
+  border: 1px solid grey;
+  border-radius: 50%;
   object-fit: cover;
 }
 
