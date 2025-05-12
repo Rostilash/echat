@@ -13,3 +13,17 @@
   font-size: 14px;
   color: var(--text-low);
 }
+
+.head {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+
+.icon_image img {
+  height: 18px;
+  width: 18px;
+  object-fit: cover;
+}

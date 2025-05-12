@@ -1,17 +1,11 @@
-import { useState } from "react";
-import style from "../Home.module.css";
-import { timeAgo } from "../../../utils/timeAgo";
+import style from "./Comment.module.css";
 import { handleLikeItem } from "../../../utils/handleLikeItem";
-import { useDropdown } from "../../../hooks/useDropdown";
 import { Button } from "../../../components/Button/Button";
-import { Modal } from "../../../components/Modal/ModalConfirm";
+import { UserImage } from "../components/UserImage";
+import { PostHeader } from "../components/PostHeader";
+import { PostDropdown } from "../components/PostDropdown";
 
-export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [commentIdToDelete, setCommentIdToDelete] = useState(null);
-
-  const { openId: commentOpenOptions, handleToggle: handleOpenCommentOptions, dropdownRef, toggleRef } = useDropdown();
-
+export const Comments = ({ currentUser, comment, post, posts, setPosts, postId, isOwner }) => {
   const handleLikeComment = () => {
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
@@ -25,21 +19,10 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
-  console.log(comment);
-  const openDeleteCommentModal = (id) => {
-    setCommentIdToDelete(id);
-    setShowModal(true);
-  };
-
-  const cancelDelete = () => {
-    setShowModal(false);
-    setCommentIdToDelete(null);
-  };
-
-  const handleDeleteComment = () => {
+  const handleDeleteComment = (id) => {
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
-        const updatedComments = post.comments.filter((c) => c.id !== commentIdToDelete);
+        const updatedComments = post.comments.filter((c) => c.id !== id);
         return { ...post, comments: updatedComments };
       }
       return post;
@@ -47,86 +30,49 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
 
     setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
-
-    setShowModal(false);
-    setCommentIdToDelete(null);
   };
 
   return (
-    <div className={style.messages} style={{ borderBottom: "1px solid var(--border-color)" }}>
-      <div className={style.bottom_cart}>
-        <div className={style.user_image}>
+    <div className={style.comment} style={{ borderBottom: "1px solid var(--border-color)" }}>
+      <div className={style.comment_header}>
+        <UserImage post={post} />
+        <PostHeader post={post} />
+      </div>
+
+      {/* Drop down */}
+      {comment.author.email === currentUser.email && (
+        <PostDropdown
+          onDelete={() => handleDeleteComment(comment.id)}
+          item={comment}
+          currentUser={currentUser}
+          messageToDelate="Ви впевнені, що хочете видалити цей коментар?"
+        />
+      )}
+
+      <div className={style.comment_content}>
+        {/* comment TEXT */}
+        <p>{comment.text}</p>
+      </div>
+
+      <div className={style.comment_actions}>
+        <span className={style.icon_image} onClick={handleLikeComment}>
           <img
             src={
-              comment.author.email === currentUser.email
-                ? currentUser.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
-                : comment.author.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"
+              comment.likedBy && comment.likedBy.includes(currentUser.email)
+                ? "https://cdn-icons-png.flaticon.com/128/210/210545.png"
+                : "https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
             }
-            alt="user"
+            alt="icon"
           />
-        </div>
-
-        <div className={style.user_info}>
-          <div className={style.messages_text}>
-            <div className={style.user_name}>
-              <p>
-                {comment.author.name}{" "}
-                <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
-              </p>
-              <span>@{comment.author.nickname} </span>
-              <div className={style.dot_wrapper}>
-                <span className={style.dot}>.</span>
-              </div>
-              <span>{timeAgo(comment.timestamp)}</span>
-            </div>
-
-            <div className={style.post_edit_selection} ref={toggleRef} onClick={(e) => handleOpenCommentOptions(e, comment.id)}>
-              <img
-                className={`${style.icon_transition} ${commentOpenOptions === comment.id ? style.icon_rotate : ""}`}
-                src="https://cdn-icons-png.flaticon.com/128/18557/18557107.png"
-                alt="icon"
-                style={{ height: "18px", width: "18px" }}
-              />
-
-              {commentOpenOptions === comment.id && (
-                <>
-                  {comment.author.email === currentUser.email && (
-                    <div className={style.edit_delete_buttons} ref={dropdownRef}>
-                      <button onClick={() => openDeleteCommentModal(comment.id)}>Видалити</button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-          <div className={style.message_content}>
-            {/* comment TEXT */}
-            <p>{comment.text}</p>
-          </div>
-
-          <div className={style.message_actions}>
-            <div className={style.message_icons}>
-              <span className={style.icon_image} onClick={handleLikeComment}>
-                <img
-                  src={
-                    comment.likedBy && comment.likedBy.includes(currentUser.email)
-                      ? "https://cdn-icons-png.flaticon.com/128/210/210545.png"
-                      : "https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
-                  }
-                  alt="icon"
-                />
-                <span>{comment.likes || 0}</span>
-              </span>
-              <span className={style.icon_image}>
-                <Button size="small" variant="secondary">
-                  Відписати
-                </Button>
-              </span>
-            </div>
-          </div>
-        </div>
+          {"  "}
+          <span>{comment.likes || 0}</span>
+        </span>
+        <span className={style.icon_image}>
+          <Button size="small" variant="secondary">
+            Відповісти
+          </Button>
+        </span>
       </div>
-      {showModal && <Modal message="Ви впевнені, що хочете видалити цей коментар?" onConfirm={handleDeleteComment} onCancel={cancelDelete} />}
     </div>
   );
 };

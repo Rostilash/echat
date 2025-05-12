@@ -1,0 +1,46 @@
+.user_image {
+  display: flex;
+  justify-content: center;
+}
+.user_image img {
+  height: 40px;
+  width: 40px;
+  border: 1px solid grey;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user_info {
+  min-width: 90%;
+}
+
+.header_text {
+  padding: 5px;
+  align-items: center;
+}
+
+.user_name {
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 5px;
+}
+.user_name span {
+  color: grey;
+}
+
+.dot_wrapper {
+  width: 5px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dot_wrapper span {
+  color: #707070;
+  font-size: 24px;
+  padding-bottom: 10px;
+}

@@ -7,7 +7,6 @@ import { useAuth } from "./../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 
 export const MainLayout = () => {
-  const { currentUser, logout } = useAuth();
   useTheme();
 
   const [posts, setPosts] = useState(() => {
@@ -27,7 +26,8 @@ export const MainLayout = () => {
         comments: [],
         author: {
           name: "Avity",
-          username: "@sktch_ComedyFan",
+          nickname: "sktch_ComedyFan",
+          email: "avity@gmail.com",
           profileImage: "https://yt3.ggpht.com/cBjl6YDbv6639q6ELLETZhW3nOqAUhWIr9cx4fHUKjrmhs2YcfiHQ9KkNgGHU_psIfdw_aSt=s88-c-k-c0x00ffffff-no-rj",
         },
       },
@@ -42,7 +42,8 @@ export const MainLayout = () => {
         comments: [],
         author: {
           name: "Aloha Vibes",
-          username: "@Vach_Cana",
+          nickname: "Vach_Cana",
+          email: "Vach_Cana.com",
           profileImage: "https://yt3.ggpht.com/SmANtx6ituy1f16EKHUruhfal5oXhW8FhWVBb9oxvqAZ1oVDYnWlF8GfiiIyS2JC7G9bYlYqiA=s68-c-k-c0x00ffffff-no-rj",
         },
       },

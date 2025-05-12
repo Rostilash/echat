@@ -46,7 +46,7 @@ export const Profile = () => {
 
   // If user email = current user = you are the owner
   const isOwner = currentUser?.email === user?.email;
-
+  console.log(currentUser);
   return (
     <div className={style.profileWrapper}>
       <ProfileHeader
@@ -78,8 +78,8 @@ export const Profile = () => {
               },
               {
                 key: "bookmarks",
-                label: "Репости",
-                icon: "https://cdn-icons-png.flaticon.com/128/3313/3313887.png",
+                label: "Збережені",
+                icon: "https://cdn-icons-png.flaticon.com/128/4942/4942550.png",
               },
               {
                 key: "likes",
@@ -90,10 +90,10 @@ export const Profile = () => {
           />
 
           {/* Tab content rendering */}
-          {tab === "posts" && <Posts posts={posts} user={user} userPosts={userPosts} />}
+          {tab === "posts" && <Posts posts={posts} user={user} userPosts={userPosts} setPosts={setPosts} />}
           {tab === "media" && <Media posts={posts} user={user} />}
           {tab === "bookmarks" && <Bookmarks posts={posts} user={user} />}
-          {tab === "likes" && <Likes posts={posts} user={user} setPosts={setPosts} />}
+          {tab === "likes" && <Likes posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} />}
         </>
       )}
     </div>

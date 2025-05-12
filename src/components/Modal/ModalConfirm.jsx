@@ -1,4 +1,3 @@
-import React from "react";
 import style from "./Modal.module.css";
 import { Button } from "../Button/Button";
 
