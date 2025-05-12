@@ -1,8 +1,8 @@
 import style from "./Home.module.css";
 import { PostForm } from "./PostForm/PostForm";
 import { useAuth } from "../../hooks/useAuth";
-import { PostList } from "./PostList";
 import { useOutletContext } from "react-router-dom";
+import { PostList } from "./components/PostList";
 
 const monthNames = {
   січня: 0,

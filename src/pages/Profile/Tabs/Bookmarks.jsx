@@ -1,6 +1,6 @@
 import React from "react";
 import style from "../Profile.module.css";
-import { PostList } from "../../Home/PostList";
+import { PostList } from "../../Home/components/PostList";
 
 export const Bookmarks = ({ posts, user }) => {
   const bookmarksPosts = (posts || []).filter((post) => user?.bookmarks?.includes(post.id));

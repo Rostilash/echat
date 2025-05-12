@@ -1,6 +1,6 @@
 import React from "react";
 import style from "../Profile.module.css";
-import { PostList } from "../../Home/PostList";
+import { PostList } from "../../Home/components/PostList";
 
 export const Media = ({ posts, user }) => {
   const mediaPosts = (posts || []).filter((post) => post.author.email === user.email && post.media);

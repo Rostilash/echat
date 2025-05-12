@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import style from "./Home.module.css";
-import { timeAgo } from "./../../utils/timeAgo";
-import { useDropdown } from "../../hooks/useDropdown";
-import { Modal } from "../../components/Modal/ModalConfirm";
-import { Comments } from "./comments/Comments";
-import { Input } from "./../../components/Input/Input";
-import { Button } from "./../../components/Button/Button";
-import { handleLikeItem } from "../../utils/handleLikeItem";
-import { deleteItemById } from "../../utils/deleteItem";
+import style from "../Home.module.css";
+import { timeAgo } from "../../../utils/timeAgo";
+import { useDropdown } from "../../../hooks/useDropdown";
+import { Modal } from "../../../components/Modal/ModalConfirm";
+import { Comments } from "../comments/Comments";
+import { Input } from "../../../components/Input/Input";
+import { Button } from "../../../components/Button/Button";
+import { handleLikeItem } from "../../../utils/handleLikeItem";
+import { deleteItemById } from "../../../utils/deleteItem";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
+import { useAuth } from "../../../hooks/useAuth";
+import { LoaderSmall } from "../../../components/Loader/LoaderSmall";
 
 export const PostList = ({ posts, setPosts }) => {
   const { currentUser, updatePost } = useAuth();

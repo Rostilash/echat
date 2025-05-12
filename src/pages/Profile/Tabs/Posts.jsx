@@ -1,6 +1,6 @@
 import React from "react";
-import { PostList } from "./../../Home/PostList";
 import style from "../Profile.module.css";
+import { PostList } from "../../Home/components/PostList";
 
 export const Posts = ({ userPosts, user }) => {
   if (userPosts.length === 0) {
