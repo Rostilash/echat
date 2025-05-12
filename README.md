@@ -1,12 +1,34 @@
-# React + Vite
+💬 eChat – Social Network Prototype
+eChat is a prototype of a social media platform built with modern web technologies. It features messaging, emoji support, geolocation-based content, and news integration. The app is designed with scalability in mind and includes experiments with external APIs and performance tools.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 Repository: https://github.com/Rostilash/echat
 
-Currently, two official plugins are available:
+🚀 Features & Technologies
+😄 Emoji Picker
+Integrated using emoji-picker-react to add emojis in chat messages.
+npm install emoji-picker-react
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🌍 Google Maps Search by Coordinates
+Users can view locations by clicking a link that opens Google Maps with specific latitude and longitude:
+https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lon}
 
-## Expanding the ESLint configuration
+🏙 Nearby Places API (Overpass API)
+Displays a list of nearby places (restaurants, pubs, cafes) using:
+https://overpass-api.de/api/interpreter
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+📰 RSS News Feed Integration
+Pulls live news from NV.ua using rss2json as a proxy:
+const feedUrl = "https://nv.ua/rss/all.xml";
+const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+
+📅 Date Handling with dayjs
+For easier manipulation and formatting of dates.
+npm install dayjs
+
+Future improvement 
+🛡️ API Security (Cloudflare Worker)
+For protecting API keys, the app uses Cloudflare Workers and Wrangler CLI:
+🔐 Hide private API keys by proxying requests through a secure worker.
+🌐 Cloudflare Dashboard – manage and deploy workers.
+🧰 Wrangler – deploy and manage your worker environment.
+npm install -g wrangler
