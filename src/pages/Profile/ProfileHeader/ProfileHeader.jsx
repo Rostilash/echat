@@ -7,7 +7,7 @@ import { formatDateWithCapitalMonth } from "../../../utils/dateUtils";
 export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsEditing, isOwner }) => {
   const navigate = useNavigate();
 
-  const { name, profileImage, nickname, region, website, followers = [], following = [], createdAt } = user;
+  const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt } = user;
 
   // Change the first letter of the month to uppercase
   const date = formatDateWithCapitalMonth(createdAt);
@@ -41,10 +41,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
         <>
           <div className={s.body}>
             <div className={s.background_image}>
-              <img
-                src="https://images.unsplash.com/photo-1746061641845-0825bf320bf1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxODl8fHxlbnwwfHx8fHw%3D"
-                alt="user-image"
-              />
+              <img src={headerImage} alt="user-image" />
             </div>
             <div className={s.user_body_info}>
               <div className={s.body_left}>

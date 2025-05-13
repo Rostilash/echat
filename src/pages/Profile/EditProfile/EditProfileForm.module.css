@@ -7,34 +7,6 @@
   position: relative;
   width: 100%;
 }
-.user_image {
-  border: 1px solid var(--text-color);
-  height: 100px;
-  width: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.5s;
-}
-.user_image:hover {
-  border: 1px solid var(--echat-color);
-}
-.user_image_upload_icon {
-  position: absolute;
-  bottom: 0;
-  right: 40px;
-  height: 30px;
-  width: 30px;
-}
-.user_image img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-}
 
 .profile h1 {
   text-align: center;
@@ -43,51 +15,33 @@
   text-align: center;
 }
 
-.overlay {
-  position: fixed;
+/* userImages header block */
+.userImages {
+  min-height: 150px;
+}
+.userHeaderImage {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background-color: #3631310e;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-.change_user_info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* form */
-.profile {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.imageSection {
-  display: flex;
-  justify-content: center;
-  /* margin-bottom: 2rem; */
-}
-
-.user_image {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  border: 2px solid #ccc;
-  position: relative;
-}
-
-.user_image img {
+.userHeaderImage img {
+  max-height: 200px;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+}
+.userProfileImage {
+  position: relative;
+  z-index: 5;
+}
+
+.userProfileImage img {
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+  border: 1px solid var(--text-color);
+}
+.userProfileImage img:hover {
+  border: 1px solid var(--echat-color);
 }
 
 .form {
@@ -110,4 +64,22 @@
 
 .passwordBlock {
   margin-top: 2rem;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #3631310e;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.change_user_info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

@@ -32,7 +32,7 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
 
-  console.log(posts);
+  // console.log(posts);
 
   return (
     <div className={style.message_actions}>

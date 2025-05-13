@@ -1,0 +1,26 @@
+.user_image {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.5s;
+}
+
+.user_image_upload_icon {
+  position: absolute;
+  bottom: 0;
+  right: 40px;
+  height: 30px;
+  width: 30px;
+}
+
+.user_image_upload_icon img {
+  height: 30px;
+  width: 30px;
+  object-fit: contain;
+}
+.user_image img {
+  object-fit: cover;
+}
