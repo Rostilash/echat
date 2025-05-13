@@ -26,4 +26,5 @@
   height: 18px;
   width: 18px;
   object-fit: cover;
+  cursor: pointer;
 }

@@ -10,12 +10,14 @@ import { Tabs } from "../../components/Tabs/Tabs";
 import { useAuth } from "../../hooks/useAuth";
 import { useOutletContext, useParams } from "react-router-dom";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
+import { Reposts } from "./Tabs/Reposts";
 
 export const Profile = () => {
   // URL params
   const { nickname: routeNickname } = useParams();
+
   // load user from localStorage
-  const { currentUser } = useAuth();
+  const { currentUser, updatePost } = useAuth();
   const { posts, setPosts } = useOutletContext();
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("posts");
@@ -39,14 +41,24 @@ export const Profile = () => {
     );
   }
 
-  const { email } = user || {};
+  // const { email } = user || {};
 
   // Posts OutletContent
-  const userPosts = (posts || []).filter((post) => post.author.email === email);
+  const userPosts = (posts || []).filter((post) => post.author.email === user?.email);
 
   // If user email = current user = you are the owner
   const isOwner = currentUser?.email === user?.email;
-  console.log(currentUser);
+
+  const tabComponents = {
+    posts: Posts,
+    media: Media,
+    bookmarks: Bookmarks,
+    likes: Likes,
+    reposts: Reposts,
+  };
+
+  const ActiveTabComponent = tabComponents[tab];
+
   return (
     <div className={style.profileWrapper}>
       <ProfileHeader
@@ -86,14 +98,18 @@ export const Profile = () => {
                 label: "Уподобання",
                 icon: "https://cdn-icons-png.flaticon.com/128/833/833472.png",
               },
+              {
+                key: "reposts",
+                label: "Репости",
+                icon: "https://cdn-icons-png.flaticon.com/128/12604/12604036.png",
+              },
             ]}
+            isOwner={isOwner}
           />
 
-          {/* Tab content rendering */}
-          {tab === "posts" && <Posts posts={posts} user={user} userPosts={userPosts} setPosts={setPosts} />}
-          {tab === "media" && <Media posts={posts} user={user} />}
-          {tab === "bookmarks" && <Bookmarks posts={posts} user={user} />}
-          {tab === "likes" && <Likes posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} />}
+          {ActiveTabComponent && (
+            <ActiveTabComponent posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
+          )}
         </>
       )}
     </div>

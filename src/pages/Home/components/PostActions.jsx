@@ -1,41 +1,13 @@
 import style from "./PostActions.module.css";
 import { useAuth } from "../../../hooks/useAuth";
-import { handleLikeItem } from "../../../utils/handleLikeItem";
+import { handleLikePost } from "../../../utils/handleLikeItem";
 
 export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isOwner }) => {
-  const { currentUser, updatePost, updateUser } = useAuth();
+  const { currentUser, updatePost } = useAuth();
 
   // Likes
   const handleLike = (postId) => {
-    const updatedPosts = posts.map((post) => {
-      if (post.id === postId) {
-        return handleLikeItem(post, currentUser.email);
-      }
-      return post;
-    });
-
-    setPosts(updatedPosts);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-
-    // Update user likes
-    const hasLiked = currentUser.likes.includes(postId);
-    const updatedLikes = hasLiked
-      ? currentUser.likes.filter((id) => id !== postId) // if didn`t liked -1 like
-      : [...currentUser.likes, postId]; // or like +1
-
-    //Filter posts if they where deleted
-    const remainingPostIds = updatedPosts.map((p) => p.id);
-    const finalLikes = updatedLikes.filter((likedPostId) => remainingPostIds.includes(likedPostId));
-
-    // Update posts in array
-    const updatedCurrentUser = {
-      ...currentUser,
-      likes: finalLikes, // save if likes where really clicked
-      updatedAt: new Date().toISOString(),
-    };
-
-    // Update users & currentUser localstorage
-    updatePost(updatedCurrentUser);
+    handleLikePost({ postId, posts, currentUser, setPosts, updatePost });
   };
 
   // add for bookmarks
@@ -43,9 +15,12 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     const isBookmarked = currentUser.bookmarks.includes(postId);
     const updatedBookmarks = isBookmarked ? currentUser.bookmarks.filter((id) => id !== postId) : [...currentUser.bookmarks, postId];
 
+    const existingPostIds = posts.map((p) => p.id);
+    const validBookmarks = updatedBookmarks.filter((id) => existingPostIds.includes(id));
+
     const updatedCurrentUser = {
       ...currentUser,
-      bookmarks: updatedBookmarks,
+      bookmarks: validBookmarks,
       updatedAt: new Date().toISOString(),
     };
 
@@ -57,8 +32,8 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
 
-  console.log(currentUser);
   console.log(posts);
+
   return (
     <div className={style.message_actions}>
       <div className={style.message_icons}>

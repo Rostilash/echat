@@ -1,5 +1,5 @@
+import { timeAgo } from "../../../utils/dateUtils";
 import style from "./PostHeader.module.css";
-import { timeAgo } from "../../../utils/timeAgo";
 
 export const PostHeader = ({ post }) => {
   return (

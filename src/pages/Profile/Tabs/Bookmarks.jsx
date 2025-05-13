@@ -1,8 +1,7 @@
-import React from "react";
 import style from "../Profile.module.css";
-import { PostList } from "../../Home/components/PostList";
+import { PostItem } from "../../Home/components/PostItem";
 
-export const Bookmarks = ({ posts, user }) => {
+export const Bookmarks = ({ posts, user, setPosts, currentUser, updatePost }) => {
   const bookmarksPosts = (posts || []).filter((post) => user?.bookmarks?.includes(post.id));
 
   if (bookmarksPosts.length === 0) {
@@ -10,8 +9,10 @@ export const Bookmarks = ({ posts, user }) => {
   }
 
   return (
-    <div>
-      <PostList posts={bookmarksPosts} />
+    <div style={{ position: "relative" }}>
+      {bookmarksPosts.map((post) => (
+        <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
+      ))}
     </div>
   );
 };

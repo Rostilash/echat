@@ -97,7 +97,9 @@ export const Home = () => {
       media: mediaData,
       timestamp: new Date().toISOString(),
       likes: 0,
+      likedBy: [],
       reposts: 0,
+      repostedBy: [],
       region: currentUser.region || "",
       comments: [],
       tags: extractTags(text) || [],
@@ -113,7 +115,6 @@ export const Home = () => {
 
     const updatedPosts = [newPost, ...posts];
     setPosts(updatedPosts);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
 
     // Оновлення користувача через твою функцію
     const updatedCurrentUser = {

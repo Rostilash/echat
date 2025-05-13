@@ -1,8 +1,7 @@
-import React from "react";
+import { PostItem } from "../../Home/components/PostItem";
 import style from "../Profile.module.css";
-import { PostList } from "../../Home/components/PostList";
 
-export const Media = ({ posts, user }) => {
+export const Media = ({ posts, user, setPosts, currentUser, updatePost }) => {
   const mediaPosts = (posts || []).filter((post) => post.author.email === user.email && post.media);
 
   if (mediaPosts.length === 0) {
@@ -10,8 +9,10 @@ export const Media = ({ posts, user }) => {
   }
 
   return (
-    <div>
-      <PostList posts={mediaPosts} />
+    <div style={{ position: "relative" }}>
+      {mediaPosts.map((post) => (
+        <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
+      ))}
     </div>
   );
 };

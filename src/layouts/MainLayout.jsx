@@ -11,7 +11,15 @@ export const MainLayout = () => {
 
   const [posts, setPosts] = useState(() => {
     const saved = localStorage.getItem("posts");
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const migrated = parsed.map((post) => ({
+        ...post,
+        likedBy: Array.isArray(post.likedBy) ? post.likedBy : [],
+        likes: typeof post.likes === "number" ? post.likes : 0,
+      }));
+      return migrated;
+    }
 
     //Default State
     return [

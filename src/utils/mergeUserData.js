@@ -3,12 +3,11 @@ export const mergeUserData = (oldUser, newData) => {
     ...oldUser,
     ...newData,
 
-    // save critical values
     password: oldUser.password,
     email: oldUser.email,
     createdAt: oldUser.createdAt,
     posts: oldUser.posts || [],
-    likes: oldUser.likes || [],
+    likes: newData.likes || oldUser.likes || [],
     bookmarks: oldUser.bookmarks || [],
     followers: oldUser.followers || [],
     following: oldUser.following || [],
