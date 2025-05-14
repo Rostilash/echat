@@ -30,6 +30,10 @@
   width: 100%;
   object-fit: fill;
 }
+
+.userHeaderImage img:hover {
+  border: 2px solid var(--echat-color);
+}
 .userProfileImage {
   position: relative;
   z-index: 5;

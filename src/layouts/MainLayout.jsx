@@ -3,12 +3,10 @@ import { Outlet } from "react-router-dom";
 import style from "./MainLayout.module.css";
 import { Sidebar } from "../components/Sidebar/Sidebar";
 import { Rightbar } from "../components/Rightbar/Rightbar";
-import { useAuth } from "./../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 
 export const MainLayout = () => {
-  useTheme();
-
+  // useTheme();
   const [posts, setPosts] = useState(() => {
     const saved = localStorage.getItem("posts");
     if (saved) {

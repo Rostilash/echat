@@ -13,6 +13,7 @@ import { AdminPanel } from "./../pages/AdminPanel/AdminPanel";
 import { Profile } from "./../pages/Profile/Profile";
 import { PrePage } from "./../pages/PrePage/PrePage";
 import { Weather } from "./../pages/Weather/Weather";
+import { Messages } from "../pages/Messages/components/Messages";
 
 export const AppRoutes = () => {
   return (
@@ -34,6 +35,11 @@ export const AppRoutes = () => {
         <Route path="weather" element={<Weather />} />
       </Route>
 
+      {/* for messages */}
+      <Route path="/echat/message/" element={<AuthLayout />}>
+        <Route path=":nickname" element={<Messages />} />
+      </Route>
+
       {/* Loading page without header and footer  */}
       <Route path="/echat/register/" element={<AuthLayout />}>
         <Route path="me/" element={<PrePage />} />
@@ -51,7 +57,7 @@ export const AppRoutes = () => {
         }
       />
       {/* Redirect to main page */}
-      <Route path="*" element={<Navigate to="/echat/" />} />
+      {/* <Route path="*" element={<Navigate to="/echat/" />} /> */}
     </Routes>
   );
 };

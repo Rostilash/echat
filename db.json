@@ -1,0 +1,38 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Rostik",
+      "nickname": "rostikxub66",
+      "avatar": null,
+      "isOnline": true,
+      "hasUnread": true,
+      "lastMessage": "Hey, are you there?"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "nickname": "janesmith",
+      "avatar": null,
+      "isOnline": false,
+      "hasUnread": false,
+      "lastMessage": "Let's talk later."
+    }
+  ],
+  "messages": [
+    {
+      "nickname": "johndoe",
+      "messages": [
+        { "from": "them", "content": "Hey!", "timestamp": "10:00" },
+        { "from": "me", "content": "Hi!", "timestamp": "10:01" }
+      ]
+    },
+    {
+      "nickname": "janesmith",
+      "messages": [
+        { "from": "them", "content": "Yo!", "timestamp": "9:00" },
+        { "from": "me", "content": "What's up?", "timestamp": "9:05" }
+      ]
+    }
+  ]
+}

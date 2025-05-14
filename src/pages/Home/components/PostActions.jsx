@@ -1,6 +1,8 @@
 import style from "./PostActions.module.css";
 import { useAuth } from "../../../hooks/useAuth";
 import { handleLikePost } from "../../../utils/handleLikeItem";
+import { getPostActionArray } from "../utils/postActionsArray";
+import { Action } from "./Action";
 
 export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isOwner }) => {
   const { currentUser, updatePost } = useAuth();
@@ -73,60 +75,27 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
   };
 
   // console.log(currentUser);
-  // console.log(posts);
+
+  //Array for our ActionButtons
+  const actionButtons = getPostActionArray({
+    post,
+    currentUser,
+    isOwner,
+    handlers: {
+      handleClickComment,
+      handleLike,
+      handleRepost,
+      handleBookmark,
+    },
+  });
 
   return (
     <div className={style.message_actions}>
       <div className={style.message_icons}>
-        <span className={style.icon_image} onClick={() => handleClickComment(post.id)}>
-          <img src="https://cdn-icons-png.flaticon.com/128/16689/16689811.png" alt="icon" /> <span>{post.comments.length}</span>
-        </span>
-
-        <span className={style.icon_image} onClick={() => handleLike(post.id)}>
-          <img
-            src={
-              post.likedBy && post.likedBy.includes(currentUser?.email)
-                ? "https://cdn-icons-png.flaticon.com/128/210/210545.png" // Icon for a liked post
-                : "https://cdn-icons-png.flaticon.com/128/1077/1077035.png" // Standard like icon
-            }
-            alt="icon"
-          />
-          <span>{post.likes}</span>
-        </span>
-
-        <span
-          className={style.icon_image}
-          onClick={() => {
-            handleRepost(post.id);
-          }}
-        >
-          <img
-            src={
-              post.repostedBy && post.repostedBy.includes(currentUser?.email)
-                ? "https://cdn-icons-png.flaticon.com/128/11289/11289820.png" // Icon for a repost post
-                : "https://cdn-icons-png.flaticon.com/128/14385/14385249.png" // Standard repost icon
-            }
-            alt="icon"
-          />
-          <span>{post.reposts}</span>
-        </span>
-        <span className={style.icon_image} onClick={() => handleBookmark(post.id)}>
-          <img
-            src={
-              currentUser?.bookmarks.includes(post.id)
-                ? "https://cdn-icons-png.flaticon.com/128/4942/4942550.png" // Active bookmark icon
-                : "https://cdn-icons-png.flaticon.com/128/3983/3983871.png" // Default bookmark icon
-            }
-            alt="bookmark"
-          />
-        </span>
-
-        {/* hide for currentUser */}
-        {!isOwner && (
-          <span className={style.icon_image}>
-            <img src="https://cdn-icons-png.flaticon.com/128/18166/18166719.png" alt="icon" />
-          </span>
-        )}
+        {/* Loopping array for action buttons  */}
+        {actionButtons.map(({ key, isActive, handleClick, activeImage, defaultImage, count }) => (
+          <Action key={key} isActive={isActive} handleClick={handleClick} activeImage={activeImage} defaultImage={defaultImage} count={count} />
+        ))}
       </div>
     </div>
   );
