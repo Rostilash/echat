@@ -1,4 +1,4 @@
-import style from "../../Home/components/PostItem.module.css";
+import style from "../Profile.module.css";
 import { PostItem } from "../../Home/components/PostItem";
 
 export const Posts = ({ post, posts, user, setPosts, currentUser, updatePost }) => {

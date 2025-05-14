@@ -40,9 +40,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
       {!isEditing && (
         <>
           <div className={s.body}>
-            <div className={s.background_image}>
-              <img src={headerImage} alt="user-image" />
-            </div>
+            <div className={s.background_image}>{headerImage && <img src={headerImage} alt="user-image" />}</div>
             <div className={s.user_body_info}>
               <div className={s.body_left}>
                 <div className={s.head_user_info}>

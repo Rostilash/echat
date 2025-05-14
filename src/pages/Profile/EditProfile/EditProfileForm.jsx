@@ -134,7 +134,15 @@ export const EditProfileForm = () => {
         </div>
 
         <div className={style.userHeaderImage}>
-          <ImageUpload uploadKey="headerImage" maxSizeKB={100} image={headerImage} updateUser={updateUser} />
+          <ImageUpload
+            uploadKey="headerImage"
+            maxSizeKB={100}
+            image={
+              headerImage ||
+              "https://images.unsplash.com/photo-1746263658731-469853340643?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D"
+            }
+            updateUser={updateUser}
+          />
         </div>
       </div>
 

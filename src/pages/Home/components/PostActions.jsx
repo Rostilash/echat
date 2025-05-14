@@ -10,7 +10,47 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     handleLikePost({ postId, posts, currentUser, setPosts, updatePost });
   };
 
-  // add for bookmarks
+  // Repost
+  const handleRepost = (postId) => {
+    const hasRepost = currentUser.repostedBy.includes(postId);
+
+    const updatedPosts = posts.map((post) => {
+      // if not array we make an array
+      if (post.id === postId) {
+        const currentRepostedBy = Array.isArray(post.repostedBy) ? post.repostedBy : [];
+
+        // if user made repost Email deleted else added
+        const updatedRepostBy = hasRepost
+          ? currentRepostedBy.filter((email) => email !== currentUser.email)
+          : [...currentRepostedBy, currentUser.email];
+
+        // if hasRepost=false add +1 else -1
+        const updateRepposts = hasRepost ? (post.reposts || 1) - 1 : (post.reposts || 0) + 1;
+
+        return {
+          ...post,
+          repostedBy: updatedRepostBy,
+          reposts: updateRepposts,
+        };
+      }
+      return post;
+    });
+    // update post from MainLoyout (refresh items on posts)
+    setPosts(updatedPosts);
+
+    // if hasRepost false return all id, if true take existing array and put postId into it.
+    const updatedCurrentUser = hasRepost ? currentUser.repostedBy.filter((id) => id !== postId) : [...currentUser.repostedBy, postId];
+
+    // put it into array
+    const updateCurrentUser = {
+      ...currentUser,
+      repostedBy: updatedCurrentUser,
+    };
+    // save into user array
+    updatePost(updateCurrentUser);
+  };
+
+  // Bookmarks
   const handleBookmark = (postId) => {
     const isBookmarked = currentUser.bookmarks.includes(postId);
     const updatedBookmarks = isBookmarked ? currentUser.bookmarks.filter((id) => id !== postId) : [...currentUser.bookmarks, postId];
@@ -27,11 +67,12 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     updatePost(updatedCurrentUser);
   };
 
-  // open Comment options
+  // Open Comment options
   const handleClickComment = (postId) => {
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
 
+  // console.log(currentUser);
   // console.log(posts);
 
   return (
@@ -51,6 +92,23 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
             alt="icon"
           />
           <span>{post.likes}</span>
+        </span>
+
+        <span
+          className={style.icon_image}
+          onClick={() => {
+            handleRepost(post.id);
+          }}
+        >
+          <img
+            src={
+              post.repostedBy && post.repostedBy.includes(currentUser?.email)
+                ? "https://cdn-icons-png.flaticon.com/128/11289/11289820.png" // Icon for a repost post
+                : "https://cdn-icons-png.flaticon.com/128/14385/14385249.png" // Standard repost icon
+            }
+            alt="icon"
+          />
+          <span>{post.reposts}</span>
         </span>
         <span className={style.icon_image} onClick={() => handleBookmark(post.id)}>
           <img

@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       posts: [], // array of post IDs created by this user
       likes: [], // array of post IDs liked by this user
       bookmarks: [], // array of post IDs saved/bookmarked
+      repostedBy: [],
 
       // Settings
       emailVerified: false, // whether the email is verified
