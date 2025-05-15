@@ -34,7 +34,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
       key: "messages",
       path: `/echat/message/${currentUser?.nickname}`,
       handleClick: null,
-      image: null,
+      image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
       message: "Повідомлення",
     },
     {

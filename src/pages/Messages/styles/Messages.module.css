@@ -76,6 +76,12 @@
   background: green;
   border-radius: 999px;
 }
+.unreadDot {
+  width: 10px;
+  height: 10px;
+  background: rgb(121, 209, 236);
+  border-radius: 999px;
+}
 
 .lastMessage {
   font-size: 0.875rem;
@@ -146,9 +152,9 @@
 .timestamp {
   font-size: 0.7rem;
   color: #666;
-  position: absolute;
+  /* position: absolute;
   bottom: -1.2rem;
-  right: 0.5rem;
+  right: 0.5rem; */
 }
 
 .chatInput {

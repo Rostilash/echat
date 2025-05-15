@@ -11,7 +11,7 @@ import { ImageUpload } from "./ImageUpload";
 
 export const EditProfileForm = () => {
   // useContext our user
-  const { currentUser, updateUser } = useAuth();
+  const { currentUser, updateUserProfile, updateUser } = useAuth();
 
   const [fadeOut, setFadeOut] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -88,7 +88,7 @@ export const EditProfileForm = () => {
     //Save old userData info of user
     const updatedData = mergeUserData(currentUser, form);
     //update User
-    updateUser(updatedData);
+    updateUserProfile(updatedData);
 
     setSuccessMessage("Профіль оновлено успішно");
     setFadeOut(false);

@@ -4,10 +4,16 @@ export const getChats = () => {
   return chats || [];
 };
 
+// Отримує всі чати користувача
+export const getUserChats = (nickname) => {
+  const chats = getChats();
+  return chats.filter((chat) => chat.participants.includes(nickname));
+};
+
 // Функція для збереження чатів в localStorage
 export const saveChats = (chats) => {
   try {
-    const pureChats = JSON.parse(JSON.stringify(chats)); // фільтрує все циклічне
+    const pureChats = JSON.parse(JSON.stringify(chats));
     localStorage.setItem("messages", JSON.stringify(pureChats));
   } catch (err) {
     console.error("❌ Failed to save chats:", err, chats);
@@ -25,10 +31,8 @@ export const sendMessage = (from, to, content) => {
   const chatId = generateChatId(from, to);
   const chats = getChats();
 
-  // Знаходимо чи є вже такий чат
   let chat = chats.find((chat) => chat.id === chatId);
 
-  // Якщо чату не існує, створюємо новий
   if (!chat) {
     chat = {
       id: chatId,
@@ -38,18 +42,21 @@ export const sendMessage = (from, to, content) => {
     chats.push(chat);
   }
 
-  // Додаємо нове повідомлення
   const newMessage = {
     from,
     to,
     content,
     isRead: false,
     timestamp: new Date().toISOString(),
-    type: "text", // тут можна додавати типи повідомлень: "text", "image", "gif"
+    type: "text",
   };
 
   chat.messages.push(newMessage);
   saveChats(chats);
+
+  // ДОДАЄМО співрозмовника до списку chatUsers
+  addUserToChatList(from, to);
+  addUserToChatList(to, from);
 };
 
 // Функція для отримання всіх повідомлень для конкретного чату
@@ -71,5 +78,16 @@ export const markMessagesAsRead = (chatId, user) => {
       return msg;
     });
     saveChats(chats);
+  }
+};
+
+// Додати користувача до списку чатів іншого
+export const addUserToChatList = (userNickname, chatWithNickname) => {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const user = users.find((u) => u.nickname === userNickname);
+  if (user && !user.chatUsers.includes(chatWithNickname)) {
+    user.chatUsers.push(chatWithNickname);
+    localStorage.setItem("users", JSON.stringify(users));
   }
 };

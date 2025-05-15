@@ -8,16 +8,17 @@ import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
 import { EditProfileForm } from "./EditProfile/EditProfileForm";
 import { Tabs } from "../../components/Tabs/Tabs";
 import { useAuth } from "../../hooks/useAuth";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
 import { Reposts } from "./Tabs/Reposts";
 
 export const Profile = () => {
   // URL params
   const { nickname: routeNickname } = useParams();
+  const navigate = useNavigate();
 
   // load user from localStorage
-  const { currentUser, updatePost } = useAuth();
+  const { currentUser, updateUser } = useAuth();
   const { posts, setPosts } = useOutletContext();
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("posts");
@@ -30,6 +31,12 @@ export const Profile = () => {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const found = users.find((u) => u.nickname === routeNickname);
       setUser(found || null);
+
+      if (!found) {
+        setTimeout(() => {
+          navigate("/echat/");
+        }, 2000);
+      }
     }
   }, [routeNickname, currentUser]);
 
@@ -59,6 +66,34 @@ export const Profile = () => {
 
   const ActiveTabComponent = tabComponents[tab];
 
+  const tabsName = [
+    {
+      key: "posts",
+      label: "Пости",
+      icon: "https://cdn-icons-png.flaticon.com/128/2099/2099085.png",
+    },
+    {
+      key: "media",
+      label: "Медіа",
+      icon: "https://cdn-icons-png.flaticon.com/128/3313/3313887.png",
+    },
+    {
+      key: "bookmarks",
+      label: "Збережені",
+      icon: "https://cdn-icons-png.flaticon.com/128/4942/4942550.png",
+    },
+    {
+      key: "likes",
+      label: "Уподобання",
+      icon: "https://cdn-icons-png.flaticon.com/128/833/833472.png",
+    },
+    {
+      key: "reposts",
+      label: "Репости",
+      icon: "https://cdn-icons-png.flaticon.com/128/12604/12604036.png",
+    },
+  ];
+
   return (
     <div className={style.profileWrapper}>
       <ProfileHeader
@@ -74,41 +109,10 @@ export const Profile = () => {
         <EditProfileForm />
       ) : (
         <>
-          <Tabs
-            current={tab}
-            onChange={setTab}
-            tabs={[
-              {
-                key: "posts",
-                label: "Пости",
-                icon: "https://cdn-icons-png.flaticon.com/128/2099/2099085.png",
-              },
-              {
-                key: "media",
-                label: "Медіа",
-                icon: "https://cdn-icons-png.flaticon.com/128/3313/3313887.png",
-              },
-              {
-                key: "bookmarks",
-                label: "Збережені",
-                icon: "https://cdn-icons-png.flaticon.com/128/4942/4942550.png",
-              },
-              {
-                key: "likes",
-                label: "Уподобання",
-                icon: "https://cdn-icons-png.flaticon.com/128/833/833472.png",
-              },
-              {
-                key: "reposts",
-                label: "Репости",
-                icon: "https://cdn-icons-png.flaticon.com/128/12604/12604036.png",
-              },
-            ]}
-            isOwner={isOwner}
-          />
+          <Tabs current={tab} onChange={setTab} tabs={tabsName} isOwner={isOwner} />
 
           {ActiveTabComponent && (
-            <ActiveTabComponent posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
+            <ActiveTabComponent posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
           )}
         </>
       )}

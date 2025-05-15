@@ -5,7 +5,7 @@ import style from "../Home.module.css";
 import { LoaderSmall } from "../../../components/Loader/LoaderSmall";
 
 export const PostList = ({ posts, setPosts }) => {
-  const { currentUser, updatePost } = useAuth();
+  const { currentUser, updateUserProfile } = useAuth();
   const [visibleCount, setVisibleCount] = useState(5);
 
   const containerRef = useRef(null);
@@ -30,7 +30,7 @@ export const PostList = ({ posts, setPosts }) => {
     <>
       <div ref={containerRef} className={style.post_list_container} onScroll={handleScroll}>
         {visiblePosts.map((post) => (
-          <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
+          <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updateUserProfile={updateUserProfile} />
         ))}
       </div>
     </>

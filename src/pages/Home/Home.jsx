@@ -22,7 +22,7 @@ const monthNames = {
 const formatDate = (date) => date.toISOString().split("T")[0]; // "YYYY-MM-DD"
 
 export const Home = () => {
-  const { currentUser, updateUser } = useAuth();
+  const { currentUser, updateUserProfile } = useAuth();
   const { posts, setPosts, selectedFilter } = useOutletContext();
 
   const today = new Date();
@@ -122,7 +122,7 @@ export const Home = () => {
       posts: [...(currentUser.posts || []), newPost.id],
       updatedAt: new Date().toISOString(),
     };
-    updateUser(updatedCurrentUser);
+    updateUserProfile(updatedCurrentUser);
   };
 
   return (

@@ -8,7 +8,7 @@ import { Comments } from "../comments/Comments";
 import { UserImage } from "./UserImage";
 import { PostHeader } from "./PostHeader";
 
-export const PostItem = ({ post, posts, setPosts, currentUser, updatePost }) => {
+export const PostItem = ({ post, posts, setPosts, currentUser, updateUser }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const isOwner = post?.author.nickname === currentUser?.nickname;
@@ -59,7 +59,7 @@ export const PostItem = ({ post, posts, setPosts, currentUser, updatePost }) => 
       {/* Show comments  */}
       {activeCommentPostId === post.id && post.comments && (
         <div className={style.comments_item}>
-          <AddComments posts={posts} setPosts={setPosts} updatePost={updatePost} postId={activeCommentPostId} currentUser={currentUser} />
+          <AddComments posts={posts} setPosts={setPosts} updateUser={updateUser} postId={activeCommentPostId} currentUser={currentUser} />
 
           {post.comments.length > 0 ? (
             post.comments.map((comment) => (

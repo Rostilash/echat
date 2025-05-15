@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("currentUser", JSON.stringify(updatedUser));
     setCurrentUser(null);
 
-    setInterval(() => {
-      navigate("echat/register/me");
+    setTimeout(() => {
+      navigate("/echat/register/me");
     }, 1000);
   };
 
@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }) => {
       likes: [], // array of post IDs liked by this user
       bookmarks: [], // array of post IDs saved/bookmarked
       repostedBy: [],
+      chatUsers: [], //chating with
 
       // Settings
       emailVerified: false, // whether the email is verified
@@ -104,7 +105,7 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(newUser);
   };
 
-  const updateUser = (newUserData) => {
+  const updateUserProfile = (newUserData) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
     const updatedUsers = users.map((user) => (user.email === newUserData.email ? mergeUserData(user, newUserData) : user));
@@ -116,7 +117,7 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(updatedCurrentUser);
   };
 
-  const updatePost = (newUserData) => {
+  const updateUser = (newUserData) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
     const updatedUsers = users.map((user) => (user.email === newUserData.email ? newUserData : user));
@@ -164,7 +165,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, verifyOldPassword, register, updateUser, updatePost, setCurrentUser, changePassword }}>
+    <AuthContext.Provider
+      value={{ currentUser, login, logout, verifyOldPassword, register, updateUserProfile, updateUser, setCurrentUser, changePassword }}
+    >
       {children}
     </AuthContext.Provider>
   );

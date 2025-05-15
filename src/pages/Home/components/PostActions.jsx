@@ -5,11 +5,11 @@ import { getPostActionArray } from "../utils/postActionsArray";
 import { Action } from "./Action";
 
 export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isOwner }) => {
-  const { currentUser, updatePost } = useAuth();
+  const { currentUser, updateUser } = useAuth();
 
   // Likes
   const handleLike = (postId) => {
-    handleLikePost({ postId, posts, currentUser, setPosts, updatePost });
+    handleLikePost({ postId, posts, currentUser, setPosts, updateUser });
   };
 
   // Repost
@@ -49,7 +49,7 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
       repostedBy: updatedCurrentUser,
     };
     // save into user array
-    updatePost(updateCurrentUser);
+    updateUser(updateCurrentUser);
   };
 
   // Bookmarks
@@ -66,7 +66,7 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
       updatedAt: new Date().toISOString(),
     };
 
-    updatePost(updatedCurrentUser);
+    updateUser(updatedCurrentUser);
   };
 
   // Open Comment options
