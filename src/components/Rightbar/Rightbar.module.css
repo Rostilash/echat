@@ -32,12 +32,6 @@
   border-radius: 8px;
   transition: background-color 0.3s;
 }
-.newsContent {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  justify-content: space-between;
-}
 
 /* Dots */
 .newsOptions {
@@ -59,12 +53,6 @@
 }
 /* end Dots */
 
-.recommended_users img {
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-}
-
 .recommended_info {
   display: flex;
   flex-direction: row;
@@ -79,7 +67,6 @@
 }
 .newsTitles {
   flex-wrap: wrap;
-
   word-break: break-word;
 }
 .newsName {

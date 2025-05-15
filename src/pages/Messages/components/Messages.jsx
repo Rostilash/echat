@@ -35,11 +35,9 @@ export const Messages = () => {
     setAllUsers(users);
   }, []);
 
-  console.log(allUsers);
-
   // Filter that users have that nick name
   const visibleUsers = allUsers.filter((user) => chatNickNames.includes(user.nickname));
-  console.log(visibleUsers);
+
   // visibile users for current user
   const enhancedVisibleUsers = visibleUsers.map((user) => {
     const chatId = generateChatId(currentUser.nickname, user.nickname);

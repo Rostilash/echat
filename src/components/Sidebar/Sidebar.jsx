@@ -3,12 +3,18 @@ import style from "./Sidebar.module.css";
 import { Link } from "react-router-dom";
 import { useMediaQuery } from "./../../hooks/useMediaQuery";
 import { useAuth } from "./../../hooks/useAuth";
+import { getUserChats } from "../../pages/Messages/utils/chatUtils";
 
 export const Sidebar = ({ selectedPostFilter }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const { logout, currentUser } = useAuth();
+
   const [openQuitMenu, setOpenQuitMenu] = useState(false);
+
+  const messages = getUserChats(currentUser?.nickname) || [];
+
+  const hasUnread = messages.some((chat) => chat.messages.some((msg) => msg.to === currentUser?.nickname && !msg.isRead));
 
   const handleOpenQuitOption = () => {
     setOpenQuitMenu((prev) => !prev);
@@ -36,6 +42,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
       message: "Повідомлення",
+      chatMessage: hasUnread,
     },
     {
       key: "movies",
@@ -87,10 +94,11 @@ export const Sidebar = ({ selectedPostFilter }) => {
           chat
         </div>
 
-        {mainLinks.map(({ key, path, handleClick, image, message }) => (
+        {mainLinks.map(({ key, path, handleClick, image, message, chatMessage }) => (
           <Link key={key} to={path} className={style.menuItem} onClick={handleClick}>
             <img src={image} alt="icon" />
             <span>{message}</span>
+            {chatMessage && <span className={style.unreadDot}></span>}
           </Link>
         ))}
       </div>

@@ -23,6 +23,12 @@
   height: 38px;
 }
 
+.unreadDot {
+  width: 10px;
+  height: 10px;
+  background: rgb(121, 209, 236);
+  border-radius: 999px;
+}
 .menu {
   display: flex;
   flex-direction: column;

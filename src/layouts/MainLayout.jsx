@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
 import style from "./MainLayout.module.css";
+import { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar/Sidebar";
 import { Rightbar } from "../components/Rightbar/Rightbar";
 import { useTheme } from "../hooks/useTheme";
@@ -55,7 +55,15 @@ export const MainLayout = () => {
       },
     ];
   });
+
   const [selectedFilter, setSelectedFilter] = useState(null);
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    setUsers(storedUsers);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
@@ -65,10 +73,9 @@ export const MainLayout = () => {
     <div className={style.layout}>
       <Sidebar selectedPostFilter={setSelectedFilter} />
       <main className={style.content}>
-        {/* Outlet  props */}
         <Outlet context={{ posts, setPosts, selectedFilter }} />
       </main>
-      <Rightbar onSelectFilter={setSelectedFilter} posts={posts} />
+      <Rightbar onSelectFilter={setSelectedFilter} posts={posts} users={users} />
     </div>
   );
 };
