@@ -17,9 +17,10 @@ export const Profile = () => {
   const { nickname: routeNickname } = useParams();
   const navigate = useNavigate();
 
-  // load user from localStorage
+  // load user & posts from localStorage
   const { currentUser, updateUser } = useAuth();
   const { posts, setPosts } = useOutletContext();
+
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
@@ -32,11 +33,11 @@ export const Profile = () => {
       const found = users.find((u) => u.nickname === routeNickname);
       setUser(found || null);
 
-      if (!found) {
-        setTimeout(() => {
-          navigate("/echat/");
-        }, 2000);
-      }
+      // if (!found) {
+      //   setTimeout(() => {
+      //     navigate("/echat/");
+      //   }, 2000);
+      // }
     }
   }, [routeNickname, currentUser]);
 
@@ -47,8 +48,6 @@ export const Profile = () => {
       </div>
     );
   }
-
-  // const { email } = user || {};
 
   // Posts OutletContent
   const userPosts = (posts || []).filter((post) => post.author.email === user?.email);
@@ -106,7 +105,7 @@ export const Profile = () => {
       />
 
       {isEditing && isOwner ? (
-        <EditProfileForm />
+        <EditProfileForm setPosts={setPosts} />
       ) : (
         <>
           <Tabs current={tab} onChange={setTab} tabs={tabsName} isOwner={isOwner} />

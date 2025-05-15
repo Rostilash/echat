@@ -91,3 +91,21 @@ export const addUserToChatList = (userNickname, chatWithNickname) => {
     localStorage.setItem("users", JSON.stringify(users));
   }
 };
+
+// for deleting the chatUsers
+export const clearChatUsers = () => {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  if (!currentUser) return;
+
+  // Очистити chatUsers
+  currentUser.chatUsers = [];
+
+  // Оновити користувача в users
+  const updatedUsers = users.map((user) => (user.email === currentUser.email ? { ...user, chatUsers: [] } : user));
+
+  // Зберегти назад
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+  localStorage.setItem("users", JSON.stringify(updatedUsers));
+};

@@ -3,14 +3,13 @@ import { Button } from "../../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../../hooks/useTheme";
 import { formatDateWithCapitalMonth } from "../../../utils/dateUtils";
-import { UserLink } from "../../Messages/components/UserLink";
+import { UserLink } from "../../Messages/components/SendMessageToBtn";
 
 export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsEditing, isOwner }) => {
   const navigate = useNavigate();
 
   const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt } = user;
-
-  const userNickName = user?.nickname;
+  console.log(following.length);
 
   // Change the first letter of the month to uppercase
   const date = formatDateWithCapitalMonth(createdAt);
@@ -52,7 +51,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
                   <span className={s.post_count}>@{nickname}</span>
                 </div>
               </div>
-              <UserLink nickname={nickname} />
+              {!isOwner && <UserLink nickname={nickname} />}
               <div className={s.body_right}>
                 {isOwner && (
                   <Button onClick={onEditClick} variant="empty">
@@ -71,8 +70,8 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
               <span>Зареєстрований: {date}</span>
             </div>
             <div className={s.followers}>
-              <span>{following} Підписався</span>
-              <span>{followers} Підписаних </span>
+              <span>{following.length} Підписався</span>
+              <span>{followers.length} Підписаних </span>
             </div>
           </div>
         </>

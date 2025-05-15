@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { LoaderSmall } from "./../../../components/Loader/LoaderSmall";
 import { ImageUpload } from "./ImageUpload";
 
-export const EditProfileForm = () => {
+export const EditProfileForm = ({ setPosts }) => {
   // useContext our user
   const { currentUser, updateUserProfile, updateUser } = useAuth();
 
@@ -87,8 +87,9 @@ export const EditProfileForm = () => {
 
     //Save old userData info of user
     const updatedData = mergeUserData(currentUser, form);
-    //update User
-    updateUserProfile(updatedData);
+
+    //update User in LocalStorage
+    updateUserProfile(updatedData, setPosts);
 
     setSuccessMessage("Профіль оновлено успішно");
     setFadeOut(false);
@@ -105,8 +106,6 @@ export const EditProfileForm = () => {
 
     navigate(`/echat/profile/${encodeURIComponent(form.nickname)}`);
   };
-
-  console.log(currentUser);
 
   const inputFields = [
     { name: "name", placeholder: "Ім’я" },

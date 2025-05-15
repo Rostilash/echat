@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import style from "../styles/Messages.module.css";
 import { useAuth } from "./../../../hooks/useAuth";
-import { generateChatId, sendMessage, getMessages, markMessagesAsRead } from "../utils/chatUtils";
+import { generateChatId, sendMessage, getMessages, markMessagesAsRead, clearChatUsers } from "../utils/chatUtils";
+import { Button } from "../../../components/Button/Button";
 
 export const Messages = () => {
   const { currentUser } = useAuth();
   const isOwner = currentUser?.nickname;
-  const chatNickNames = currentUser?.chatUsers; // ['johndoe', 'janesmith']
-  console.log(chatNickNames);
+  const chatNickNames = Array.isArray(currentUser?.chatUsers) ? currentUser.chatUsers : []; // ['johndoe', 'janesmith']
+
   const [selectedUserId, setSelectedUserId] = useState(chatNickNames ? chatNickNames[chatNickNames.length - 1] : null);
-  console.log(selectedUserId);
+
   const [chatMessages, setChatMessages] = useState({});
   const [inputMessage, setInputMessage] = useState("");
   const [allUsers, setAllUsers] = useState([]);
@@ -34,10 +35,12 @@ export const Messages = () => {
     setAllUsers(users);
   }, []);
 
+  console.log(allUsers);
+
   // Filter that users have that nick name
   const visibleUsers = allUsers.filter((user) => chatNickNames.includes(user.nickname));
-
-  // vibile users for current user
+  console.log(visibleUsers);
+  // visibile users for current user
   const enhancedVisibleUsers = visibleUsers.map((user) => {
     const chatId = generateChatId(currentUser.nickname, user.nickname);
     const messages = getMessages(chatId);
@@ -121,6 +124,9 @@ export const Messages = () => {
     setFilteredChat(filtered || []);
   };
 
+  const handleClick = () => {
+    clearChatUsers();
+  };
   return (
     <div className={style.container}>
       {/* Left Sidebar */}
@@ -150,6 +156,9 @@ export const Messages = () => {
             </div>
           ))}
         </div>
+        {/* <Button onClick={handleClick} variant="empty">
+          Видалити всі розмови
+        </Button> */}
       </div>
 
       {/* Right Chat Area */}
@@ -165,6 +174,7 @@ export const Messages = () => {
               </>
             )}
           </div>
+
           <input className={style.searchChat} placeholder="Пошук в чаті..." onChange={handleFindChat} />
         </div>
 

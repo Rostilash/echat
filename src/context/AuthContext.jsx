@@ -105,14 +105,39 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(newUser);
   };
 
-  const updateUserProfile = (newUserData) => {
+  // Need to copy Messages with old nickname
+  const updateUserProfile = (newUserData, setPosts = null) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
+    const posts = JSON.parse(localStorage.getItem("posts")) || [];
 
+    // 1. Update user
     const updatedUsers = users.map((user) => (user.email === newUserData.email ? mergeUserData(user, newUserData) : user));
 
     const updatedCurrentUser = updatedUsers.find((u) => u.email === newUserData.email);
 
+    // 2. Update user posts
+    const updatedPosts = posts.map((post) => {
+      if (post.author.email === newUserData.email) {
+        return {
+          ...post,
+          author: {
+            ...post.author,
+            name: newUserData.name,
+            nickname: newUserData.nickname,
+            profileImage: newUserData.profileImage,
+          },
+        };
+      }
+      return post;
+    });
+
+    if (typeof setPosts === "function") {
+      setPosts(updatedPosts);
+    }
+
+    // 3. save to localStorage
     localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
     localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
     setCurrentUser(updatedCurrentUser);
   };
@@ -164,9 +189,69 @@ export const AuthProvider = ({ children }) => {
     return { success: true, message: "Пароль успішно змінено" };
   };
 
+  const followUser = (nicknameToUnfollow) => {
+    if (!currentUser || !nicknameToUnfollow || nicknameToUnfollow === currentUser.nickname) return;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const updatedUsers = users.map((user) => {
+      if (user.nickname === currentUser.nickname) {
+        if (!user.following.includes(nicknameToUnfollow)) {
+          return { ...user, following: [...user.following, nicknameToUnfollow] };
+        }
+      }
+      if (user.nickname === nicknameToUnfollow) {
+        if (!user.followers.includes(currentUser.nickname)) {
+          return { ...user, followers: [...user.followers, currentUser.nickname] };
+        }
+      }
+      return user;
+    });
+    const updatedCurrentUser = updatedUsers.find((u) => u.nickname === currentUser.nickname);
+
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
+
+    setCurrentUser(updatedCurrentUser);
+  };
+
+  const unfollowUser = (nicknameToUnfollow) => {
+    if (!currentUser || nicknameToUnfollow === currentUser.nickname) return;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const updatedUsers = users.map((user) => {
+      if (user.nickname === currentUser.nickname) {
+        return { ...user, following: user.following.filter((n) => n !== nicknameToUnfollow) };
+      }
+      if (user.nickname === nicknameToUnfollow) {
+        return { ...user, followers: user.followers.filter((n) => n !== currentUser.nickname) };
+      }
+      return user;
+    });
+
+    const updatedCurrentUser = updatedUsers.find((u) => u.nickname === currentUser.nickname);
+
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
+    setCurrentUser(updatedCurrentUser);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ currentUser, login, logout, verifyOldPassword, register, updateUserProfile, updateUser, setCurrentUser, changePassword }}
+      value={{
+        currentUser,
+        login,
+        logout,
+        verifyOldPassword,
+        register,
+        updateUserProfile,
+        updateUser,
+        setCurrentUser,
+        changePassword,
+        followUser,
+        unfollowUser,
+      }}
     >
       {children}
     </AuthContext.Provider>
