@@ -8,7 +8,6 @@ export const UserLink = ({ nickname }) => {
 
   const { currentUser, updateUser } = useAuth();
 
-  console.log(currentUser);
   const handleClickMessage = () => {
     if (!currentUser) return;
 

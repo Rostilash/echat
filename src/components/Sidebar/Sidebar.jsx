@@ -46,7 +46,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "movies",
-      path: "/echat/movies",
+      path: "/echat/movies/1",
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/6815/6815074.png",
       message: "Фільми",

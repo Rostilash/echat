@@ -125,6 +125,7 @@ export const Messages = () => {
   const handleClick = () => {
     clearChatUsers();
   };
+
   return (
     <div className={style.container}>
       {/* Left Sidebar */}
@@ -135,28 +136,33 @@ export const Messages = () => {
           </Link>
           <input className={style.searchInput} placeholder="Пошук Користувача..." onChange={handleFindUser} />
         </div>
-        <div className={style.usersList}>
-          {(filteredUsers.length > 0 ? filteredUsers : enhancedVisibleUsers).map((user) => (
-            <div
-              key={user.nickname}
-              onClick={() => setSelectedUserId(user.nickname)}
-              className={`${style.userItem} ${user.hasUnread ? style.unread : ""}`}
-            >
-              <img src={user.profileImage} alt={user.name} className={style.avatar} />
-              <div className={style.userInfo}>
-                <div className={style.userHeader}>
-                  <span>{user.name}</span>
-                  {user.isOnline && <span className={style.onlineDot}></span>}
-                  {user.hasUnread && <span className={style.unreadDot}></span>}
+
+        <div className={style.left_side}>
+          <div className={style.usersList}>
+            {(filteredUsers.length > 0 ? filteredUsers : enhancedVisibleUsers).map((user) => (
+              <div
+                key={user.nickname}
+                onClick={() => setSelectedUserId(user.nickname)}
+                className={`${style.userItem} ${user.hasUnread ? style.unread : ""}`}
+              >
+                <img src={user.profileImage} alt={user.name} className={style.avatar} />
+                <div className={style.userInfo}>
+                  <div className={style.userHeader}>
+                    <span>{user.name}</span>
+                    {user.isOnline && <span className={style.onlineDot}></span>}
+                    {user.hasUnread && <span className={style.unreadDot}></span>}
+                  </div>
+                  <p className={style.lastMessage}>{user.lastMessage}</p>
                 </div>
-                <p className={style.lastMessage}>{user.lastMessage}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div>
+            <Button onClick={handleClick} variant="empty">
+              Видалити всі розмови
+            </Button>
+          </div>
         </div>
-        {/* <Button onClick={handleClick} variant="empty">
-          Видалити всі розмови
-        </Button> */}
       </div>
 
       {/* Right Chat Area */}

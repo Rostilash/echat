@@ -8,7 +8,7 @@ export const handleLikeItem = (item, userEmail) => {
   };
 };
 
-export const handleLikePost = ({ postId, posts, currentUser, setPosts, updatePost }) => {
+export const handleLikePost = ({ postId, posts, currentUser, setPosts, updateUser }) => {
   const hasLiked = currentUser.likes.includes(postId);
 
   const updatedPosts = posts.map((post) => {
@@ -42,5 +42,5 @@ export const handleLikePost = ({ postId, posts, currentUser, setPosts, updatePos
     updatedAt: new Date().toISOString(),
   };
 
-  updatePost(updatedCurrentUser);
+  updateUser(updatedCurrentUser);
 };

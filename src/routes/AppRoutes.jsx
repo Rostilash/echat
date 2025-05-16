@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { Home } from "../pages/Home/Home";
@@ -30,7 +30,7 @@ export const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="news" element={<News />} />
         <Route path="top-places" element={<TopPlaces />} />
-        <Route path="movies" element={<Movies />} />
+        <Route path="movies/:id" element={<Movies />} />
         <Route path="profile/:nickname" element={<Profile />} />
         <Route path="weather" element={<Weather />} />
       </Route>

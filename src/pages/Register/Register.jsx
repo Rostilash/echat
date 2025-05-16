@@ -12,11 +12,13 @@ export const Register = ({ onClose, setLoginForm }) => {
 
   const { register, login } = useAuth();
   const [formData, setFormData] = useState({
+    id: Date.now().toString(),
     name: "",
     email: "",
     password: "",
     role: "user",
   });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {

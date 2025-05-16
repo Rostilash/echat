@@ -14,7 +14,7 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
 
   const newsBlocks = generateNewsBlocks(posts, visibleBlocks);
 
-  const recommended = users.filter((user) => user.nickname !== currentUser.nickname);
+  const recommended = currentUser ? users.filter((user) => user.nickname !== currentUser.nickname) : [];
 
   //users shown now
   const visibleRecommended = recommended.slice(0, visibleUsers);

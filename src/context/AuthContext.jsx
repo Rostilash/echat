@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { mergeUserData } from "../utils/mergeUserData";
 
 export const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();

@@ -17,7 +17,7 @@ export const FollowButton = ({ nickname }) => {
 
   return (
     <>
-      <Button onClick={handleClickFollow} variant={isFollowing ? "empty" : "default"}>
+      <Button onClick={handleClickFollow} size="small" variant={isFollowing ? "empty" : "default"}>
         {isFollowing ? "Відписатися" : "Підписатися"}
       </Button>
     </>

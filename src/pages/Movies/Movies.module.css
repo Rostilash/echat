@@ -1,5 +1,12 @@
 .movies {
-  position: fixed;
-  height: 100vh;
-  width: 100wh;
+  display: grid;
+  grid-template-columns: 2fr 5fr;
+  gap: 10px;
+}
+
+.item {
+  background-color: #cce5ff;
+  padding: 20px;
+  border: 1px solid #007bff;
+  text-align: center;
 }

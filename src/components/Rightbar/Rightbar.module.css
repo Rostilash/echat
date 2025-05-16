@@ -14,7 +14,11 @@
   gap: 15px;
   position: relative;
 }
-
+.newsContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .news_block {
   border: 1px solid var(--border-color);
   border-radius: 15px;
@@ -64,6 +68,9 @@
 .newsInfoText {
   font-size: 12px;
   color: var(--text-low);
+}
+.newsContent {
+  position: relative;
 }
 .newsTitles {
   flex-wrap: wrap;
