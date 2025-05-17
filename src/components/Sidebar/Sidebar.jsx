@@ -75,14 +75,14 @@ export const Sidebar = ({ selectedPostFilter }) => {
         handleClick: null,
         image: "https://cdn-icons-png.flaticon.com/128/9068/9068871.png",
         message: "Профіль",
-      },
-      {
-        key: "other_actions",
-        path: null,
-        handleClick: null,
-        image: "https://cdn-icons-png.flaticon.com/128/8106/8106905.png",
-        message: "Інші дії",
       }
+      // {
+      //   key: "other_actions",
+      //   path: null,
+      //   handleClick: null,
+      //   image: "https://cdn-icons-png.flaticon.com/128/8106/8106905.png",
+      //   message: "Інші дії",
+      // }
     );
   }
 

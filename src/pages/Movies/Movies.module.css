@@ -10,3 +10,33 @@
   border: 1px solid #007bff;
   text-align: center;
 }
+
+.chat_container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* відступи між повідомленнями */
+  padding: 16px;
+  max-height: 100%;
+  overflow-y: auto; /* щоб скролилось */
+}
+
+.chat_messages {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.from_me {
+  background-color: #daf8cb;
+  align-self: flex-end;
+  text-align: right;
+}
+
+.from_other {
+  background-color: #f1f0f0;
+  align-self: flex-start;
+  text-align: left;
+}

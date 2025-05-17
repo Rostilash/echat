@@ -21,18 +21,58 @@
   ],
   "messages": [
     {
-      "nickname": "johndoe",
-      "messages": [
-        { "from": "them", "content": "Hey!", "timestamp": "10:00" },
-        { "from": "me", "content": "Hi!", "timestamp": "10:01" }
-      ]
+      "id": "1",
+      "message": "Hi!",
+      "dialogId": 1,
+      "from": "other"
     },
     {
-      "nickname": "janesmith",
-      "messages": [
-        { "from": "them", "content": "Yo!", "timestamp": "9:00" },
-        { "from": "me", "content": "What's up?", "timestamp": "9:05" }
-      ]
+      "id": "2",
+      "message": "How are you?",
+      "dialogId": 1,
+      "from": "other"
+    },
+    {
+      "id": "3",
+      "message": "Yo!",
+      "dialogId": 2,
+      "from": "other"
+    },
+    {
+      "id": "id_1747511522039_8fyiy",
+      "message": "41241",
+      "dialogId": 2,
+      "from": "me"
+    },
+    {
+      "id": "id_1747512794014_33v00",
+      "message": "21414141",
+      "dialogId": 1,
+      "from": "me"
+    },
+    {
+      "id": "id_1747512795406_c9w5h",
+      "message": "4214214",
+      "dialogId": 1,
+      "from": "me"
+    },
+    {
+      "id": "id_1747512796998_532wa",
+      "message": "421414214",
+      "dialogId": 1,
+      "from": "me"
+    },
+    {
+      "id": "id_1747512799022_otbzr",
+      "message": "42141424",
+      "dialogId": 1,
+      "from": "me"
+    },
+    {
+      "id": "id_1747512841846_wdmfo",
+      "message": "qrqr",
+      "dialogId": 2,
+      "from": "me"
     }
   ]
 }
