@@ -20,7 +20,7 @@ export const AppRoutes = () => {
   const [messagesData, setMessagesData] = useState([]);
   const [usersData, setUsersData] = useState([]);
 
-  //testing localBase
+  // testing localBase
   useEffect(() => {
     // Отримати messages
     fetch("http://localhost:3001/messages")

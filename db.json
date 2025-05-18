@@ -3,11 +3,37 @@
     {
       "id": 1,
       "name": "Rostik",
+      "email": "rostik@kak.net",
+      "password": "123456",
+      "role": "user",
+      "isLoggedIn": true,
+      "profileImage": null,
+      "headerImage": null,
+      "createdAt": "2025-05-13T21:17:20.418Z",
+      "region": "Україна",
+      "username": "Rostik",
       "nickname": "rostikxub66",
-      "avatar": null,
-      "isOnline": true,
-      "hasUnread": true,
-      "lastMessage": "Hey, are you there?"
+      "bio": "React developer",
+      "location": "Ужгород",
+      "website": "https://github.com/Rostilash",
+      "birthdate": "2025-05-10",
+      "followers": ["Roma_12356"],
+      "following": ["Roma_12356"],
+      "posts": ["1747230307464"],
+      "likes": ["2", "1747309668428", "1747230307464", "1747346950007"],
+      "bookmarks": ["2"],
+      "repostedBy": ["1747230307464", "1747309668428"],
+      "emailVerified": false,
+      "theme": "light",
+      "language": "uk",
+      "notifications": {
+        "mentions": true,
+        "follows": true,
+        "likes": true
+      },
+      "lastLogin": null,
+      "updatedAt": "2025-05-16T19:07:57.501Z",
+      "chatUsers": ["Roma_12356"]
     },
     {
       "id": 2,
@@ -46,25 +72,13 @@
     },
     {
       "id": "id_1747512794014_33v00",
-      "message": "21414141",
+      "message": "Та все чудово! ",
       "dialogId": 1,
       "from": "me"
     },
     {
       "id": "id_1747512795406_c9w5h",
-      "message": "4214214",
-      "dialogId": 1,
-      "from": "me"
-    },
-    {
-      "id": "id_1747512796998_532wa",
-      "message": "421414214",
-      "dialogId": 1,
-      "from": "me"
-    },
-    {
-      "id": "id_1747512799022_otbzr",
-      "message": "42141424",
+      "message": "А ти як ?!",
       "dialogId": 1,
       "from": "me"
     },
@@ -74,5 +88,6 @@
       "dialogId": 2,
       "from": "me"
     }
-  ]
+  ],
+  "posts": []
 }
