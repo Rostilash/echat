@@ -1,16 +1,16 @@
-// Функція для отримання поточних чатів з localStorage
+// Function to get current chats from localStorage
 export const getChats = () => {
   const chats = JSON.parse(localStorage.getItem("messages"));
   return chats || [];
 };
 
-// Отримує всі чати користувача
+// Gets all user chats
 export const getUserChats = (nickname) => {
   const chats = getChats();
   return chats.filter((chat) => chat.participants.includes(nickname));
 };
 
-// Функція для збереження чатів в localStorage
+// Function to save chats to localStorage
 export const saveChats = (chats) => {
   try {
     const pureChats = JSON.parse(JSON.stringify(chats));
@@ -20,13 +20,13 @@ export const saveChats = (chats) => {
   }
 };
 
-// Генератор унікального chatId
+// Unique chatId generator
 export const generateChatId = (user1, user2) => {
   const sortedUsers = [user1, user2].sort();
   return `chat_${sortedUsers[0]}_${sortedUsers[1]}`;
 };
 
-// Функція для надсилання повідомлення в чат
+// Function to send a message to the chat
 export const sendMessage = (from, to, content) => {
   const chatId = generateChatId(from, to);
   const chats = getChats();
@@ -59,14 +59,14 @@ export const sendMessage = (from, to, content) => {
   addUserToChatList(to, from);
 };
 
-// Функція для отримання всіх повідомлень для конкретного чату
+// Function to get all messages for a specific chat
 export const getMessages = (chatId) => {
   const chats = getChats();
   const chat = chats.find((chat) => chat.id === chatId);
   return chat ? chat.messages : [];
 };
 
-// Функція для позначення повідомлень як прочитаних
+// Function to mark messages as read
 export const markMessagesAsRead = (chatId, user) => {
   const chats = getChats();
   const chat = chats.find((chat) => chat.id === chatId);
@@ -81,7 +81,7 @@ export const markMessagesAsRead = (chatId, user) => {
   }
 };
 
-// Додати користувача до списку чатів іншого
+// Add user to another's chat list
 export const addUserToChatList = (userNickname, chatWithNickname) => {
   const users = JSON.parse(localStorage.getItem("users")) || [];
 

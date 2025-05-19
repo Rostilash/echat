@@ -23,7 +23,7 @@ const formatDate = (date) => date.toISOString().split("T")[0]; // "YYYY-MM-DD"
 
 export const Home = () => {
   const { currentUser, updateUserProfile } = useAuth();
-  const { posts, setPosts, selectedFilter } = useOutletContext();
+  const { posts, setPosts, selectedFilter, sendMessage } = useOutletContext();
 
   const today = new Date();
   const formattedToday = formatDate(today);

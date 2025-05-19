@@ -238,6 +238,10 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(updatedCurrentUser);
   };
 
+  const isOwner = (nickname) => currentUser?.nickname === nickname;
+
+  const ownerNickName = currentUser?.nickname;
+
   return (
     <AuthContext.Provider
       value={{
@@ -252,6 +256,8 @@ export const AuthProvider = ({ children }) => {
         changePassword,
         followUser,
         unfollowUser,
+        isOwner,
+        ownerNickName,
       }}
     >
       {children}

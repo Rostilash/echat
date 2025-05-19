@@ -38,7 +38,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "messages",
-      path: `/echat/message/${currentUser?.nickname}`,
+      path: `/echat/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || `/${currentUser?.nickname}`}`,
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
       message: "Повідомлення",
@@ -46,7 +46,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "movies",
-      path: "/echat/movies/1",
+      path: `/echat/movies`,
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/6815/6815074.png",
       message: "Фільми",

@@ -77,7 +77,7 @@ export const SearchLabels = ({ newsBlocks = [], onSelectFilter }) => {
         <Input
           type="search"
           name="search"
-          placeholder="Search"
+          placeholder="Пошук..."
           value={formData.search}
           onChange={handleChange}
           error={errors.name}
