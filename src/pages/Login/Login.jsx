@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import style from "./Login.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./../../hooks/useAuth";
@@ -53,19 +53,19 @@ export const Login = ({ onClose, setRegisterForm }) => {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    const isLoginSuccessful = login(formData.email, formData.password);
+    const isLoginSuccessful = await login(formData.email, formData.password);
 
     if (isLoginSuccessful) {
       navigate("/echat/", { replace: true });
     } else {
-      setErrorMessage("❌ Password incorrect ");
+      setErrorMessage("Невірний email або пароль");
     }
   };
 

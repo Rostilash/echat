@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import dayjs from "./dayjs-setup";
 
 // convert if date
@@ -8,7 +9,10 @@ export const formatDateWithCapitalMonth = (date) => {
 // convert if timestamp;
 export const formatFullDateTime = (timestamp) => {
   if (!timestamp) return "";
-  const date = timestamp.toDate(); // дуже важливо: переводимо Firestore Timestamp у Date
+
+  const fixedTimestamp = typeof timestamp.toDate === "function" ? timestamp : new Timestamp(timestamp.seconds, timestamp.nanoseconds);
+
+  const date = fixedTimestamp.toDate();
   return dayjs(date).format("HH:mm, DD MMMM YYYY");
 };
 

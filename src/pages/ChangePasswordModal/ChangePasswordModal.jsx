@@ -5,7 +5,7 @@ import { Input } from "./../../components/Input/Input";
 import { CloseButton } from "./../../components/Button/CloseButton";
 import { Button } from "./../../components/Button/Button";
 
-export const ChangePasswordModal = ({ onClose }) => {
+export const ChangePasswordModal = ({ onClose, setShowModal }) => {
   const { currentUser, changePassword, verifyOldPassword } = useContext(AuthContext);
 
   const [step, setStep] = useState(1);
@@ -14,8 +14,8 @@ export const ChangePasswordModal = ({ onClose }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleVerifyOldPassword = () => {
-    const result = verifyOldPassword(currentUser.email, oldPassword);
+  const handleVerifyOldPassword = async () => {
+    const result = await verifyOldPassword(currentUser.email, oldPassword);
 
     if (!result.success) {
       setError(result.message);
@@ -23,10 +23,10 @@ export const ChangePasswordModal = ({ onClose }) => {
     }
 
     setError("");
-    setStep(2); // go to next step
+    setStep(2); // переходимо до наступного кроку
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (!newPassword || !confirmPassword) {
       setError("Усі поля обов’язкові");
       return;
@@ -69,20 +69,21 @@ export const ChangePasswordModal = ({ onClose }) => {
     }
 
     const result = changePassword(currentUser.email, oldPassword, newPassword);
-
+    onClose();
     if (!result.success) {
       setError(result.message);
       return;
     }
 
+    setShowModal(false);
     setError("");
-    onClose();
   };
 
   return (
     <div className={style.overlay}>
       <div className={style.modal}>
         <CloseButton onClose={onClose} />
+
         <h2>Зміна паролю</h2>
         {/* {error && <p className={style.error}>{error}</p>} */}
 

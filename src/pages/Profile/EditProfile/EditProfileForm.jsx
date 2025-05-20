@@ -54,15 +54,14 @@ export const EditProfileForm = ({ setPosts }) => {
     setErrorMessage(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const hasChanges = Object.keys(form).some((key) => form[key]?.trim() && form[key] !== currentUser[key]);
+    const hasChanges = Object.keys(form).some((key) => form[key] !== currentUser[key]);
 
     if (!hasChanges) {
       setErrorMessage("Ви нічого не змінили");
       setFadeOut(false);
-
       setTimeout(() => setFadeOut(true), 200);
       setTimeout(() => {
         setErrorMessage(null);
@@ -71,7 +70,7 @@ export const EditProfileForm = ({ setPosts }) => {
       return;
     }
 
-    if (!/^[a-zA-Z0-9_]+$/.test(form.nickname)) {
+    if (!form.nickname || !/^[a-zA-Z0-9_]+$/.test(form.nickname)) {
       setErrorMessage("Нікнейм може містити лише латинські літери, цифри та символ _");
       return;
     }
@@ -85,26 +84,27 @@ export const EditProfileForm = ({ setPosts }) => {
       return;
     }
 
-    //Save old userData info of user
+    // Updating user data
     const updatedData = mergeUserData(currentUser, form);
 
-    //update User in LocalStorage
-    updateUserProfile(updatedData, setPosts);
+    try {
+      // If updateUserProfile async - wait function ends
+      await updateUserProfile(updatedData, setPosts);
 
-    setSuccessMessage("Профіль оновлено успішно");
-    setFadeOut(false);
-
-    setTimeout(() => {
-      setFadeOut(true);
-    }, 200);
-
-    setTimeout(() => {
-      setErrorMessage(null);
-      setSuccessMessage(null);
+      setSuccessMessage("Профіль оновлено успішно");
       setFadeOut(false);
-    }, 3100);
+      setTimeout(() => setFadeOut(true), 200);
+      setTimeout(() => {
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        setFadeOut(false);
+      }, 3100);
 
-    navigate(`/echat/profile/${encodeURIComponent(form.nickname)}`);
+      navigate(`/echat/profile/${encodeURIComponent(form.nickname)}`);
+    } catch (error) {
+      setErrorMessage("Сталася помилка при оновленні профілю");
+      console.error("Update user profile error:", error);
+    }
   };
 
   const inputFields = [

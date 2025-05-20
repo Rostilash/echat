@@ -18,7 +18,7 @@ export const Profile = () => {
   const navigate = useNavigate();
 
   // load user & posts from localStorage
-  const { currentUser, updateUser } = useAuth();
+  const { currentUser, updateUser, ownerNickName, findUserByNickname } = useAuth();
   const { posts, setPosts } = useOutletContext();
 
   const [user, setUser] = useState(null);

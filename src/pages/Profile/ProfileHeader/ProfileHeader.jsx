@@ -2,17 +2,15 @@ import s from "./ProfileHeader.module.css";
 import { Button } from "../../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../../hooks/useTheme";
-import { formatDateWithCapitalMonth } from "../../../utils/dateUtils";
+import { formatFullDateTime } from "../../../utils/dateUtils";
 import { UserLink } from "../../Messages/components/SendMessageToBtn";
 
 export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsEditing, isOwner }) => {
   const navigate = useNavigate();
 
   const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt } = user;
-  console.log(following.length);
 
-  // Change the first letter of the month to uppercase
-  const date = formatDateWithCapitalMonth(createdAt);
+  const dayjsFormat = formatFullDateTime(createdAt);
 
   const { theme, toggleTheme } = useTheme();
 
@@ -67,7 +65,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
               <span>
                 <a href={website || ""}>{website || ""}</a>
               </span>
-              <span>Зареєстрований: {date}</span>
+              <span>Зареєстрований: {dayjsFormat}</span>
             </div>
             <div className={s.followers}>
               <span>{following.length} Підписався</span>

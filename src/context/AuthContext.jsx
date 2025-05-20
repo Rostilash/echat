@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect } from "react";
+import { collection, query, where, getFirestore, doc, setDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { mergeUserData } from "../utils/mergeUserData";
 
@@ -15,15 +17,20 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (email, password) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const foundUser = users.find((user) => user.email === email && user.password === password);
-    if (foundUser) {
-      foundUser.isLoggedIn = true;
-      localStorage.setItem("currentUser", JSON.stringify(foundUser));
-      setCurrentUser(foundUser);
+  const login = async (email, password) => {
+    const q = query(collection(db, "users"), where("email", "==", email), where("password", "==", password));
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      const userDoc = snapshot.docs[0];
+      const userData = { ...userDoc.data(), id: userDoc.id };
+      userData.isLoggedIn = true;
+
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      setCurrentUser(userData);
       return true;
     }
+
     return false;
   };
 
@@ -32,14 +39,21 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("currentUser", JSON.stringify(updatedUser));
     setCurrentUser(null);
 
-    setTimeout(() => {
-      navigate("/echat/register/me");
-    }, 1000);
+    // setTimeout(() => {
+    navigate("/echat/register/me");
+    // }, 1000);
   };
 
-  const generateUniqueNickname = (baseName) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+  const generateUniqueNickname = async (baseName) => {
     const slug = baseName.trim().toLowerCase().replace(/\s+/g, "");
+
+    const q = query(collection(db, "users"), where("nickname", "==", slug));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return slug;
+    }
+
     const generateRandomSuffix = () => Math.random().toString(36).slice(-5);
 
     let nickname;
@@ -48,194 +62,266 @@ export const AuthProvider = ({ children }) => {
     while (!isUnique) {
       const suffix = generateRandomSuffix();
       nickname = `${slug}${suffix}`;
-      isUnique = !users.some((user) => user.nickname === nickname);
+      const q = query(collection(db, "users"), where("nickname", "==", nickname));
+      const snapshot = await getDocs(q);
+      isUnique = snapshot.empty;
     }
 
     return nickname;
   };
 
-  const register = (userData) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+  const register = async (userData) => {
+    try {
+      const uid = crypto.randomUUID();
 
-    const newUser = {
-      ...userData,
-      isLoggedIn: true,
-      profileImage: userData.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837645.png" || "",
-      headerImage: "",
-      createdAt: new Date().toISOString(), // account creation date
-      region: "", // user's region (can be updated later)
+      const nickname = await generateUniqueNickname(userData.name);
 
-      // profile details
-      username: userData.name, // display name (full name)
-      nickname: generateUniqueNickname(userData.name), // unique
+      const newUser = {
+        ...userData,
+        uid,
+        isLoggedIn: true,
+        profileImage: userData.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837645.png",
+        headerImage: "",
+        createdAt: serverTimestamp(),
+        region: "",
 
-      bio: "", // short user bio
-      location: "", // city or country
-      website: "", // personal website or link
-      birthdate: "", // date of birth
+        username: userData.name,
+        nickname,
 
-      // social activity
-      followers: [], // users who follow this user
-      following: [], // users this user follows
+        bio: "",
+        location: "",
+        website: "",
+        birthdate: "",
 
-      // interactions
-      posts: [], // array of post IDs created by this user
-      likes: [], // array of post IDs liked by this user
-      bookmarks: [], // array of post IDs saved/bookmarked
-      repostedBy: [],
-      chatUsers: [], //chating with
+        followers: [],
+        following: [],
 
-      // Settings
-      emailVerified: false, // whether the email is verified
-      theme: "light", // light or dark UI theme
-      language: "uk", // UI language
-      notifications: {
-        mentions: true, // notify when mentioned
-        follows: true, // notify when followed
-        likes: true, // notify on likes
-      },
+        posts: [],
+        likes: [],
+        bookmarks: [],
+        repostedBy: [],
+        chatUsers: [],
 
-      // timestamps
-      lastLogin: null, // last login date
-      updatedAt: null, // last profile update date
-    };
+        emailVerified: false,
+        theme: "light",
+        language: "uk",
+        notifications: {
+          mentions: true,
+          follows: true,
+          likes: true,
+        },
 
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
-    setCurrentUser(newUser);
+        lastLogin: null,
+        updatedAt: null,
+      };
+
+      await setDoc(doc(db, "users", uid), newUser);
+      setCurrentUser(newUser);
+    } catch (error) {
+      console.error("Помилка при реєстрації:", error.message);
+    }
   };
 
-  // Need to copy Messages with old nickname
-  const updateUserProfile = (newUserData, setPosts = null) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const posts = JSON.parse(localStorage.getItem("posts")) || [];
+  const updateUserProfile = async (newUserData, setPosts = null) => {
+    try {
+      const usersRef = collection(db, "users");
+      const userQuery = query(usersRef, where("email", "==", newUserData.email));
+      const userSnapshot = await getDocs(userQuery);
 
-    // 1. Update user
-    const updatedUsers = users.map((user) => (user.email === newUserData.email ? mergeUserData(user, newUserData) : user));
-
-    const updatedCurrentUser = updatedUsers.find((u) => u.email === newUserData.email);
-
-    // 2. Update user posts
-    const updatedPosts = posts.map((post) => {
-      if (post.author.email === newUserData.email) {
-        return {
-          ...post,
-          author: {
-            ...post.author,
-            name: newUserData.name,
-            nickname: newUserData.nickname,
-            profileImage: newUserData.profileImage,
-          },
-        };
+      if (userSnapshot.empty) {
+        console.error("Користувача не знайдено");
+        return false;
       }
-      return post;
-    });
 
-    if (typeof setPosts === "function") {
-      setPosts(updatedPosts);
+      const userDoc = userSnapshot.docs[0];
+      const mergedUser = mergeUserData(userDoc.data(), newUserData);
+
+      await updateDoc(userDoc.ref, mergedUser);
+
+      if (setCurrentUser) {
+        setCurrentUser({ ...mergedUser, id: userDoc.id });
+        localStorage.setItem("currentUser", JSON.stringify({ ...mergedUser, id: userDoc.id }));
+      }
+
+      const postsRef = collection(db, "posts");
+      const postsQuery = query(postsRef, where("author.email", "==", newUserData.email));
+      const postsSnapshot = await getDocs(postsQuery);
+
+      const updatedPosts = await Promise.all(
+        postsSnapshot.docs.map(async (postDoc) => {
+          const post = postDoc.data();
+          const updatedPost = {
+            ...post,
+            author: {
+              ...post.author,
+              name: newUserData.name,
+              nickname: newUserData.nickname,
+              profileImage: newUserData.profileImage,
+            },
+          };
+          await updateDoc(postDoc.ref, updatedPost);
+          return { ...updatedPost, id: postDoc.id };
+        })
+      );
+
+      if (typeof setPosts === "function") {
+        setPosts(updatedPosts);
+      }
+
+      return mergedUser;
+    } catch (error) {
+      console.error("Помилка оновлення профілю:", error);
+      return false;
+    }
+  };
+
+  const updateUser = async (newUserData, setCurrentUser) => {
+    try {
+      const usersRef = collection(db, "users");
+
+      // Знаходимо користувача по email
+      const userQuery = query(usersRef, where("email", "==", newUserData.email));
+      const querySnapshot = await getDocs(userQuery);
+
+      if (querySnapshot.empty) {
+        console.error("Користувача не знайдено");
+        return;
+      }
+
+      const userDoc = querySnapshot.docs[0];
+
+      // Оновлюємо документ користувача
+      await updateDoc(doc(db, "users", userDoc.id), newUserData);
+
+      // Оновлюємо поточного користувача в React Context
+      if (typeof setCurrentUser === "function") {
+        setCurrentUser({ ...newUserData, id: userDoc.id });
+      }
+    } catch (error) {
+      console.error("Помилка при оновленні користувача:", error);
+    }
+  };
+
+  const verifyOldPassword = async (email, oldPassword) => {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return { success: false, message: "Користувача не знайдено" };
     }
 
-    // 3. save to localStorage
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-    localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
-    setCurrentUser(updatedCurrentUser);
-  };
+    const userDoc = snapshot.docs[0];
+    const userData = userDoc.data();
 
-  const updateUser = (newUserData) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-
-    const updatedUsers = users.map((user) => (user.email === newUserData.email ? newUserData : user));
-
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem("currentUser", JSON.stringify(newUserData));
-    setCurrentUser(newUserData);
-  };
-
-  const verifyOldPassword = (email, oldPassword) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find((user) => user.email === email);
-    if (!user) return { success: false, message: "Користувача не знайдено" };
-    if (user.password !== oldPassword) return { success: false, message: "Старий пароль невірний" };
+    if (userData.password !== oldPassword) {
+      return { success: false, message: "Старий пароль невірний" };
+    }
 
     return { success: true };
   };
 
-  const changePassword = (email, oldPassword, newPassword) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-
-    const userIndex = users.findIndex((user) => user.email === email);
-
-    if (userIndex === -1) return { success: false, message: "Користувача не знайдено" };
-
+  const changePassword = async (email, oldPassword, newPassword, currentUser, setCurrentUser) => {
     if (newPassword.length < 6) {
       return { success: false, message: "Пароль надто короткий" };
     }
 
-    if (users[userIndex].password !== oldPassword) {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return { success: false, message: "Користувача не знайдено" };
+    }
+
+    const userDoc = snapshot.docs[0];
+    const userData = userDoc.data();
+
+    if (userData.password !== oldPassword) {
       return { success: false, message: "Старий пароль невірний" };
     }
 
-    users[userIndex].password = newPassword;
+    // Оновлення пароля в Firestore
+    await updateDoc(doc(db, "users", userDoc.id), { password: newPassword });
 
+    // Оновлення локального користувача, якщо це він
     if (currentUser?.email === email) {
       const updatedUser = { ...currentUser, password: newPassword };
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
     }
-
-    localStorage.setItem("users", JSON.stringify(users));
 
     return { success: true, message: "Пароль успішно змінено" };
   };
 
-  const followUser = (nicknameToUnfollow) => {
-    if (!currentUser || !nicknameToUnfollow || nicknameToUnfollow === currentUser.nickname) return;
+  const followUser = async (nicknameToFollow, currentUser, setCurrentUser) => {
+    if (!currentUser || !nicknameToFollow || nicknameToFollow === currentUser.nickname) return;
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const usersRef = collection(db, "users");
 
-    const updatedUsers = users.map((user) => {
-      if (user.nickname === currentUser.nickname) {
-        if (!user.following.includes(nicknameToUnfollow)) {
-          return { ...user, following: [...user.following, nicknameToUnfollow] };
-        }
-      }
-      if (user.nickname === nicknameToUnfollow) {
-        if (!user.followers.includes(currentUser.nickname)) {
-          return { ...user, followers: [...user.followers, currentUser.nickname] };
-        }
-      }
-      return user;
+    // Завантажуємо користувачів, що беруть участь
+    const q = query(usersRef, where("nickname", "in", [currentUser.nickname, nicknameToFollow]));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return;
+
+    const users = {};
+    snapshot.docs.forEach((doc) => {
+      users[doc.data().nickname] = { id: doc.id, data: doc.data() };
     });
-    const updatedCurrentUser = updatedUsers.find((u) => u.nickname === currentUser.nickname);
 
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
+    // Оновлюємо currentUser.following
+    const currentUserData = users[currentUser.nickname].data;
+    if (!currentUserData.following.includes(nicknameToFollow)) {
+      currentUserData.following.push(nicknameToFollow);
+      await updateDoc(doc(db, "users", users[currentUser.nickname].id), { following: currentUserData.following });
+    }
 
-    setCurrentUser(updatedCurrentUser);
+    // Оновлюємо користувача, якого підписуються followers
+    const followedUserData = users[nicknameToFollow].data;
+    if (!followedUserData.followers.includes(currentUser.nickname)) {
+      followedUserData.followers.push(currentUser.nickname);
+      await updateDoc(doc(db, "users", users[nicknameToFollow].id), { followers: followedUserData.followers });
+    }
+
+    // Оновлюємо локальний стан currentUser
+    setCurrentUser({ ...currentUser, following: currentUserData.following });
   };
 
-  const unfollowUser = (nicknameToUnfollow) => {
+  const unfollowUser = async (nicknameToUnfollow, currentUser, setCurrentUser) => {
     if (!currentUser || nicknameToUnfollow === currentUser.nickname) return;
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const usersRef = collection(db, "users");
 
-    const updatedUsers = users.map((user) => {
-      if (user.nickname === currentUser.nickname) {
-        return { ...user, following: user.following.filter((n) => n !== nicknameToUnfollow) };
-      }
-      if (user.nickname === nicknameToUnfollow) {
-        return { ...user, followers: user.followers.filter((n) => n !== currentUser.nickname) };
-      }
-      return user;
+    // Завантажуємо користувачів, що беруть участь
+    const q = query(usersRef, where("nickname", "in", [currentUser.nickname, nicknameToUnfollow]));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return;
+
+    const users = {};
+    snapshot.docs.forEach((doc) => {
+      users[doc.data().nickname] = { id: doc.id, data: doc.data() };
     });
 
-    const updatedCurrentUser = updatedUsers.find((u) => u.nickname === currentUser.nickname);
+    // Оновлюємо currentUser.following
+    const currentUserData = users[currentUser.nickname].data;
+    currentUserData.following = currentUserData.following.filter((n) => n !== nicknameToUnfollow);
+    await updateDoc(doc(db, "users", users[currentUser.nickname].id), { following: currentUserData.following });
 
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
-    setCurrentUser(updatedCurrentUser);
+    // Оновлюємо користувача, якого відписуємо followers
+    const unfollowedUserData = users[nicknameToUnfollow].data;
+    unfollowedUserData.followers = unfollowedUserData.followers.filter((n) => n !== currentUser.nickname);
+    await updateDoc(doc(db, "users", users[nicknameToUnfollow].id), { followers: unfollowedUserData.followers });
+
+    // Оновлюємо локальний стан currentUser
+    setCurrentUser({ ...currentUser, following: currentUserData.following });
+  };
+
+  const findUserByNickname = async (nickname) => {
+    const q = query(collection(db, "users"), where("nickname", "==", nickname));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.empty ? null : querySnapshot.docs[0].data();
   };
 
   const isOwner = (nickname) => currentUser?.nickname === nickname;
@@ -258,6 +344,7 @@ export const AuthProvider = ({ children }) => {
         unfollowUser,
         isOwner,
         ownerNickName,
+        findUserByNickname,
       }}
     >
       {children}

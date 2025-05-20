@@ -5,7 +5,7 @@ import { Button } from "./../../../components/Button/Button";
 
 export const ChatActions = ({ currentUser, chatId, isEditing, setIsEditing, setSendText, sendText, messageIdToEdit }) => {
   //  functions from context
-  const { sendMessage, editMessage, deleteMessage, deleteChatWithMessages } = useMessages();
+  const { sendMessage, editMessage } = useMessages();
 
   // Send message to FireBase
   const handleSendMessage = () => {

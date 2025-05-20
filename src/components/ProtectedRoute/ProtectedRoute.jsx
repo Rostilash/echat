@@ -1,10 +1,9 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
 
 export const ProtectedRoute = ({ children, requiredRole }) => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-  if (!currentUser) {
+  if (!currentUser || !currentUser.isLoggedIn) {
     return <Navigate to="/echat/register/me" replace />;
   }
 
