@@ -14,11 +14,11 @@ import { Reposts } from "./Tabs/Reposts";
 
 export const Profile = () => {
   // URL params
-  const { nickname: routeNickname } = useParams();
+  const { uid } = useParams();
   const navigate = useNavigate();
 
   // load user & posts from localStorage
-  const { currentUser, updateUser, ownerNickName, findUserByNickname } = useAuth();
+  const { currentUser, updateUser, isOwner, findUserByUid } = useAuth();
   const { posts, setPosts } = useOutletContext();
 
   const [user, setUser] = useState(null);
@@ -26,20 +26,13 @@ export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (!routeNickname || currentUser?.nickname === routeNickname) {
-      setUser(currentUser); // if Own profile.
-    } else {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const found = users.find((u) => u.nickname === routeNickname);
-      setUser(found || null);
+    const loadUser = async () => {
+      const userData = await findUserByUid(uid);
+      setUser(userData);
+    };
 
-      // if (!found) {
-      //   setTimeout(() => {
-      //     navigate("/echat/");
-      //   }, 2000);
-      // }
-    }
-  }, [routeNickname, currentUser]);
+    if (uid) loadUser();
+  }, [uid]);
 
   if (!user) {
     return (
@@ -50,10 +43,10 @@ export const Profile = () => {
   }
 
   // Posts OutletContent
-  const userPosts = (posts || []).filter((post) => post.author.email === user?.email);
+  const userPosts = (posts || []).filter((post) => post.authorId === user?.id);
 
   // If user email = current user = you are the owner
-  const isOwner = currentUser?.email === user?.email;
+  // const owner =isOwner(uid);
 
   const tabComponents = {
     posts: Posts,

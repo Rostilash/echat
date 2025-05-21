@@ -5,10 +5,13 @@ import { ChatSideBar } from "./ChatSideBar";
 import { ChatHeader } from "./СhatHeader.jsx";
 import { ChatBody } from "./ChatBody.jsx";
 import { ChatActions } from "./ChatActions";
+import { useMessages } from "../../../context/MessageContext.jsx";
 
-export const Messages = ({ users, chatId }) => {
+export const Messages = ({ UrlID }) => {
   // Get currentUser from context
-  const { currentUser, ownerNickName: isOwner } = useAuth();
+  const { currentUser, ownerUid } = useAuth();
+  // get chat messages and chat users
+  const { messages, allUsers, deleteAllUserChats } = useMessages();
   // Open the eddit page
   const [isEditing, setIsEditing] = useState(false);
   // Take information of message (id , text, edit true)
@@ -18,12 +21,12 @@ export const Messages = ({ users, chatId }) => {
   // Searching in chat
   const [filteredChat, setFilteredChat] = useState([]);
   // Take information about selected user by URL chatId
-  const selectedUser = users.find((u) => u.nickname === chatId);
+  const selectedUser = allUsers.find((u) => u.id === UrlID);
 
   return (
     <div className={style.container}>
       {/* Left Sidebar */}
-      <ChatSideBar users={users} />
+      <ChatSideBar users={allUsers} deleteAllUserChats={deleteAllUserChats} messages={messages} />
       {/* Right Chat Area */}
       <div className={style.chatArea}>
         {/* need to add messages */}
@@ -31,7 +34,7 @@ export const Messages = ({ users, chatId }) => {
         {/* Main chat body page (setEdit by id)*/}
         <ChatBody
           filteredChat={filteredChat}
-          isOwner={isOwner}
+          isOwnId={ownerUid}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           setMessageIdToEdit={setMessageIdToEdit}
@@ -40,7 +43,7 @@ export const Messages = ({ users, chatId }) => {
         {/* Text acitons (add,confirm edit,delete)  */}
         <ChatActions
           currentUser={currentUser}
-          chatId={chatId}
+          chatId={UrlID}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           setSendText={setSendText}

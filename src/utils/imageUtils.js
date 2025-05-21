@@ -7,7 +7,9 @@ export const compressImage = (file, maxSizeKB = 100) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        const scale = Math.min(1, 500 / img.width);
+        const maxDimension = 500;
+        const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -18,7 +20,7 @@ export const compressImage = (file, maxSizeKB = 100) => {
           base64 = canvas.toDataURL("image/jpeg", quality);
           const sizeKB = Math.round((base64.length * 3) / 4 / 1024);
 
-          if (sizeKB <= maxSizeKB || quality < 0.2) {
+          if (sizeKB <= maxSizeKB || quality < 0.1) {
             resolve(base64);
           } else {
             quality -= 0.05;
@@ -28,10 +30,10 @@ export const compressImage = (file, maxSizeKB = 100) => {
 
         tryCompress();
       };
-      img.onerror = reject;
+      img.onerror = () => reject(new Error("Неможливо завантажити зображення"));
       img.src = event.target.result;
     };
-    reader.onerror = reject;
+    reader.onerror = () => reject(new Error("Помилка зчитування файлу"));
     reader.readAsDataURL(file);
   });
 };

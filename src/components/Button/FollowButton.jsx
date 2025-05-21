@@ -1,17 +1,17 @@
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "./Button";
 
-export const FollowButton = ({ nickname }) => {
+export const FollowButton = ({ userId }) => {
   const { currentUser, followUser, unfollowUser } = useAuth();
 
-  if (!currentUser || currentUser.nickname === nickname) return;
-  const isFollowing = currentUser.following.includes(nickname);
+  if (!currentUser || currentUser.userId === userId) return;
+  const isFollowing = currentUser.following.includes(userId);
 
   const handleClickFollow = () => {
     if (isFollowing) {
-      unfollowUser(nickname);
+      unfollowUser(userId);
     } else {
-      followUser(nickname);
+      followUser(userId);
     }
   };
 

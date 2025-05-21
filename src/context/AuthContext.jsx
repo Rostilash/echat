@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { collection, query, where, getFirestore, doc, setDoc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
+import { collection, query, where, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { mergeUserData } from "../utils/mergeUserData";
@@ -34,14 +34,21 @@ export const AuthProvider = ({ children }) => {
     return false;
   };
 
-  const logout = () => {
-    const updatedUser = { ...currentUser, isLoggedIn: false };
-    localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+  const logout = async () => {
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, {
+        isLoggedIn: false,
+        lastLogin: serverTimestamp(),
+      });
+    } catch (err) {
+      console.error("Не вдалося оновити lastLogin:", err);
+    }
+
+    localStorage.removeItem("currentUser");
     setCurrentUser(null);
 
-    // setTimeout(() => {
     navigate("/echat/register/me");
-    // }, 1000);
   };
 
   const generateUniqueNickname = async (baseName) => {
@@ -80,8 +87,9 @@ export const AuthProvider = ({ children }) => {
         ...userData,
         uid,
         isLoggedIn: true,
-        profileImage: userData.profileImage || "https://cdn-icons-png.flaticon.com/128/1837/1837645.png",
-        headerImage: "",
+        profileImage: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png" || "https://cdn-icons-png.flaticon.com/128/456/456141.png",
+        headerImage:
+          "https://images.unsplash.com/photo-1747629382448-fde8a1fc8391?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw1MHx8fGVufDB8fHx8fA%3D%3D",
         createdAt: serverTimestamp(),
         region: "",
 
@@ -175,11 +183,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateUser = async (newUserData, setCurrentUser) => {
+  const updateUser = async (newUserData) => {
     try {
       const usersRef = collection(db, "users");
 
-      // Знаходимо користувача по email
+      // foun user by email
       const userQuery = query(usersRef, where("email", "==", newUserData.email));
       const querySnapshot = await getDocs(userQuery);
 
@@ -197,6 +205,7 @@ export const AuthProvider = ({ children }) => {
       if (typeof setCurrentUser === "function") {
         setCurrentUser({ ...newUserData, id: userDoc.id });
       }
+      debugger;
     } catch (error) {
       console.error("Помилка при оновленні користувача:", error);
     }
@@ -254,84 +263,97 @@ export const AuthProvider = ({ children }) => {
     return { success: true, message: "Пароль успішно змінено" };
   };
 
-  const followUser = async (nicknameToFollow, currentUser, setCurrentUser) => {
-    if (!currentUser || !nicknameToFollow || nicknameToFollow === currentUser.nickname) return;
+  const followUser = async (targetUserId) => {
+    if (!currentUser || currentUser.userId === targetUserId) return;
 
-    const usersRef = collection(db, "users");
+    const currentRef = doc(db, "users", currentUser.userId);
+    const targetRef = doc(db, "users", targetUserId);
 
-    // Завантажуємо користувачів, що беруть участь
-    const q = query(usersRef, where("nickname", "in", [currentUser.nickname, nicknameToFollow]));
+    const targetSnap = await getDoc(targetRef);
+    if (!targetSnap.exists()) return;
+
+    const targetUser = targetSnap.data();
+
+    // Оновлення списків
+    const updatedFollowing = [...(currentUser.following || []), targetUserId];
+    const updatedFollowers = [...(targetUser.followers || []), currentUser.userId];
+
+    await Promise.all([updateDoc(currentRef, { following: updatedFollowing }), updateDoc(targetRef, { followers: updatedFollowers })]);
+
+    const updatedUser = { ...currentUser, following: updatedFollowing };
+    updateUser(updatedUser);
+  };
+
+  const unfollowUser = async (targetUserId) => {
+    if (!currentUser || currentUser.userId === targetUserId) return;
+
+    const currentRef = doc(db, "users", currentUser.userId);
+    const targetRef = doc(db, "users", targetUserId);
+
+    const targetSnap = await getDoc(targetRef);
+    if (!targetSnap.exists()) return;
+
+    const targetUser = targetSnap.data();
+
+    const updatedFollowing = currentUser.following.filter((uid) => uid !== targetUserId);
+    const updatedFollowers = (targetUser.followers || []).filter((uid) => uid !== currentUser.userId);
+
+    await Promise.all([updateDoc(currentRef, { following: updatedFollowing }), updateDoc(targetRef, { followers: updatedFollowers })]);
+
+    const updatedUser = { ...currentUser, following: updatedFollowing };
+    updateUser(updatedUser);
+  };
+
+  const findUserByUid = async (uid) => {
+    if (!uid) return null;
+    const q = query(collection(db, "users"), where("uid", "==", uid));
     const snapshot = await getDocs(q);
+    return snapshot.empty ? null : snapshot.docs[0].data();
+  };
 
-    if (snapshot.empty) return;
+  const deleteCurrentUser = async (emailConfirmation) => {
+    if (!currentUser) return { success: false, message: "Користувача не знайдено." };
 
-    const users = {};
-    snapshot.docs.forEach((doc) => {
-      users[doc.data().nickname] = { id: doc.id, data: doc.data() };
-    });
+    // 1️⃣  Перевірка локальних даних
+    if (currentUser.email.toLowerCase() !== emailConfirmation.trim().toLowerCase()) return { success: false, message: "E-mail не збігається." };
 
-    // Оновлюємо currentUser.following
-    const currentUserData = users[currentUser.nickname].data;
-    if (!currentUserData.following.includes(nicknameToFollow)) {
-      currentUserData.following.push(nicknameToFollow);
-      await updateDoc(doc(db, "users", users[currentUser.nickname].id), { following: currentUserData.following });
+    try {
+      // 2️⃣  Додаткова перевірка у Firestore
+      const userRef = doc(db, "users", currentUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) return { success: false, message: "Документ користувача не знайдено." };
+
+      const firestoreEmail = userSnap.data().email;
+      if (firestoreEmail.toLowerCase() !== emailConfirmation.trim().toLowerCase())
+        return { success: false, message: "E-mail у Firestore не збігається." };
+
+      // 3️⃣  Видалення документа
+      await deleteDoc(userRef);
+
+      // 4️⃣  Очищення локального стану
+      localStorage.removeItem("currentUser");
+      setCurrentUser(null);
+      navigate("/echat/register/me");
+
+      return { success: true };
+    } catch (error) {
+      console.error("Помилка при видаленні користувача:", error);
+      return { success: false, message: "Не вдалося видалити користувача." };
     }
-
-    // Оновлюємо користувача, якого підписуються followers
-    const followedUserData = users[nicknameToFollow].data;
-    if (!followedUserData.followers.includes(currentUser.nickname)) {
-      followedUserData.followers.push(currentUser.nickname);
-      await updateDoc(doc(db, "users", users[nicknameToFollow].id), { followers: followedUserData.followers });
-    }
-
-    // Оновлюємо локальний стан currentUser
-    setCurrentUser({ ...currentUser, following: currentUserData.following });
   };
-
-  const unfollowUser = async (nicknameToUnfollow, currentUser, setCurrentUser) => {
-    if (!currentUser || nicknameToUnfollow === currentUser.nickname) return;
-
-    const usersRef = collection(db, "users");
-
-    // Завантажуємо користувачів, що беруть участь
-    const q = query(usersRef, where("nickname", "in", [currentUser.nickname, nicknameToUnfollow]));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) return;
-
-    const users = {};
-    snapshot.docs.forEach((doc) => {
-      users[doc.data().nickname] = { id: doc.id, data: doc.data() };
-    });
-
-    // Оновлюємо currentUser.following
-    const currentUserData = users[currentUser.nickname].data;
-    currentUserData.following = currentUserData.following.filter((n) => n !== nicknameToUnfollow);
-    await updateDoc(doc(db, "users", users[currentUser.nickname].id), { following: currentUserData.following });
-
-    // Оновлюємо користувача, якого відписуємо followers
-    const unfollowedUserData = users[nicknameToUnfollow].data;
-    unfollowedUserData.followers = unfollowedUserData.followers.filter((n) => n !== currentUser.nickname);
-    await updateDoc(doc(db, "users", users[nicknameToUnfollow].id), { followers: unfollowedUserData.followers });
-
-    // Оновлюємо локальний стан currentUser
-    setCurrentUser({ ...currentUser, following: currentUserData.following });
-  };
-
-  const findUserByNickname = async (nickname) => {
-    const q = query(collection(db, "users"), where("nickname", "==", nickname));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.empty ? null : querySnapshot.docs[0].data();
-  };
-
-  const isOwner = (nickname) => currentUser?.nickname === nickname;
 
   const ownerNickName = currentUser?.nickname;
+  const ownerUid = currentUser?.id;
+
+  const isOwner = (id) => currentUser?.id === id;
 
   return (
     <AuthContext.Provider
       value={{
         currentUser,
+        ownerNickName,
+        ownerUid,
         login,
         logout,
         verifyOldPassword,
@@ -343,8 +365,8 @@ export const AuthProvider = ({ children }) => {
         followUser,
         unfollowUser,
         isOwner,
-        ownerNickName,
-        findUserByNickname,
+        findUserByUid,
+        deleteCurrentUser,
       }}
     >
       {children}

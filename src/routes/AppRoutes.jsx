@@ -31,13 +31,13 @@ export const AppRoutes = () => {
         <Route path="news" element={<News />} />
         <Route path="top-places" element={<TopPlaces />} />
         <Route path="movies" element={<Movies />} />
-        <Route path="profile/:nickname" element={<Profile />} />
+        <Route path="profile/:uid" element={<Profile />} />
         <Route path="weather" element={<Weather />} />
       </Route>
 
       {/* for messages */}
       <Route path="/echat/message/" element={<AuthLayout />}>
-        <Route path=":nickname" element={<MessagesWithProvider />} />
+        <Route path=":uid" element={<MessagesWithProvider />} />
       </Route>
 
       {/* Loading page without header and footer  */}

@@ -2,29 +2,24 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { Button } from "../../../components/Button/Button";
 import { FollowButton } from "../../../components/Button/FollowButton";
+import { createMutualChatConnection } from "../../../firebase/chatHelpers";
 
-export const UserLink = ({ nickname }) => {
+export const UserLink = ({ userId }) => {
   const navigate = useNavigate();
 
   const { currentUser, updateUser } = useAuth();
 
-  const handleClickMessage = () => {
-    if (!currentUser) return;
+  const handleClickMessage = async () => {
+    if (!currentUser || !userId) return;
 
-    // Checking if there is a nickname in chats
-    if (!currentUser.chatUsers.includes(nickname)) {
-      // Create a new object with the updated chatUsers
-      const updatedUser = {
-        ...currentUser,
-        chatUsers: [...currentUser.chatUsers, nickname],
-      };
+    // Створюємо зв’язок між користувачами
+    const updatedUser = await createMutualChatConnection(currentUser, userId);
 
-      // Save UserInfo to localStorage
-      updateUser(updatedUser);
+    // Redirect to user with this nickname
+    if (updatedUser) {
+      await updateUser(updatedUser); // оновити контекст, якщо треба
+      navigate(`/echat/message/${userId}`);
     }
-
-    // Redirecto to user with this nickname
-    navigate(`/echat/message/${currentUser.nickname}`);
   };
 
   return (
@@ -32,7 +27,7 @@ export const UserLink = ({ nickname }) => {
       <Button onClick={handleClickMessage} variant="default">
         Написати повідомлення
       </Button>
-      <FollowButton nickname={nickname} />
+      <FollowButton userId={userId} />
     </div>
   );
 };

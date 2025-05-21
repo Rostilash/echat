@@ -22,8 +22,8 @@ const monthNames = {
 const formatDate = (date) => date.toISOString().split("T")[0]; // "YYYY-MM-DD"
 
 export const Home = () => {
-  const { currentUser, updateUserProfile } = useAuth();
-  const { posts, setPosts, selectedFilter, sendMessage } = useOutletContext();
+  const { currentUser, updateUserProfile, findUserByUid } = useAuth();
+  const { posts, setPosts, selectedFilter } = useOutletContext();
 
   const today = new Date();
   const formattedToday = formatDate(today);
@@ -104,13 +104,7 @@ export const Home = () => {
       comments: [],
       tags: extractTags(text) || [],
       scheduledFor: scheduledDate || formattedToday,
-      author: {
-        id: currentUser.id,
-        name: currentUser.name,
-        nickname: currentUser.nickname || currentUser.id,
-        profileImage: currentUser.profileImage || "",
-        email: currentUser.email,
-      },
+      authorId: currentUser.id || currentUser.uid,
     };
 
     const updatedPosts = [newPost, ...posts];

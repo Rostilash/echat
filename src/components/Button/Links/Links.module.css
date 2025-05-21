@@ -1,5 +1,5 @@
 .backLink {
   text-decoration: none;
-  color: #007bff;
+  color: var(--text-color);
   font-weight: bold;
 }

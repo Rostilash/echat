@@ -1,5 +1,5 @@
 import style from "./PostItem.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PostActions } from "./PostActions";
 import { PostDropdown } from "./PostDropdown";
 import { PostImage } from "./PostImage";
@@ -7,11 +7,19 @@ import { AddComments } from "../comments/AddComments";
 import { Comments } from "../comments/Comments";
 import { UserImage } from "./UserImage";
 import { PostHeader } from "./PostHeader";
+import { useAuth } from "../../../hooks/useAuth";
 
 export const PostItem = ({ post, posts, setPosts, currentUser, updateUser }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
-  const isOwner = post?.author.nickname === currentUser?.nickname;
+  const { isOwner, findUserByUid } = useAuth();
+  const [postAuthor, setPostAuthor] = useState(null);
+
+  useEffect(() => {
+    if (post?.authorId) {
+      findUserByUid(post.authorId).then(setPostAuthor);
+    }
+  }, [post]);
 
   // delete post
   const handleDelete = () => {
@@ -27,9 +35,9 @@ export const PostItem = ({ post, posts, setPosts, currentUser, updateUser }) => 
     <div className={`${style.post} ${isDeleting ? style.fadeOut : ""}`}>
       {/* Header (name,image,nickname,time) */}
       <div className={style.post_header}>
-        <UserImage post={post} currentUser={currentUser} />
+        <UserImage author={postAuthor} />
 
-        <PostHeader post={post} />
+        <PostHeader post={post} author={postAuthor} />
 
         {/* Drop down menu */}
         {isOwner && (

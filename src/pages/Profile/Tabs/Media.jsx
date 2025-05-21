@@ -2,7 +2,7 @@ import { PostItem } from "../../Home/components/PostItem";
 import style from "../Profile.module.css";
 
 export const Media = ({ posts, user, setPosts, currentUser, updatePost }) => {
-  const mediaPosts = (posts || []).filter((post) => post.author.email === user.email && post.media);
+  const mediaPosts = (posts || []).filter((post) => post.authorId === user.id && post.media);
 
   if (mediaPosts.length === 0) {
     return <p className={style.no_posts_message}>У вас ще немає жодного медіа...</p>;

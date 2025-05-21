@@ -4,7 +4,7 @@ import { formatFullDateTime } from "../../../utils/dateUtils";
 import style from "../styles/Messages.module.css";
 import { Button } from "./../../../components/Button/Button";
 
-export const ChatBody = ({ isOwner, setIsEditing, isEditing, filteredChat, setMessageIdToEdit, setSendText }) => {
+export const ChatBody = ({ isOwnId, setIsEditing, isEditing, filteredChat, setMessageIdToEdit, setSendText }) => {
   //  functions from context
   const { messages, loading, deleteMessage } = useMessages();
 
@@ -14,22 +14,23 @@ export const ChatBody = ({ isOwner, setIsEditing, isEditing, filteredChat, setMe
     setSendText(text);
     setIsEditing(true);
   };
-
+  // console.log(messages);
   return (
     <div className={style.chatBody}>
       {!loading ? (
         (filteredChat.length > 0 ? filteredChat : messages).map((msg, index) => (
-          <div key={index} className={msg.from === isOwner ? style.myMessage : style.theirMessage}>
+          <div key={index} className={msg.from === isOwnId ? style.myMessage : style.theirMessage}>
             <p>
-              {msg.content} {/* Delete the message */}
-              {/* {isOwner && (
+              {msg.content}
+              {/* Delete the message */}
+              {/* {msg.from === isOwnId  && (
                 <Button onClick={() => deleteMessage(msg.id)} variant="danger" size="small">
                   x
                 </Button>
               )} */}
             </p>
             <span className={style.timestamp}>{formatFullDateTime(msg.timestamp)}</span>{" "}
-            {isOwner && !isEditing && <button onClick={() => handleGetInfo(msg.id, msg.content)}>Редагувати</button>}
+            {msg.from === isOwnId && !isEditing && <button onClick={() => handleGetInfo(msg.id, msg.content)}>Редагувати</button>}
           </div>
         ))
       ) : (

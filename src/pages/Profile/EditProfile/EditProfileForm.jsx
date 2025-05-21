@@ -11,14 +11,12 @@ import { ImageUpload } from "./ImageUpload";
 
 export const EditProfileForm = ({ setPosts }) => {
   // useContext our user
-  const { currentUser, updateUserProfile, updateUser } = useAuth();
+  const { currentUser, updateUserProfile, updateUser, deleteCurrentUser } = useAuth();
 
   const [fadeOut, setFadeOut] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-
   const [showModal, setShowModal] = useState(false);
-
   const [form, setForm] = useState({
     name: currentUser?.name || "",
     password: "",
@@ -42,7 +40,7 @@ export const EditProfileForm = ({ setPosts }) => {
   }
 
   const navigate = useNavigate();
-  const { profileImage, headerImage } = currentUser;
+  const { profileImage, headerImage, id: uid } = currentUser;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,6 +115,25 @@ export const EditProfileForm = ({ setPosts }) => {
     { name: "birthdate", placeholder: "Дата народження", type: "date" },
   ];
 
+  // need to change it later
+  const handleDelete = async () => {
+    const emailConfirmation = prompt("Для підтвердження введіть свій email:");
+
+    if (!emailConfirmation) return;
+
+    const confirmed = window.confirm("Ви впевнені, що хочете видалити обліковий запис? Цю дію не можна скасувати!");
+
+    if (!confirmed) return;
+
+    const { success, message } = await deleteCurrentUser(emailConfirmation);
+
+    if (success) {
+      alert("Обліковий запис успішно видалено.");
+    } else {
+      alert(`Помилка: ${message}`);
+    }
+  };
+
   return (
     <div className={style.profile}>
       <h1 style={{ position: "relative", zIndex: "1000", color: "var(--text-color)" }}>Редагувати профіль</h1>
@@ -126,8 +143,10 @@ export const EditProfileForm = ({ setPosts }) => {
           <ImageUpload
             uploadKey="profileImage"
             maxSizeKB={50}
+            currentUser={currentUser}
             image={profileImage}
             updateUser={updateUser}
+            userUid={uid}
             iconPath="https://cdn-icons-png.flaticon.com/128/13407/13407013.png"
           />
         </div>
@@ -136,11 +155,11 @@ export const EditProfileForm = ({ setPosts }) => {
           <ImageUpload
             uploadKey="headerImage"
             maxSizeKB={100}
-            image={
-              headerImage ||
-              "https://images.unsplash.com/photo-1746263658731-469853340643?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D"
-            }
+            currentUser={currentUser}
+            image={headerImage}
             updateUser={updateUser}
+            userUid={uid}
+            iconPath="https://cdn-icons-png.flaticon.com/128/13407/13407013.png"
           />
         </div>
       </div>
@@ -174,6 +193,11 @@ export const EditProfileForm = ({ setPosts }) => {
 
         <Button type="submit">Зберегти зміни</Button>
       </form>
+
+      {/* delete Current user */}
+      <Button type="text" onClick={handleDelete}>
+        Видалити Аккуант
+      </Button>
     </div>
   );
 };

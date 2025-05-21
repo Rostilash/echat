@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../../hooks/useTheme";
 import { formatFullDateTime } from "../../../utils/dateUtils";
 import { UserLink } from "../../Messages/components/SendMessageToBtn";
+import { ToMainPage } from "./../../../components/Button/Links/ToMainPage";
 
 export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsEditing, isOwner }) => {
   const navigate = useNavigate();
 
-  const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt } = user;
-
+  const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt, id } = user;
   const dayjsFormat = formatFullDateTime(createdAt);
 
   const { theme, toggleTheme } = useTheme();
@@ -29,14 +29,14 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
       </div>
 
       <div className={s.head}>
-        <span className={s.back_arrow} onClick={handleBack}>
-          &#8592;
-        </span>
+        <ToMainPage />
+
         <div className={s.head_user_info}>
           <span className={s.user_name}>{name}</span>
           <span className={s.post_count}>Eчатнув: {postsCount} </span>
         </div>
       </div>
+
       {!isEditing && (
         <>
           <div className={s.body}>
@@ -49,7 +49,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
                   <span className={s.post_count}>@{nickname}</span>
                 </div>
               </div>
-              {!isOwner && <UserLink nickname={nickname} />}
+              {isOwner && <UserLink userId={id} />}
               <div className={s.body_right}>
                 {isOwner && (
                   <Button onClick={onEditClick} variant="empty">

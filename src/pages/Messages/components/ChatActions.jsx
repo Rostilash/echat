@@ -10,10 +10,10 @@ export const ChatActions = ({ currentUser, chatId, isEditing, setIsEditing, setS
   // Send message to FireBase
   const handleSendMessage = () => {
     if (sendText.length > 0) {
-      // firebase context function
+      // Send to FireBase
       sendMessage({
         content: sendText,
-        from: currentUser.nickname,
+        from: currentUser.uid,
         to: chatId,
       });
       setSendText("");

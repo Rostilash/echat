@@ -12,8 +12,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
 
   const [openQuitMenu, setOpenQuitMenu] = useState(false);
 
-  const messages = getUserChats(currentUser?.nickname) || [];
-
+  const messages = getUserChats(currentUser?.id) || [];
   const hasUnread = messages.some((chat) => chat.messages.some((msg) => msg.to === currentUser?.nickname && !msg.isRead));
 
   const handleOpenQuitOption = () => {
@@ -38,11 +37,11 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "messages",
-      path: `/echat/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.nickname}`,
+      path: `/echat/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
       message: "Повідомлення",
-      chatMessage: hasUnread,
+      // chatMessage: hasUnread,
     },
     {
       key: "movies",
@@ -71,7 +70,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     mainLinks.push(
       {
         key: "profile",
-        path: `/echat/profile/${currentUser?.nickname}`,
+        path: `/echat/profile/${currentUser?.id}`,
         handleClick: null,
         image: "https://cdn-icons-png.flaticon.com/128/9068/9068871.png",
         message: "Профіль",
