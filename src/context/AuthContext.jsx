@@ -198,14 +198,13 @@ export const AuthProvider = ({ children }) => {
 
       const userDoc = querySnapshot.docs[0];
 
-      // Оновлюємо документ користувача
+      //Gey user doc
       await updateDoc(doc(db, "users", userDoc.id), newUserData);
 
-      // Оновлюємо поточного користувача в React Context
+      // refresh current user в React Context
       if (typeof setCurrentUser === "function") {
         setCurrentUser({ ...newUserData, id: userDoc.id });
       }
-      debugger;
     } catch (error) {
       console.error("Помилка при оновленні користувача:", error);
     }

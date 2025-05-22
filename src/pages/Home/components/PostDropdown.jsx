@@ -44,7 +44,7 @@ export const PostDropdown = ({ onEdit, onDelete, item, currentUser, messageToDel
       {open && (
         <div className={style.dropdown_buttons}>
           {onEdit && <button onClick={onEdit}>Редагувати</button>}
-          {item.author.email === currentUser?.email && (
+          {item.authorId === currentUser?.id && (
             <button onClick={() => openModal(item.id)}>
               <img src="https://cdn-icons-png.flaticon.com/128/17780/17780343.png" alt="delete" />
               {"   "} Видалити

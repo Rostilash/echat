@@ -56,7 +56,7 @@ export const MessageProvider = ({ children, chatId, currentUser }) => {
   }, [chatId, userId]);
   const [messages, setMessages] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-  const [chatPartner, setChatPartner] = useState(null);
+  const [allMessages, setAllMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Load chat Users
@@ -70,7 +70,6 @@ export const MessageProvider = ({ children, chatId, currentUser }) => {
         const usersFromCache = await fetchUsersByIdsWithCache(currentUser.chatUsers);
         setAllUsers(usersFromCache);
         const partner = usersFromCache.find((u) => u.uid === chatId) || null;
-        setChatPartner(partner);
       } catch (error) {
         console.error("Error loading users:", error);
       }
@@ -92,20 +91,45 @@ export const MessageProvider = ({ children, chatId, currentUser }) => {
       setMessages(msgs);
       setLoading(false);
 
-      // Mark isRead on true
-      const unreadMessages = snapshot.docs.filter((doc) => doc.data().to === userId && doc.data().isRead === false);
+      // Знаходимо непрочитані повідомлення в цьому чаті (адресовані поточному користувачу)
+      const unreadDocs = snapshot.docs.filter((doc) => doc.data().to === userId && doc.data().isRead === false);
 
-      const updatePromises = unreadMessages.map((docSnap) =>
-        updateDoc(doc(db, "chats", userA_userB, "messages", docSnap.id), {
-          isRead: true,
-        })
-      );
+      // Ставимо тільки їх як прочитані
+      const updatePromises = unreadDocs.map((docSnap) => updateDoc(doc(db, "chats", userA_userB, "messages", docSnap.id), { isRead: true }));
 
       await Promise.all(updatePromises);
     });
 
     return () => unsubscribe();
   }, [userA_userB, userId]);
+
+  useEffect(() => {
+    if (!currentUser?.chatUsers?.length || !userId) return;
+
+    const unsubscribes = [];
+
+    currentUser.chatUsers.forEach((partnerId) => {
+      const chatId = generateChatId(userId, partnerId);
+      const messagesRef = collection(db, "chats", chatId, "messages");
+      const q = query(messagesRef, orderBy("timestamp", "asc"));
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const messages = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setAllMessages((prev) => ({
+          ...prev,
+          [partnerId]: messages,
+        }));
+      });
+
+      unsubscribes.push(unsubscribe);
+    });
+
+    return () => unsubscribes.forEach((unsub) => unsub());
+  }, [currentUser, userId]);
 
   //Send message
   const sendMessage = async ({ content, from, to, type = "text" }) => {
@@ -228,8 +252,8 @@ export const MessageProvider = ({ children, chatId, currentUser }) => {
       value={{
         messages,
         loading,
-        chatPartner,
         allUsers,
+        allMessages,
         sendMessage,
         editMessage,
         deleteMessage,

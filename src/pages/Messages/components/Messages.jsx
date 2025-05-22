@@ -11,7 +11,7 @@ export const Messages = ({ UrlID }) => {
   // Get currentUser from context
   const { currentUser, ownerUid } = useAuth();
   // get chat messages and chat users
-  const { messages, allUsers, deleteAllUserChats } = useMessages();
+  const { allUsers, deleteAllUserChats, allMessages } = useMessages();
   // Open the eddit page
   const [isEditing, setIsEditing] = useState(false);
   // Take information of message (id , text, edit true)
@@ -21,12 +21,13 @@ export const Messages = ({ UrlID }) => {
   // Searching in chat
   const [filteredChat, setFilteredChat] = useState([]);
   // Take information about selected user by URL chatId
+
   const selectedUser = allUsers.find((u) => u.id === UrlID);
 
   return (
     <div className={style.container}>
       {/* Left Sidebar */}
-      <ChatSideBar users={allUsers} deleteAllUserChats={deleteAllUserChats} messages={messages} />
+      <ChatSideBar users={allUsers} deleteAllUserChats={deleteAllUserChats} allMessages={allMessages} ownerUid={ownerUid} UrlID={UrlID} />
       {/* Right Chat Area */}
       <div className={style.chatArea}>
         {/* need to add messages */}

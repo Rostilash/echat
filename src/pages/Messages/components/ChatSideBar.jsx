@@ -4,7 +4,7 @@ import { UsersChatNav } from "./UsersChatNav";
 import { Button } from "./../../../components/Button/Button";
 import { useState } from "react";
 
-export const ChatSideBar = ({ users, messages, deleteAllUserChats }) => {
+export const ChatSideBar = ({ users, allMessages, deleteAllUserChats, ownerUid, UrlID }) => {
   // Search users in chat
   const [filteredUsers, setFilteredUsers] = useState([]);
 
@@ -30,11 +30,10 @@ export const ChatSideBar = ({ users, messages, deleteAllUserChats }) => {
       <div className={style.left_side}>
         <div className={style.usersList}>
           {(filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
-            <UsersChatNav key={user.nickname} user={user} messages={messages} />
+            <UsersChatNav key={user.uid} user={user} chatMessage={allMessages[user.uid] || []} currentUserId={ownerUid} UrlID={UrlID} />
           ))}
         </div>
         <div>
-          <h1>для тестування</h1>
           <Button
             onClick={() => {
               if (window.confirm("Ви впевнені, що хочете видалити всі розмови?")) {

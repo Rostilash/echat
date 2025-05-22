@@ -11,12 +11,7 @@ export const AddComments = ({ posts, setPosts, updatePost, postId, currentUser }
       id: Date.now(),
       text: commentValue.trim(),
       timestamp: new Date().toISOString(),
-      author: {
-        name: currentUser.name || "Guest",
-        email: currentUser.email,
-        nickname: currentUser.nickname || currentUser.id,
-        profileImage: currentUser.profileImage || "",
-      },
+      authorId: currentUser.uid,
       likes: 0,
       likedBy: [],
       replies: [],
