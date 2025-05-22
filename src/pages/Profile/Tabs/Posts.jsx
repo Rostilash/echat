@@ -1,7 +1,7 @@
 import style from "../Profile.module.css";
 import { PostItem } from "../../Home/components/PostItem";
 
-export const Posts = ({ post, posts, user, setPosts, currentUser, updateUser }) => {
+export const Posts = ({ posts, user, setPosts, currentUser, updateUser }) => {
   const userPosts = posts.filter((post) => post.authorId === user.id);
 
   if (userPosts.length === 0) {

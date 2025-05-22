@@ -104,7 +104,6 @@ export const AuthProvider = ({ children }) => {
         followers: [],
         following: [],
 
-        posts: [],
         likes: [],
         bookmarks: [],
         repostedBy: [],
@@ -263,9 +262,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const followUser = async (targetUserId) => {
-    if (!currentUser || currentUser.userId === targetUserId) return;
+    if (!currentUser || currentUser?.uid === targetUserId) return;
+    if (currentUser.following?.includes(targetUserId)) return;
 
-    const currentRef = doc(db, "users", currentUser.userId);
+    const currentRef = doc(db, "users", currentUser?.uid);
     const targetRef = doc(db, "users", targetUserId);
 
     const targetSnap = await getDoc(targetRef);
@@ -273,20 +273,26 @@ export const AuthProvider = ({ children }) => {
 
     const targetUser = targetSnap.data();
 
-    // Оновлення списків
-    const updatedFollowing = [...(currentUser.following || []), targetUserId];
-    const updatedFollowers = [...(targetUser.followers || []), currentUser.userId];
+    // Update
+    const updatedFollowing = [...(currentUser?.following || []), targetUserId];
+    const updatedFollowers = [...(targetUser.followers || []), currentUser?.uid];
 
     await Promise.all([updateDoc(currentRef, { following: updatedFollowing }), updateDoc(targetRef, { followers: updatedFollowers })]);
 
     const updatedUser = { ...currentUser, following: updatedFollowing };
     updateUser(updatedUser);
+    localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+    // refresh current user в React Context
+    if (typeof setCurrentUser === "function") {
+      setCurrentUser({ ...updatedUser, id: currentUser?.id });
+    }
   };
 
   const unfollowUser = async (targetUserId) => {
-    if (!currentUser || currentUser.userId === targetUserId) return;
+    if (!currentUser || currentUser.uid === targetUserId) return;
 
-    const currentRef = doc(db, "users", currentUser.userId);
+    const currentRef = doc(db, "users", currentUser.uid);
     const targetRef = doc(db, "users", targetUserId);
 
     const targetSnap = await getDoc(targetRef);
@@ -294,13 +300,17 @@ export const AuthProvider = ({ children }) => {
 
     const targetUser = targetSnap.data();
 
-    const updatedFollowing = currentUser.following.filter((uid) => uid !== targetUserId);
-    const updatedFollowers = (targetUser.followers || []).filter((uid) => uid !== currentUser.userId);
+    const updatedFollowing = (currentUser.following || []).filter((uid) => uid !== targetUserId);
+    const updatedFollowers = (targetUser.followers || []).filter((uid) => uid !== currentUser.uid);
 
     await Promise.all([updateDoc(currentRef, { following: updatedFollowing }), updateDoc(targetRef, { followers: updatedFollowers })]);
 
     const updatedUser = { ...currentUser, following: updatedFollowing };
-    updateUser(updatedUser);
+    localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+    if (typeof setCurrentUser === "function") {
+      setCurrentUser({ ...updatedUser, id: currentUser.uid });
+    }
   };
 
   const findUserByUid = async (uid) => {

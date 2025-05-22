@@ -1,69 +1,45 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button } from "../../../components/Button/Button";
 import style from "./PostForm.module.css";
+import { useRef, useState } from "react";
+import { Button } from "../../../components/Button/Button";
 import { useAuth } from "../../../hooks/useAuth";
-import { compressImage } from "../../../utils/imageUtils";
-import EmojiPicker from "emoji-picker-react";
+import { EmojiPickerWrapper } from "../../../components/EmojiPickerWrapper/EmojiPickerWrapper";
+import { GifPicker } from "./components/GifPicker";
+import { ImagePreview } from "./../../../components/ImagePreview/ImagePreview";
+import { UserImage } from "./../components/UserImage";
+import { PostFormHeader } from "./components/PostFormHeader";
+import { InputField } from "./components/InputField";
+import { Action } from "../components/Action";
+import { useImageUpload } from "../../../hooks/useImageUpload";
 
 export const PostForm = ({ onCreatePost }) => {
   const { currentUser } = useAuth();
-  const profileImage = currentUser?.profileImage;
 
   const [text, setText] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [gifPreview, setGifPreview] = useState(null);
+  const { imageFile, imagePreview, gifPreview, handleLoadImage, clearPreviews, addGifPreview } = useImageUpload();
+
   const [showPicker, setShowPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
 
-  const pickerRef = useRef(null);
-  const gifRef = useRef(null);
+  // made for closing the action icons
   const emojiIconRef = useRef(null);
   const gifIconRef = useRef(null);
 
-  //close emoji & gif window dropdowns
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target) && emojiIconRef.current && !emojiIconRef.current.contains(event.target)) {
-        setShowPicker(false);
-      }
+  // fixes with click outside
+  const handleEmojiToggle = (e) => {
+    e.stopPropagation();
+    setShowPicker((prev) => {
+      if (!prev) setShowGifPicker(false); // if emoji is not open, close gif
+      return !prev;
+    });
+  };
 
-      if (gifRef.current && !gifRef.current.contains(event.target) && gifIconRef.current && !gifIconRef.current.contains(event.target)) {
-        setShowGifPicker(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // load image on project.
-  const handleLoadImage = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const fileType = file.type.split("/")[0];
-
-    if (fileType === "image" && !file.type.includes("gif")) {
-      try {
-        const compressedBase64 = await compressImage(file, 100);
-        setImageFile(file);
-        setImagePreview(compressedBase64);
-      } catch (err) {
-        console.error("Помилка при стисненні зображення:", err);
-      }
-    } else if (file.type.includes("gif")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageFile(file);
-        setGifPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert("Будь ласка, завантажте зображення або gif-файл.");
-    }
+  // fixes with click outside
+  const handleGifToggle = (e) => {
+    e.stopPropagation();
+    setShowGifPicker((prev) => {
+      if (!prev) setShowPicker(false); // if gif is not open, close emoji
+      return !prev;
+    });
   };
 
   // Throw Data to our LocalStorage with onCreatePost
@@ -80,105 +56,49 @@ export const PostForm = ({ onCreatePost }) => {
 
     // refresh
     setText("");
-    setImageFile(null);
-    setImagePreview(null);
-    setGifPreview(null);
+
+    clearPreviews();
   };
 
-  // Add emoji into input
+  // Add emoji into input field
   const onEmojiClick = (emojiData) => {
     setText((prev) => prev + emojiData.emoji);
   };
 
   return (
     <div className={style.home}>
-      <div className={style.top_cart}>
-        <div>
-          <h3>Головна сторінка</h3>
-        </div>
-        <div>
-          <span className={style.icon_image}>
-            <img src="https://cdn-icons-png.flaticon.com/128/899/899531.png" alt="icon" />
-          </span>
-        </div>
-      </div>
+      <PostFormHeader />
 
       <div className={style.bottom_cart}>
-        <div className={style.user_image}>{profileImage && <img src={profileImage} alt="Profile" />}</div>
+        <UserImage author={currentUser} />
+
         <div className={style.user_info}>
-          <div className={style.home_text}>
-            {/* main post text */}
-            <input
-              type="text"
-              placeholder="Що відбувається ?"
-              value={text}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-              onChange={(e) => setText(e.target.value)}
-            />
-          </div>
-          {(imagePreview || gifPreview) && (
-            <div className={style.preview_block}>
-              <div className={style.preview_content}>
-                <img src={imagePreview || gifPreview} alt="Preview" className={style.preview_image} />
-                <button
-                  className={style.remove_button}
-                  onClick={() => {
-                    setImageFile(null);
-                    setImagePreview(null);
-                    setGifPreview(null);
-                  }}
-                >
-                  ✖
-                </button>
-              </div>
-            </div>
-          )}
+          {/* main post text */}
+          <InputField text={text} handleSubmit={handleSubmit} setText={setText} />
+
+          {(imagePreview || gifPreview) && <ImagePreview src={imagePreview || gifPreview} onRemove={clearPreviews} />}
 
           <div className={style.home_actions}>
+            {/* Actions */}
             <div className={style.icons}>
               {/* photo icon */}
-              <span className={style.icon_image} onClick={() => document.getElementById("image-upload").click()}>
-                <img src="https://cdn-icons-png.flaticon.com/128/13123/13123917.png" alt="icon" />
-              </span>
+              <Action
+                handleClick={() => document.getElementById("image-upload").click()}
+                defaultImage={"https://cdn-icons-png.flaticon.com/128/13123/13123917.png"}
+              />
+
               {/* gif icon */}
-              <span
-                ref={gifIconRef}
-                className={style.icon_image}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowGifPicker((prev) => !prev);
-                }}
-              >
-                <img src="https://cdn-icons-png.flaticon.com/128/11633/11633511.png" alt="icon" />
-              </span>
-              {/* question icon */}
-              <span className={style.icon_image}>
-                <img src="https://cdn-icons-png.flaticon.com/128/11846/11846979.png" alt="icon" />
-              </span>
+              <Action ref={gifIconRef} handleClick={handleGifToggle} defaultImage={"https://cdn-icons-png.flaticon.com/128/11633/11633511.png"} />
+
+              {/* question icon need to update it latter for options*/}
+              {/* <Action defaultImage={"https://cdn-icons-png.flaticon.com/128/11846/11846979.png"} /> */}
+
               {/* smile icon */}
-              <span
-                ref={emojiIconRef}
-                className={style.icon_image}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowPicker((prev) => !prev);
-                }}
-              >
-                <img src="https://cdn-icons-png.flaticon.com/128/1182/1182408.png" alt="icon" />
-              </span>
+              <Action ref={emojiIconRef} handleClick={handleEmojiToggle} defaultImage={"https://cdn-icons-png.flaticon.com/128/1182/1182408.png"} />
             </div>
 
             {/* Emoji block */}
-            {showPicker && (
-              <div ref={pickerRef} className={style.emoji_block}>
-                <EmojiPicker onEmojiClick={onEmojiClick} />
-              </div>
-            )}
+            {showPicker && <EmojiPickerWrapper visible={showPicker} onEmojiClick={onEmojiClick} onClose={() => setShowPicker(false)} />}
 
             {/* Hidden file input for image upload */}
             <input id="image-upload" type="file" style={{ display: "none" }} onChange={handleLoadImage} />
@@ -190,22 +110,8 @@ export const PostForm = ({ onCreatePost }) => {
             </div>
           </div>
 
-          {/* gif block */}
-          {showGifPicker && (
-            <div ref={gifRef} className={style.gif_picker_container}>
-              <input
-                type="text"
-                placeholder="Вставте посилання на GIF"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setGifPreview(e.target.value); // вставка GIF через URL
-                    setShowGifPicker(false);
-                  }
-                }}
-              />
-              <p>Натисніть Enter для додавання</p>
-            </div>
-          )}
+          {/* Gif block */}
+          {showGifPicker && <GifPicker visible={showGifPicker} onAddGif={(url) => addGifPreview(url)} onClose={() => setShowGifPicker(false)} />}
         </div>
       </div>
     </div>

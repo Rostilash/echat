@@ -5,7 +5,7 @@ import { UserImage } from "../components/UserImage";
 import { PostHeader } from "../components/PostHeader";
 import { PostDropdown } from "../components/PostDropdown";
 
-export const Comments = ({ currentUser, comment, post, posts, setPosts, postId, isOwner }) => {
+export const Comments = ({ currentUser, comment, post, posts, setPosts, postId }) => {
   const handleLikeComment = () => {
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
@@ -35,12 +35,12 @@ export const Comments = ({ currentUser, comment, post, posts, setPosts, postId, 
   return (
     <div className={style.comment} style={{ borderBottom: "1px solid var(--border-color)" }}>
       <div className={style.comment_header}>
-        <UserImage post={post} />
+        <UserImage author={currentUser} />
         <PostHeader post={post} />
       </div>
 
       {/* Drop down */}
-      {comment.author.email === currentUser.email && (
+      {comment.authorId === currentUser.uid && (
         <PostDropdown
           onDelete={() => handleDeleteComment(comment.id)}
           item={comment}

@@ -1,5 +1,3 @@
-// utils/generateNewsBlocks.js
-
 export function generateNewsBlocks(posts, visibleBlocks = 3) {
   const newsBlocks = [];
 

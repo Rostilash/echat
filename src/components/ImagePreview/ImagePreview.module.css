@@ -1,0 +1,31 @@
+/* Image loader */
+.preview_block {
+  position: relative;
+  margin-top: 10px;
+  max-width: 300px;
+}
+
+.preview_content {
+  position: relative;
+  display: inline-block;
+}
+
+.preview_image {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.remove_button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 20px;
+}

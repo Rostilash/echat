@@ -3,7 +3,7 @@ import { Input } from "../../../components/Input/Input";
 import { Button } from "../../../components/Button/Button";
 import style from "./AddComments.module.css";
 
-export const AddComments = ({ posts, setPosts, updatePost, postId, currentUser }) => {
+export const AddComments = ({ posts, setPosts, postId, currentUser }) => {
   const [commentValue, setCommentValue] = useState("");
 
   const handleAddComment = (postId) => {
@@ -12,6 +12,7 @@ export const AddComments = ({ posts, setPosts, updatePost, postId, currentUser }
       text: commentValue.trim(),
       timestamp: new Date().toISOString(),
       authorId: currentUser.uid,
+      authorImg: currentUser.profileImage,
       likes: 0,
       likedBy: [],
       replies: [],
@@ -29,16 +30,7 @@ export const AddComments = ({ posts, setPosts, updatePost, postId, currentUser }
 
     setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
-
-    // Optional: track commented posts in user activity
-    const updatedCurrentUser = {
-      ...currentUser,
-      posts: currentUser.posts.includes(postId) ? currentUser.posts : [...currentUser.posts, postId], // Add postId to posts if not already in the list
-      updatedAt: new Date().toISOString(),
-    };
-    updatePost(updatedCurrentUser);
-
-    setCommentValue(""); // Clear input
+    setCommentValue("");
   };
 
   return (

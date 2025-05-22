@@ -1,21 +1,20 @@
 import style from "./Profile.module.css";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { Tabs } from "../../components/Tabs/Tabs";
 import { Posts } from "./Tabs/Posts";
 import { Media } from "./Tabs/Media";
 import { Likes } from "./Tabs/Likes";
+import { Reposts } from "./Tabs/Reposts";
 import { Bookmarks } from "./Tabs/Bookmarks";
 import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
 import { EditProfileForm } from "./EditProfile/EditProfileForm";
-import { Tabs } from "../../components/Tabs/Tabs";
-import { useAuth } from "../../hooks/useAuth";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
-import { Reposts } from "./Tabs/Reposts";
 
 export const Profile = () => {
   // URL params
   const { uid } = useParams();
-  const navigate = useNavigate();
 
   // load user & posts from localStorage
   const { currentUser, updateUser, isOwner, findUserByUid } = useAuth();
@@ -30,7 +29,6 @@ export const Profile = () => {
       const userData = await findUserByUid(uid);
       setUser(userData);
     };
-
     if (uid) loadUser();
   }, [uid]);
 
@@ -44,9 +42,6 @@ export const Profile = () => {
 
   // Posts OutletContent
   const userPosts = (posts || []).filter((post) => post.authorId === user?.id);
-
-  // If user email = current user = you are the owner
-  // const owner =isOwner(uid);
 
   const tabComponents = {
     posts: Posts,
@@ -94,7 +89,7 @@ export const Profile = () => {
         postsCount={userPosts.length}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
-        isOwner={isOwner}
+        isOwner={isOwner(user?.id)}
       />
 
       {isEditing && isOwner ? (

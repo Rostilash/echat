@@ -15,6 +15,17 @@
   color: #707070;
   padding-left: 5px;
 }
+/* for icons */
+.icon_image {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.icon_image img {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+}
 .message_icons span {
   display: flex;
   align-items: center;

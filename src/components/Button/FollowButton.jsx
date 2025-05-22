@@ -4,8 +4,8 @@ import { Button } from "./Button";
 export const FollowButton = ({ userId }) => {
   const { currentUser, followUser, unfollowUser } = useAuth();
 
-  if (!currentUser || currentUser.userId === userId) return;
-  const isFollowing = currentUser.following.includes(userId);
+  if (!currentUser || currentUser?.uid === userId) return;
+  const isFollowing = currentUser?.following.includes(userId);
 
   const handleClickFollow = () => {
     if (isFollowing) {
@@ -14,7 +14,7 @@ export const FollowButton = ({ userId }) => {
       followUser(userId);
     }
   };
-
+  // debugger;
   return (
     <>
       <Button onClick={handleClickFollow} size="small" variant={isFollowing ? "empty" : "default"}>

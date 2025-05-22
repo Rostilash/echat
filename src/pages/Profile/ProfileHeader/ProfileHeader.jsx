@@ -10,6 +10,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
   const navigate = useNavigate();
 
   const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt, id } = user;
+  console.log(user);
   const dayjsFormat = formatFullDateTime(createdAt);
 
   const { theme, toggleTheme } = useTheme();
@@ -20,6 +21,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
     }
     setIsEditing(false);
   };
+
   return (
     <div className={s.profile_header}>
       <div className={s.themeSwitcher}>
@@ -49,7 +51,9 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
                   <span className={s.post_count}>@{nickname}</span>
                 </div>
               </div>
-              {isOwner && <UserLink userId={id} />}
+
+              {/* Write message and Following button */}
+              {!isOwner && <UserLink userId={id} />}
               <div className={s.body_right}>
                 {isOwner && (
                   <Button onClick={onEditClick} variant="empty">

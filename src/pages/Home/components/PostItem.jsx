@@ -61,7 +61,7 @@ export const PostItem = ({ post, posts, setPosts, currentUser, updateUser }) => 
         {post.media && post.id && <PostImage post={post} />}
       </div>
 
-      {/* Actions: likes. comments, bookmarks */}
+      {/* Actions: likes, comments, bookmarks */}
       <PostActions post={post} posts={posts} setPosts={setPosts} setActiveCommentPostId={setActiveCommentPostId} isOwner={isOwner} />
 
       {/* Show comments  */}

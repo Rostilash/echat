@@ -2,7 +2,7 @@ export const getPostActionArray = ({ post, currentUser, handlers, isOwner }) => 
   const actions = [
     {
       key: "comments",
-      isActive: post?.comments?.some((c) => c.author.email === currentUser?.email),
+      isActive: post?.comments?.some((c) => c.authorId === currentUser?.uid),
       handleClick: () => handlers.handleClickComment(post.id),
       activeImage: "https://cdn-icons-png.flaticon.com/128/2190/2190552.png",
       defaultImage: "https://cdn-icons-png.flaticon.com/128/16689/16689811.png",
@@ -10,7 +10,7 @@ export const getPostActionArray = ({ post, currentUser, handlers, isOwner }) => 
     },
     {
       key: "likes",
-      isActive: post.likedBy?.includes(currentUser?.email),
+      isActive: post.likedBy?.includes(currentUser?.uid),
       handleClick: () => handlers.handleLike(post.id),
       activeImage: "https://cdn-icons-png.flaticon.com/128/210/210545.png",
       defaultImage: "https://cdn-icons-png.flaticon.com/128/1077/1077035.png",
@@ -18,7 +18,7 @@ export const getPostActionArray = ({ post, currentUser, handlers, isOwner }) => 
     },
     {
       key: "reposts",
-      isActive: post.repostedBy?.includes(currentUser?.email),
+      isActive: post.repostedBy?.includes(currentUser?.uid),
       handleClick: () => handlers.handleRepost(post.id),
       activeImage: "https://cdn-icons-png.flaticon.com/128/11289/11289820.png",
       defaultImage: "https://cdn-icons-png.flaticon.com/128/14385/14385249.png",

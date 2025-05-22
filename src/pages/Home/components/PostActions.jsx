@@ -21,10 +21,8 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
       if (post.id === postId) {
         const currentRepostedBy = Array.isArray(post.repostedBy) ? post.repostedBy : [];
 
-        // if user made repost Email deleted else added
-        const updatedRepostBy = hasRepost
-          ? currentRepostedBy.filter((email) => email !== currentUser.email)
-          : [...currentRepostedBy, currentUser.email];
+        // if user made repost Uid deleted else added
+        const updatedRepostBy = hasRepost ? currentRepostedBy.filter((uid) => uid !== currentUser.uid) : [...currentRepostedBy, currentUser.uid];
 
         // if hasRepost=false add +1 else -1
         const updateRepposts = hasRepost ? (post.reposts || 1) - 1 : (post.reposts || 0) + 1;
@@ -73,8 +71,6 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
   const handleClickComment = (postId) => {
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
-
-  // console.log(currentUser);
 
   //Array for our ActionButtons
   const actionButtons = getPostActionArray({

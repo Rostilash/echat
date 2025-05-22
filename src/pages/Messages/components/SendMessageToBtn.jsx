@@ -12,7 +12,7 @@ export const UserLink = ({ userId }) => {
   const handleClickMessage = async () => {
     if (!currentUser || !userId) return;
 
-    // Створюємо зв’язок між користувачами
+    // Create chat with this Person by user ID
     const updatedUser = await createMutualChatConnection(currentUser, userId);
 
     // Redirect to user with this nickname
@@ -23,7 +23,7 @@ export const UserLink = ({ userId }) => {
   };
 
   return (
-    <div style={{ paddingTop: "50px", display: "flex", gap: "50px" }}>
+    <div style={{ display: "flex", gap: "50px" }}>
       <Button onClick={handleClickMessage} variant="default">
         Написати повідомлення
       </Button>

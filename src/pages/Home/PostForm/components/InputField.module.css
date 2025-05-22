@@ -1,0 +1,14 @@
+.home_text {
+  font-size: 16px;
+  padding: 10px 20px 10px 0px;
+}
+.home_text input {
+  color: #575757de;
+  width: 100%;
+  font-size: 14px;
+  background-color: var(--bg-color);
+  box-shadow: none;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 0px;
+}

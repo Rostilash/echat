@@ -1,0 +1,11 @@
+.gif_picker_container {
+  /* position: absolute;
+  top: 0px;
+  left: 100px; */
+}
+.gif_picker_container input {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 5px 15px;
+  border-radius: 5px;
+}
