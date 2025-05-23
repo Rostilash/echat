@@ -9,6 +9,7 @@ export const fetchPosts = async () => {
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
+// posts actions
 export const createPost = async (post) => {
   const postData = {
     ...post,
@@ -30,20 +31,4 @@ export const updatePost = async (postId, updatedFields) => {
 export const deletePost = async (postId) => {
   const postRef = doc(db, "posts", postId);
   await deleteDoc(postRef);
-};
-
-export const likePost = async (postId, userId) => {
-  const postRef = doc(db, "posts", postId);
-  await updateDoc(postRef, {
-    likedBy: arrayUnion(userId),
-    likesCount: serverTimestamp(),
-  });
-};
-
-export const unlikePost = async (postId, userId) => {
-  const postRef = doc(db, "posts", postId);
-  await updateDoc(postRef, {
-    likedBy: arrayRemove(userId),
-    likesCount: serverTimestamp(),
-  });
 };

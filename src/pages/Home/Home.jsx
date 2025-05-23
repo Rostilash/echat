@@ -5,31 +5,15 @@ import { useOutletContext } from "react-router-dom";
 import { PostList } from "./components/PostList";
 import { detectScheduledDate } from "./utils/detectScheduledDate";
 import { useExtractTags } from "./utils/useExtractTags";
-import { createPost } from "../../services/postsService";
-
-// const monthNames = {
-//   січня: 0,
-//   лютого: 1,
-//   березня: 2,
-//   квітня: 3,
-//   травня: 4,
-//   червня: 5,
-//   липня: 6,
-//   серпня: 7,
-//   вересня: 8,
-//   жовтня: 9,
-//   листопада: 10,
-//   грудня: 11,
-// };
-
-const formatDate = (date) => date.toISOString().split("T")[0]; // "YYYY-MM-DD"
+import { createPost, fetchPosts } from "../../services/postsService";
+import { formatDate } from "../../utils/dateUtils";
 
 export const Home = () => {
   const { currentUser } = useAuth();
   const { posts, setPosts, selectedFilter } = useOutletContext();
 
   const today = new Date();
-  const formattedToday = formatDate(today);
+  const formattedToday = formatDate(today); // "YYYY-MM-DD"
 
   // Filter posts
   const getFilteredPosts = () => {
@@ -55,15 +39,12 @@ export const Home = () => {
     const scheduledDate = detectScheduledDate(text, today);
 
     const newPost = {
-      id: Date.now().toString(),
       authorId: currentUser.id || currentUser.uid,
       text,
       media: mediaData,
       timestamp: new Date().toISOString(),
       likes: 0,
-      likedBy: [],
       reposts: 0,
-      repostedBy: [],
       region: currentUser.region || "Европа",
       comments: [],
       tags: useExtractTags(text) || [],
@@ -73,8 +54,10 @@ export const Home = () => {
     // Add post to Firestore
     const id = await createPost(newPost);
 
-    // Update local state з id та timestamp
-    setPosts((prev) => [{ ...newPost, id, timestamp: new Date().toISOString() }, ...prev]);
+    const updatedPosts = await fetchPosts(); // update from server
+
+    // Update local state
+    setPosts(updatedPosts);
   };
 
   return (

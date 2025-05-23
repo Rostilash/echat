@@ -104,14 +104,12 @@ export const AuthProvider = ({ children }) => {
         followers: [],
         following: [],
 
-        likes: [],
-        bookmarks: [],
-        repostedBy: [],
         chatUsers: [],
 
         emailVerified: false,
         theme: "light",
         language: "uk",
+
         notifications: {
           mentions: true,
           follows: true,
