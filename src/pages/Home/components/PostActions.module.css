@@ -23,8 +23,8 @@
 }
 .icon_image img {
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 .message_icons span {
   display: flex;

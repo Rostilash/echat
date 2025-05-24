@@ -1,36 +1,54 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "../../../components/Input/Input";
 import { Button } from "../../../components/Button/Button";
 import style from "./AddComments.module.css";
+import { createComment } from "../../../services/commentsService";
 
-export const AddComments = ({ posts, setPosts, postId, currentUser }) => {
+export const AddComments = ({ setPosts, postId, currentUser }) => {
   const [commentValue, setCommentValue] = useState("");
 
-  const handleAddComment = (postId) => {
-    const newComment = {
-      id: Date.now(),
-      text: commentValue.trim(),
-      timestamp: new Date().toISOString(),
-      authorId: currentUser.uid,
-      authorImg: currentUser.profileImage,
-      likes: 0,
-      likedBy: [],
-      replies: [],
-    };
+  const handleAddComment = async () => {
+    if (!commentValue.trim() || !currentUser?.id) return;
 
-    const updatedPosts = posts.map((post) => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          comments: [...(post.comments || []), newComment],
-        };
-      }
-      return post;
-    });
+    try {
+      const commentData = {
+        postId,
+        authorId: currentUser.id,
+        authorName: currentUser.name,
+        authorNickname: currentUser.nickname,
+        authorImg: currentUser.profileImage,
+        text: commentValue.trim(),
+      };
 
-    setPosts(updatedPosts);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-    setCommentValue("");
+      // Створюємо коментар у Firebase
+      const newCommentId = await createComment(commentData);
+
+      // Формуємо локальну копію з реальною id
+      const newComment = {
+        ...commentData,
+        id: newCommentId,
+        createdAt: new Date().toISOString(),
+        likes: [],
+        replies: [],
+      };
+
+      // Додаємо локально в стейт у відповідний пост
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: [...(post.comments || []), newComment],
+              }
+            : post
+        )
+      );
+
+      // Очищуємо поле вводу
+      setCommentValue("");
+    } catch (error) {
+      console.error("Не вдалося додати коментар:", error);
+    }
   };
 
   return (
@@ -43,7 +61,7 @@ export const AddComments = ({ posts, setPosts, postId, currentUser }) => {
         border="bordRadLow"
       />
 
-      <Button size="small" onClick={() => handleAddComment(postId)}>
+      <Button size="small" onClick={handleAddComment}>
         Коментувати
       </Button>
     </div>

@@ -8,7 +8,6 @@ export const fetchPosts = async () => {
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
-
 // posts actions
 export const createPost = async (post) => {
   const postData = {

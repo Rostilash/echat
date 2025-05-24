@@ -7,7 +7,7 @@ export const UserImage = ({ author }) => {
       <Link to={`/echat/profile/${author?.id}`}>
         <img
           src={
-            (author?.id && author?.profileImage) ||
+            (author?.id && (author?.profileImage || author.authorImg)) ||
             "[https://cdn-icons-png.flaticon.com/128/1837/1837625.png](https://cdn-icons-png.flaticon.com/128/1837/1837625.png)"
           }
           alt="user"

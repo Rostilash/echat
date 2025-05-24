@@ -4,6 +4,12 @@
   max-width: 360px;
   margin: 0 auto;
 }
+.input {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  width: 100%;
+  transition: all 0.3s ease;
+}
 
 /* size */
 .default {
@@ -17,11 +23,13 @@
   font-size: 18px;
   border: 2px solid rgb(99, 99, 99);
 }
+
 .small {
   padding: 8px 15px 8px 55px;
   font-size: 18px;
   border: 2px solid rgb(99, 99, 99);
 }
+
 .comment {
   padding: 6px;
   border: 2px solid transparent;
@@ -31,16 +39,10 @@
   border: none;
 }
 
-.input {
-  color: var(--text-color);
-  background-color: var(--bg-color);
-  width: 100%;
-  transition: all 0.3s ease;
-}
-
 .inputWrapper:has(input.bordRadLow) {
   border-radius: 15px;
 }
+
 /* changed border radius */
 .bordRadLow {
   border-radius: 10px;

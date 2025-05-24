@@ -1,5 +1,6 @@
 import style from "./MainLayout.module.css";
 import { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar/Sidebar";
 import { Rightbar } from "../components/Rightbar/Rightbar";
@@ -7,7 +8,7 @@ import { fetchPosts } from "../services/postsService";
 import { getLikesCount, hasUserLiked } from "../services/likesService";
 import { getRepostsCount, hasUserReposted } from "../services/repostsService";
 import { getBookmarksCount, hasUserBookmarked } from "../services/bookmarksService";
-import { useAuth } from "../hooks/useAuth";
+import { fetchCommentsByPostId, hasUserLikedComment } from "../services/commentsService";
 
 export const MainLayout = () => {
   const { currentUser } = useAuth();
@@ -15,19 +16,22 @@ export const MainLayout = () => {
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [posts, setPosts] = useState([]);
   const [postsWithStats, setPostsWithStats] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Upload all posts
   useEffect(() => {
     const loadPosts = async () => {
+      setLoading(true);
       const fetchedPosts = await fetchPosts();
       setPosts(fetchedPosts);
+      setLoading(false);
     };
     loadPosts();
   }, []);
 
   //load stats(actions) on post later
   useEffect(() => {
-    console.log("Effect for loading stats ran", posts);
+    // console.log("Effect for loading stats ran", posts);
     if (posts.length === 0 || !currentUser) {
       setPostsWithStats([]);
       return;
@@ -36,19 +40,22 @@ export const MainLayout = () => {
     const loadStatsAndUserLikes = async () => {
       const newPostsWithStats = await Promise.all(
         posts.map(async (post) => {
-          const [likes, reposts, bookmarks, userLiked, userReposted, userBookmarked] = await Promise.all([
-            getLikesCount(post.id),
-            getRepostsCount(post.id),
-            getBookmarksCount(post.id),
-            hasUserLiked(post.id, currentUser.id),
-            hasUserReposted(post.id, currentUser.id),
-            hasUserBookmarked(post.id, currentUser.id),
+          const postId = post.id || post.postId;
+          const [likes, reposts, bookmarks, userLiked, userReposted, userBookmarked, comments] = await Promise.all([
+            getLikesCount(postId),
+            getRepostsCount(postId),
+            getBookmarksCount(postId),
+            hasUserLiked(postId, currentUser.id),
+            hasUserReposted(postId, currentUser.id),
+            hasUserBookmarked(postId, currentUser.id),
+            fetchCommentsByPostId(postId),
           ]);
-          return { ...post, likes, reposts, bookmarks, userLiked, userReposted, userBookmarked };
+          return { ...post, likes, reposts, bookmarks, userLiked, userReposted, userBookmarked, comments };
         })
       );
 
       // Trying to awoid rerendering for testing on the moment.
+      // Load normal newPostsWithStats uid code and after turnts to currentUser Id need need to fix it later for now i will create commentId
       const isEqual =
         newPostsWithStats.length === postsWithStats.length &&
         newPostsWithStats.every((p, i) => {
@@ -60,10 +67,10 @@ export const MainLayout = () => {
             p.bookmarks === oldP.bookmarks &&
             p.userLiked === oldP.userLiked &&
             p.userReposted === oldP.userReposted &&
-            p.userBookmarked === oldP.userBookmarked
+            p.userBookmarked === oldP.userBookmarked &&
+            JSON.stringify(p.comments) === JSON.stringify(oldP.comments)
           );
         });
-
       if (!isEqual) {
         setPostsWithStats(newPostsWithStats);
       }

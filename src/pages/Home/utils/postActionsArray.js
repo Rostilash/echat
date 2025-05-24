@@ -1,8 +1,8 @@
-export const getPostActionArray = ({ post, currentUser, handlers, isOwner }) => {
+export const getPostActionArray = ({ post, handlers, isOwner }) => {
   const actions = [
     {
       key: "comments",
-      isActive: post.userComment === true,
+      isActive: post.comments.some((answer) => (answer.id = post.authorId)),
       handleClick: () => handlers.handleClickComment(post.id),
       activeImage: "https://cdn-icons-png.flaticon.com/128/2190/2190552.png",
       defaultImage: "https://cdn-icons-png.flaticon.com/128/16689/16689811.png",

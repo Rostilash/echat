@@ -12,15 +12,20 @@ import { deletePost, fetchPosts, updatePost } from "../../../services/postsServi
 
 export const PostItem = ({ post, posts, setPosts, currentUser }) => {
   const { isOwner, findUserByUid } = useAuth();
+  // function of owner id (boolian)
   const owner = isOwner(post.authorId);
 
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+  // find the user by uid from store
   const [postAuthor, setPostAuthor] = useState(null);
+
+  // Actions
+  const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
-
-  // find user by authorId
+  const { currentComentId, setCurrentComentId } = useState(null);
+  console.log(currentComentId ? currentComentId : "");
+  // Find user by authorId
   useEffect(() => {
     if (post?.authorId) {
       findUserByUid(post.authorId).then(setPostAuthor);
@@ -57,7 +62,7 @@ export const PostItem = ({ post, posts, setPosts, currentUser }) => {
       <div className={style.post_header}>
         <UserImage author={postAuthor} />
 
-        <PostHeader post={post} author={postAuthor} />
+        <PostHeader timeStamp={post.timestamp} author={postAuthor} />
 
         {/* Dropdown menu */}
         {owner && (
@@ -99,9 +104,9 @@ export const PostItem = ({ post, posts, setPosts, currentUser }) => {
           <AddComments
             posts={posts}
             setPosts={setPosts}
-            // updateUserProfile={updateUserProfile}
             postId={activeCommentPostId}
             currentUser={currentUser}
+            setCurrentComentId={setCurrentComentId}
           />
 
           {post.comments.length > 0 ? (
@@ -110,11 +115,10 @@ export const PostItem = ({ post, posts, setPosts, currentUser }) => {
                 key={comment.id}
                 comment={comment}
                 currentUser={currentUser}
-                post={post}
                 posts={posts}
                 setPosts={setPosts}
                 postId={post.id}
-                isOwner={isOwner}
+                commentId={comment.id}
               />
             ))
           ) : (
