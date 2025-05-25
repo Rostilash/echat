@@ -11,7 +11,7 @@ import { InputField } from "./components/InputField";
 import { Action } from "../components/Action";
 import { useImageUpload } from "../../../hooks/useImageUpload";
 
-export const PostForm = ({ onCreatePost }) => {
+export const PostForm = ({ onCreatePost, selectedFilter }) => {
   const { currentUser } = useAuth();
 
   const [text, setText] = useState("");
@@ -67,7 +67,7 @@ export const PostForm = ({ onCreatePost }) => {
 
   return (
     <div className={style.home}>
-      <PostFormHeader />
+      <PostFormHeader selectedFilter={selectedFilter} />
 
       <div className={style.bottom_cart}>
         <UserImage author={currentUser} />

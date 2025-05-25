@@ -59,11 +59,11 @@ export const Home = () => {
     // Update local state
     setPosts(updatedPosts);
   };
-
+  console.log(getFilteredPosts());
   return (
     <div className={style.main_page}>
       {/* Сreate Post */}
-      <PostForm onCreatePost={handleCreatePost} />
+      <PostForm onCreatePost={handleCreatePost} selectedFilter={selectedFilter} />
 
       {/* People messages */}
       <div className={style.posts_wrapper}>

@@ -1,0 +1,34 @@
+.userImages {
+  min-height: 150px;
+}
+.userHeaderImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.userHeaderImage img {
+  max-height: 200px;
+  width: 100%;
+  object-fit: fill;
+}
+
+.userHeaderImage img:hover {
+  border: 2px solid var(--echat-color);
+}
+.userProfileImage {
+  position: absolute;
+  left: 50px;
+  top: 150px;
+  z-index: 5;
+}
+
+.userProfileImage img {
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+  border: 1px solid var(--text-color);
+}
+.userProfileImage img:hover {
+  border: 1px solid var(--echat-color);
+}

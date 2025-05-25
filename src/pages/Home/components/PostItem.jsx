@@ -9,9 +9,7 @@ import { UserImage } from "./UserImage";
 import { PostHeader } from "./PostHeader";
 import { useAuth } from "../../../hooks/useAuth";
 import { deletePost, fetchPosts, updatePost } from "../../../services/postsService";
-import { LoaderSmall } from "../../../components/Loader/LoaderSmall";
-import { Input } from "../../../components/Input/Input";
-import { Button } from "../../../components/Button/Button";
+import { ChangeText } from "../../../components/Modal/ChangeText/ChangeText";
 
 export const PostItem = ({ post, posts, setPosts, loading }) => {
   const { currentUser, isOwner, findUserByUid } = useAuth();
@@ -64,7 +62,6 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
 
         <PostHeader timeStamp={post.timestamp} author={postAuthor} />
 
-        {/* Dropdown menu */}
         {!isEditing && (
           <PostDropdown
             onEdit={handleOpenModal}
@@ -77,21 +74,10 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
         )}
       </div>
 
-      {/* body */}
       <div className={style.post_content}>
-        {/* Post text */}
+        {/* Update post text */}
         {isEditing ? (
-          <div className={style.message_content}>
-            <textarea value={editText} onChange={(e) => setEditText(e.target.value)} />
-            <div className={style.buttons}>
-              <Button onClick={() => handleSaveEdit()} type="submit" size="small" variant="secondary">
-                Підтвердити
-              </Button>
-              <Button onClick={() => setIsEditing(false)} size="small" variant="secondary">
-                Відмінити
-              </Button>
-            </div>
-          </div>
+          <ChangeText text={editText} setText={setEditText} handleSave={handleSaveEdit} handleCancel={setIsEditing} />
         ) : (
           <div className={style.message_content}>
             <p>{post.text}</p>

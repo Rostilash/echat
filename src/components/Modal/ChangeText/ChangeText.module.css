@@ -1,0 +1,29 @@
+.message_content {
+  padding: 10px 60px;
+  display: flex;
+}
+.message_content textarea {
+  width: 100%;
+  max-width: 500px;
+  min-height: 50px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  background-color: var(--background-color);
+}
+.buttons {
+  padding-left: 10px;
+  /* height: 100px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 5px;
+  z-index: 1;
+}
+
+.buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

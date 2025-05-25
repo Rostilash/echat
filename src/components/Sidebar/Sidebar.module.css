@@ -110,8 +110,12 @@
 }
 
 .logoutBtn {
+  position: absolute;
+  right: 10%;
+  top: 0px;
   background-color: transparent;
   border: none;
+  padding: 5px;
   color: rgba(107, 107, 107, 0.651);
   font-weight: 600;
   cursor: pointer;

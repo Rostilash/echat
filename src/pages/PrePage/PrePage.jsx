@@ -39,7 +39,7 @@ export const PrePage = () => {
             </Button>
           </div>
 
-          {/* Or hr lines*/}
+          {/* Text with hr lines*/}
           <div className={style.hrWrapper}>
             <hr className={style.hrLine} />
             <p className={style.orText}>АБО</p>

@@ -32,7 +32,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
       key: "top",
       path: "/echat/top-places",
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/9908/9908202.png",
+      image: "https://cdn-icons-png.flaticon.com/128/5650/5650649.png",
       message: "Топ місця",
     },
     {
@@ -103,7 +103,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
       </div>
 
       <div className={style.authLinks}>
-        <div style={{ cursor: "pointer" }} onClick={handleOpenQuitOption}>
+        <div style={{ cursor: "pointer", position: "relative" }} onClick={handleOpenQuitOption}>
           <img className={style.user_image} src={currentUser?.profileImage} alt="icon" />{" "}
           <div className={style.user_info}>
             <span className={style.info_name}>{currentUser?.name}</span>

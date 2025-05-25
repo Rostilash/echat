@@ -30,7 +30,7 @@ export const Register = ({ onClose, setLoginForm }) => {
     }));
 
     // We remove the error for this field if it has become valid.
-    if (name === "name" && value.length >= 4) {
+    if (name === "name" && value.length >= 6) {
       setErrors((prevErrors) => {
         const { name, ...rest } = prevErrors; // Removing the error for "name"
         return rest;
@@ -56,8 +56,8 @@ export const Register = ({ onClose, setLoginForm }) => {
     const newErrors = {};
     setSuccessMessage("");
 
-    if (formData.name.length < 4) {
-      newErrors.name = "Ім'я повинно містити щонайменше 4 символи";
+    if (formData.name.length < 6) {
+      newErrors.name = "Ім'я повинно містити щонайменше 6 символи";
     }
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

@@ -8,12 +8,13 @@ import { Action } from "../components/Action";
 import { Input } from "../../../components/Input/Input";
 import { deleteComment, toggleLikeComment } from "../../../services/commentsService";
 import { addReplyToComment } from "./../../../services/commentsService";
+import { ChangeText } from "../../../components/Modal/ChangeText/ChangeText";
 
 export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
   const [activeCommentId, setActiveCommentId] = useState(null);
   const [prevAuthorInfo, setPrevAuthorInfo] = useState(comment.text);
   const [answerText, setAnswerText] = useState("");
-
+  const [openAnsers, setOpenAnswers] = useState(false);
   const updateCommentInPost = (commentId, updateFn) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
@@ -100,11 +101,14 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
     }
   };
 
+  const handleOpenAnswers = () => {
+    setOpenAnswers((prev) => !prev);
+  };
   const comentLikedUser = comment.likes.includes(currentUser.uid);
 
   return (
     <>
-      <div className={style.comment} style={{ borderBottom: "1px solid var(--border-color)" }}>
+      <div className={style.comment} style={{}}>
         <div className={style.comment_header}>
           <UserImage author={comment} />
           <PostHeader timeStamp={comment?.createdAt} author={comment} />
@@ -120,22 +124,28 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
           />
         )}
 
+        {/* comment TEXT */}
         <div className={style.comment_content}>
-          {/* comment TEXT */}
           <p>{comment.text}</p>
         </div>
 
         <div className={style.comment_actions}>
-          <Action
-            handleClick={handleLikeComment}
-            isActive={comentLikedUser}
-            defaultImage="https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
-            activeImage="https://cdn-icons-png.flaticon.com/128/210/210545.png"
-            count={comment.likes.length}
-            hidenUsers={comentLikedUser ? comment.authorName : false}
-          />
-
-          <span className={style.icon_image}>
+          <span>
+            <Action
+              handleClick={handleLikeComment}
+              isActive={comentLikedUser}
+              defaultImage="https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
+              activeImage="https://cdn-icons-png.flaticon.com/128/210/210545.png"
+              count={comment.likes.length}
+              hidenUsers={comentLikedUser ? comment.authorName : false}
+            />
+          </span>
+          <span>
+            <Button onClick={handleOpenAnswers} size="small" variant="secondary">
+              {comment.replies.length} Відповідей
+            </Button>
+          </span>
+          <span className={style.answer_form}>
             {!activeCommentId ? (
               <Button onClick={() => handleAnswerComment(comment)} size="small" variant="secondary">
                 Відповісти
@@ -145,18 +155,18 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    handleUpdateAnswerContext(comment.id);
+                    // handleUpdateAnswerContext(comment.id);
                   }}
                 >
                   <span>{prevAuthorInfo.authorName} </span>
                   <span>{prevAuthorInfo.text} </span>
-                  <Input value={answerText} onChange={(e) => setAnswerText(e.target.value)} />
-                  <Button type="submit" size="small" variant="secondary">
-                    Підтвердити
-                  </Button>
-                  <Button onClick={() => handleAnswerComment(comment.id)} size="small" variant="secondary">
-                    Відмінити
-                  </Button>
+
+                  <ChangeText
+                    text={answerText}
+                    setText={(value) => setAnswerText(value)}
+                    handleSave={() => handleUpdateAnswerContext(comment.id)}
+                    handleCancel={() => handleAnswerComment(comment.id)}
+                  />
                 </form>
               </>
             )}
@@ -164,21 +174,24 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
         </div>
       </div>
 
-      {comment.replies && comment.replies.length > 0 && (
+      {openAnsers && comment.replies && comment.replies.length > 0 && (
         <div className={style.replyBody}>
           {comment.replies.map((reply, index) => (
             <div key={index} className={style.reply_item}>
               <div className={style.reply_prevAuthor}>
                 <span>
-                  Відповідь на повідомлення: <b>{reply.prevAuthorName} </b>
+                  <b>{reply.prevAuthorName} </b>
                 </span>
                 <span>- {reply.prevAuthorText}</span>
               </div>
               <div className={style.reply_currentAuthor}>
-                <span>
-                  Від: <b> {reply.authorNickname}</b>{" "}
-                </span>
-                <span>- {reply.text}</span>
+                <div className={style.comment_header}>
+                  <UserImage author={reply} />
+                  <PostHeader timeStamp={reply?.createdAt} author={reply} />
+                </div>
+                <div className={style.comment_content}>
+                  <span>- {reply.text}</span>
+                </div>
               </div>
             </div>
           ))}

@@ -7,7 +7,7 @@ import { ChangePasswordModal } from "../../ChangePasswordModal/ChangePasswordMod
 import { mergeUserData } from "../../../utils/mergeUserData";
 import { useNavigate } from "react-router-dom";
 import { LoaderSmall } from "./../../../components/Loader/LoaderSmall";
-import { ImageUpload } from "./ImageUpload";
+import { LoadingImages } from "./Structure/LoadingImages/LoadingImages";
 
 export const EditProfileForm = ({ setPosts }) => {
   // useContext our user
@@ -135,17 +135,6 @@ export const EditProfileForm = ({ setPosts }) => {
       console.error("Update user profile error:", error);
     }
   };
-
-  const inputFields = [
-    { name: "name", placeholder: "Ім’я" },
-    { name: "nickname", placeholder: "Нікнейм" },
-    { name: "email", placeholder: "Email" },
-    { name: "location", placeholder: "Місто" },
-    { name: "region", placeholder: "Регіон" },
-    { name: "website", placeholder: "Вебсайт" },
-    { name: "birthdate", placeholder: "Дата народження", type: "date" },
-  ];
-
   // need to change it later
   const handleDelete = async () => {
     const emailConfirmation = prompt("Для підтвердження введіть свій email:");
@@ -165,43 +154,31 @@ export const EditProfileForm = ({ setPosts }) => {
     }
   };
 
+  const inputFields = [
+    { name: "name", placeholder: "Ім’я" },
+    { name: "nickname", placeholder: "Нікнейм" },
+    { name: "email", placeholder: "Email" },
+    { name: "location", placeholder: "Місто" },
+    { name: "region", placeholder: "Регіон" },
+    { name: "website", placeholder: "Вебсайт" },
+    { name: "birthdate", placeholder: "Дата народження", type: "date" },
+  ];
+
   return (
     <div className={style.profile}>
-      <div className={style.userImages}>
-        <div className={style.userProfileImage}>
-          {/* load profile image */}
-          <ImageUpload
-            uploadKey="profileImage"
-            maxSizeKB={50}
-            currentUser={currentUser}
-            image={profileImage}
-            updateUser={updateUser}
-            userUid={uid}
-            iconPath="https://cdn-icons-png.flaticon.com/128/13407/13407013.png"
-          />
-        </div>
-        {/* load header image */}
-        <div className={style.userHeaderImage}>
-          <ImageUpload
-            uploadKey="headerImage"
-            maxSizeKB={100}
-            currentUser={currentUser}
-            image={headerImage}
-            updateUser={updateUser}
-            userUid={uid}
-            iconPath="https://cdn-icons-png.flaticon.com/128/13407/13407013.png"
-          />
-        </div>
-      </div>
+      <LoadingImages currentUser={currentUser} profileImage={profileImage} updateUser={updateUser} headerImage={headerImage} uid={uid} />
 
       {/* change Password */}
       <div className={style.passwordBlock} title="Змінити пароль">
-        <Button onClick={() => setShowModal(true)}>Змінити пароль</Button>
+        <Button onClick={() => setShowModal(true)} size="small">
+          Змінити пароль
+        </Button>
         {showModal && <ChangePasswordModal onClose={() => setShowModal(false)} setSuccessMessage={setSuccessMessage} />}
       </div>
-
       {/* User updating form */}
       <form className={style.form} onSubmit={handleSubmit} noValidate>
+        <h1>Редагування</h1>
+
         {errorMessage && <p className={`error ${fadeOut ? "fadeOut" : ""}`}>{errorMessage}</p>}
         {successMessage && <p className={`success ${fadeOut ? "fadeOut" : ""}`}>{successMessage}</p>}
 
@@ -225,7 +202,8 @@ export const EditProfileForm = ({ setPosts }) => {
       </form>
 
       {/* delete Current user for testing */}
-      <Button type="text" onClick={handleDelete}>
+      <span>Видалити Аккуант</span>
+      <Button type="text" onClick={handleDelete} size="small" variant="empty">
         Видалити Аккуант
       </Button>
     </div>

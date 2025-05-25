@@ -1,11 +1,11 @@
 import React from "react";
 import style from "./PostFormHeader.module.css";
 
-export const PostFormHeader = () => {
+export const PostFormHeader = ({ selectedFilter }) => {
   return (
     <div className={style.top_cart}>
       <div>
-        <h3>Головна сторінка</h3>
+        <h3>{selectedFilter ? selectedFilter : "Головна сторінка"}</h3>
       </div>
       <div>
         <span className={style.icon_image}>

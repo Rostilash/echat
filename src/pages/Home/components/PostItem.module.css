@@ -41,29 +41,9 @@
 .post_content p {
   margin-bottom: 10px;
 }
-/* context text */
 .message_content {
-  padding: 10px 60px;
+  padding: 10px 40px;
   display: flex;
-}
-.buttons {
-  padding: 10px;
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  z-index: 1;
-}
-
-.message_content textarea {
-  width: 100%;
-  max-width: 500px;
-  min-height: 100px;
-  resize: vertical;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
 }
 
 /* for main image  */
