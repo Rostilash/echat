@@ -1,10 +1,10 @@
 import style from "./PostActions.module.css";
 import { useAuth } from "../../../hooks/useAuth";
 import { Action } from "./Action";
-import { getPostActionArray } from "../utils/postActionsArray";
 import { handleLikePost } from "../../../utils/handleLikeItem";
 import { handleBookmarkPost } from "./../../../utils/postActions/handleBookmarkPost";
 import { handleRepostPost } from "./../../../utils/postActions/handleRepostPost";
+import { getPostActionArray } from "../utils/postActionsArray";
 
 export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isOwner }) => {
   const { currentUser } = useAuth();
@@ -29,10 +29,13 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
 
+  const isAuthorComment = post.comments.some((comment) => comment.authorId === currentUser?.id);
+
   //Array for our ActionButtons
   const actionButtons = getPostActionArray({
     post,
     currentUser,
+    isAuthorComment,
     isOwner,
     handlers: {
       handleClickComment,

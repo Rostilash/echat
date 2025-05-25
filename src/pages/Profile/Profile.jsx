@@ -43,6 +43,8 @@ export const Profile = () => {
   // Posts OutletContent
   const userPosts = (posts || []).filter((post) => post.authorId === user?.id);
 
+  console.log(userPosts);
+
   const tabComponents = {
     posts: Posts,
     media: Media,
@@ -99,7 +101,7 @@ export const Profile = () => {
           <Tabs current={tab} onChange={setTab} tabs={tabsName} isOwner={isOwner} />
 
           {ActiveTabComponent && (
-            <ActiveTabComponent posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
+            <ActiveTabComponent posts={userPosts} user={user} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
           )}
         </>
       )}

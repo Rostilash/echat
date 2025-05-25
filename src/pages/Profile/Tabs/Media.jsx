@@ -2,6 +2,7 @@ import { PostItem } from "../../Home/components/PostItem";
 import style from "../Profile.module.css";
 
 export const Media = ({ posts, user, setPosts, currentUser, updatePost }) => {
+  console.log(posts);
   const mediaPosts = (posts || []).filter((post) => post.authorId === user.id && post.media);
 
   if (mediaPosts.length === 0) {

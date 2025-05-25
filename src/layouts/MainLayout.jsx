@@ -102,7 +102,7 @@ export const MainLayout = () => {
     <div className={style.layout}>
       <Sidebar selectedPostFilter={setSelectedFilter} />
       <main className={style.content}>
-        <Outlet context={{ posts: displayPosts, setPosts, selectedFilter }} />
+        <Outlet context={{ posts: displayPosts, setPosts, selectedFilter, loading }} />
       </main>
       <Rightbar onSelectFilter={setSelectedFilter} posts={posts} users={users} />
     </div>

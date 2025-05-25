@@ -54,6 +54,7 @@ export const MessageProvider = ({ children, chatId, currentUser }) => {
     if (!chatId || !userId) return null;
     return generateChatId(userId, chatId);
   }, [chatId, userId]);
+
   const [messages, setMessages] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [allMessages, setAllMessages] = useState([]);

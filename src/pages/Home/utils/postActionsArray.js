@@ -1,8 +1,8 @@
-export const getPostActionArray = ({ post, handlers, isOwner }) => {
+export const getPostActionArray = ({ post, handlers, isOwner, isAuthorComment }) => {
   const actions = [
     {
       key: "comments",
-      isActive: post.comments.some((answer) => (answer.id = post.authorId)),
+      isActive: isAuthorComment,
       handleClick: () => handlers.handleClickComment(post.id),
       activeImage: "https://cdn-icons-png.flaticon.com/128/2190/2190552.png",
       defaultImage: "https://cdn-icons-png.flaticon.com/128/16689/16689811.png",
@@ -32,16 +32,16 @@ export const getPostActionArray = ({ post, handlers, isOwner }) => {
       defaultImage: "https://cdn-icons-png.flaticon.com/128/3983/3983871.png",
     },
   ];
-  // hide for currentUser
-  if (!isOwner) {
-    actions.push({
-      key: "notOwnerIndicator",
-      isActive: false,
-      handleClick: null,
-      activeImage: "https://cdn-icons-png.flaticon.com/128/18166/18166719.png",
-      defaultImage: "https://cdn-icons-png.flaticon.com/128/18166/18166719.png",
-    });
-  }
+  // hide for currentUser & need to update for upload post
+  // if (!isOwner) {
+  //   actions.push({
+  //     key: "notOwnerIndicator",
+  //     isActive: false,
+  //     handleClick: null,
+  //     activeImage: "https://cdn-icons-png.flaticon.com/128/18166/18166719.png",
+  //     defaultImage: "https://cdn-icons-png.flaticon.com/128/18166/18166719.png",
+  //   });
+  // }
 
   return actions;
 };

@@ -9,7 +9,7 @@ import { Input } from "../../../components/Input/Input";
 import { deleteComment, toggleLikeComment } from "../../../services/commentsService";
 import { addReplyToComment } from "./../../../services/commentsService";
 
-export const Comments = ({ currentUser, comment, posts, setPosts, postId, commentId }) => {
+export const Comments = ({ currentUser, comment, posts, setPosts, postId }) => {
   const [activeCommentId, setActiveCommentId] = useState(null);
   const [prevAuthorInfo, setPrevAuthorInfo] = useState(comment.text);
   const [answerText, setAnswerText] = useState("");
@@ -28,6 +28,7 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId, commen
 
   const handleLikeComment = async () => {
     try {
+      if (comment.id === currentUser.id) return;
       const toggled = await toggleLikeComment(comment.id, currentUser.uid);
 
       updateCommentInPost(comment.id, (c) => {
@@ -62,105 +63,127 @@ export const Comments = ({ currentUser, comment, posts, setPosts, postId, commen
     }
   };
 
-  // const handleAnswerComment = (commentData) => {
-  //   setActiveCommentId((prevId) => (prevId === commentData.id ? null : commentData.id));
-  //   setPrevAuthorInfo(commentData);
-  // };
+  const handleAnswerComment = (commentData) => {
+    setActiveCommentId((prevId) => (prevId === commentData.id ? null : commentData.id));
+    setPrevAuthorInfo(commentData);
+  };
 
-  // const handleUpdateAnswerContext = async (commentId) => {
-  //   if (commentId !== prevAuthorInfo.id) return;
-  //   if (!answerText.trim()) return;
+  const handleUpdateAnswerContext = async (commentId) => {
+    if (commentId !== prevAuthorInfo.id) return;
+    if (!answerText.trim()) return;
 
-  //   const reply = {
-  //     text: answerText,
-  //     authorId: currentUser?.uid,
-  //     authorName: currentUser?.name,
-  //     authorNickname: currentUser?.nickname,
-  //     authorImg: currentUser?.profileImage,
-  //     prevAuthorName: prevAuthorInfo.authorName,
-  //     prevAuthorText: prevAuthorInfo.text,
-  //   };
+    const reply = {
+      text: answerText,
+      authorId: currentUser?.uid,
+      authorName: currentUser?.name,
+      authorNickname: currentUser?.nickname,
+      authorImg: currentUser?.profileImage,
+      prevAuthorName: prevAuthorInfo.authorName,
+      prevAuthorText: prevAuthorInfo.text,
+    };
 
-  //   try {
-  //     console.log("start");
-  //     // update fireBase
-  //     await addReplyToComment(commentId, reply);
-  //     console.log("over");
-  //     // update local
-  //     updateCommentInPost(commentId, (comment) => ({
-  //       ...comment,
-  //       replies: [...(comment.replies || []), { ...reply, commentId: Date.now(), createdAt: new Date().toISOString() }],
-  //     }));
+    try {
+      console.log("start");
+      // update fireBase
+      await addReplyToComment(commentId, reply);
+      console.log("over");
+      // update local
+      updateCommentInPost(commentId, (comment) => ({
+        ...comment,
+        replies: [...(comment.replies || []), { ...reply, commentId: Date.now(), createdAt: new Date().toISOString() }],
+      }));
 
-  //     setAnswerText("");
-  //     setActiveCommentId(null);
-  //   } catch (error) {
-  //     console.log("Помилка при відправці відповіді", error);
-  //   }
-  // };
+      setAnswerText("");
+      setActiveCommentId(null);
+    } catch (error) {
+      console.log("Помилка при відправці відповіді", error);
+    }
+  };
 
-  // const comentLikedUser = comment.likes.includes(currentUser.uid);
+  const comentLikedUser = comment.likes.includes(currentUser.uid);
 
-  console.log(posts[0].comments);
   return (
-    <div className={style.comment} style={{ borderBottom: "1px solid var(--border-color)" }}>
-      <div className={style.comment_header}>
-        <UserImage author={comment} />
-        <PostHeader timeStamp={comment?.createdAt} author={comment} />
+    <>
+      <div className={style.comment} style={{ borderBottom: "1px solid var(--border-color)" }}>
+        <div className={style.comment_header}>
+          <UserImage author={comment} />
+          <PostHeader timeStamp={comment?.createdAt} author={comment} />
+        </div>
+
+        {/* Drop down */}
+        {comment.authorId === currentUser.uid && (
+          <PostDropdown
+            onDelete={() => handleDeleteComment(comment.id)}
+            item={comment}
+            currentUser={currentUser}
+            messageToDelate="Ви впевнені, що хочете видалити цей коментар?"
+          />
+        )}
+
+        <div className={style.comment_content}>
+          {/* comment TEXT */}
+          <p>{comment.text}</p>
+        </div>
+
+        <div className={style.comment_actions}>
+          <Action
+            handleClick={handleLikeComment}
+            isActive={comentLikedUser}
+            defaultImage="https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
+            activeImage="https://cdn-icons-png.flaticon.com/128/210/210545.png"
+            count={comment.likes.length}
+            hidenUsers={comentLikedUser ? comment.authorName : false}
+          />
+
+          <span className={style.icon_image}>
+            {!activeCommentId ? (
+              <Button onClick={() => handleAnswerComment(comment)} size="small" variant="secondary">
+                Відповісти
+              </Button>
+            ) : (
+              <>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleUpdateAnswerContext(comment.id);
+                  }}
+                >
+                  <span>{prevAuthorInfo.authorName} </span>
+                  <span>{prevAuthorInfo.text} </span>
+                  <Input value={answerText} onChange={(e) => setAnswerText(e.target.value)} />
+                  <Button type="submit" size="small" variant="secondary">
+                    Підтвердити
+                  </Button>
+                  <Button onClick={() => handleAnswerComment(comment.id)} size="small" variant="secondary">
+                    Відмінити
+                  </Button>
+                </form>
+              </>
+            )}
+          </span>
+        </div>
       </div>
 
-      {/* Drop down */}
-      {comment.authorId === currentUser.uid && (
-        <PostDropdown
-          onDelete={() => handleDeleteComment(comment.id)}
-          item={comment}
-          currentUser={currentUser}
-          messageToDelate="Ви впевнені, що хочете видалити цей коментар?"
-        />
+      {comment.replies && comment.replies.length > 0 && (
+        <div className={style.replyBody}>
+          {comment.replies.map((reply, index) => (
+            <div key={index} className={style.reply_item}>
+              <div className={style.reply_prevAuthor}>
+                <span>
+                  Відповідь на повідомлення: <b>{reply.prevAuthorName} </b>
+                </span>
+                <span>- {reply.prevAuthorText}</span>
+              </div>
+              <div className={style.reply_currentAuthor}>
+                <span>
+                  Від: <b> {reply.authorNickname}</b>{" "}
+                </span>
+                <span>- {reply.text}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
-
-      <div className={style.comment_content}>
-        {/* comment TEXT */}
-        <p>{comment.text}</p>
-      </div>
-
-      <div className={style.comment_actions}>
-        <Action
-          handleClick={handleLikeComment}
-          // isActive={comentLikedUser}
-          defaultImage="https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
-          activeImage="https://cdn-icons-png.flaticon.com/128/210/210545.png"
-          // count={comment.likes.length}
-          // hidenUsers={comentLikedUser ? comment.authorName : false}
-        />
-
-        <span className={style.icon_image}>
-          {!activeCommentId ? (
-            <Button onClick={() => handleAnswerComment(comment)} size="small" variant="secondary">
-              Відповісти
-            </Button>
-          ) : (
-            <>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleUpdateAnswerContext(commentId);
-                }}
-              >
-                <span>{prevAuthorInfo.authorName} </span>
-                <span>{prevAuthorInfo.text} </span>
-                <Input value={answerText} onChange={(e) => setAnswerText(e.target.value)} />
-                <Button type="submit" size="small" variant="secondary">
-                  Підтвердити
-                </Button>
-                <Button onClick={() => handleAnswerComment(comment.id)} size="small" variant="secondary">
-                  Відмінити
-                </Button>
-              </form>
-            </>
-          )}
-        </span>
-      </div>
-    </div>
+    </>
   );
 };

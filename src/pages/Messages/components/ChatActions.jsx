@@ -32,7 +32,13 @@ export const ChatActions = ({ currentUser, chatId, isEditing, setIsEditing, setS
   };
 
   return (
-    <div className={style.chatInput}>
+    <form
+      className={style.chatInput}
+      onSubmit={(e) => {
+        e.preventDefault();
+        isEditing ? handleUpdateMessage() : handleSendMessage();
+      }}
+    >
       <textarea value={sendText} onChange={(e) => setSendText(e.target.value)} placeholder="Написати повідомлення..." className={style.textarea} />
 
       {/* In production, add emoji picker, GIFs, image uploader here */}
@@ -48,10 +54,10 @@ export const ChatActions = ({ currentUser, chatId, isEditing, setIsEditing, setS
           </Button>
         </>
       ) : (
-        <button onClick={handleSendMessage} className={style.sendButton} disabled={!sendText.trim()}>
+        <button type="submit" className={style.sendButton} disabled={sendText.trim() === ""}>
           Надіслати
         </button>
       )}
-    </div>
+    </form>
   );
 };

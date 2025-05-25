@@ -4,13 +4,13 @@ import { PostItem } from "./PostItem";
 import style from "../Home.module.css";
 import { LoaderSmall } from "../../../components/Loader/LoaderSmall";
 
-export const PostList = ({ posts, setPosts }) => {
+export const PostList = ({ posts, setPosts, loading }) => {
   const { currentUser } = useAuth();
   const [visibleCount, setVisibleCount] = useState(5);
 
   const containerRef = useRef(null);
 
-  if (!currentUser) {
+  if (!currentUser && loading) {
     return (
       <div className="loader_center">
         <LoaderSmall />
@@ -30,7 +30,7 @@ export const PostList = ({ posts, setPosts }) => {
     <>
       <div ref={containerRef} className={style.post_list_container} onScroll={handleScroll}>
         {visiblePosts.map((post) => (
-          <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} />
+          <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} loading={loading} />
         ))}
       </div>
     </>

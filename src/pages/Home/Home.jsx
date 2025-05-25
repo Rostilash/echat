@@ -10,7 +10,7 @@ import { formatDate } from "../../utils/dateUtils";
 
 export const Home = () => {
   const { currentUser } = useAuth();
-  const { posts, setPosts, selectedFilter } = useOutletContext();
+  const { posts, setPosts, selectedFilter, loading } = useOutletContext();
 
   const today = new Date();
   const formattedToday = formatDate(today); // "YYYY-MM-DD"
@@ -67,7 +67,7 @@ export const Home = () => {
 
       {/* People messages */}
       <div className={style.posts_wrapper}>
-        <PostList posts={getFilteredPosts()} setPosts={setPosts} />
+        <PostList posts={getFilteredPosts()} setPosts={setPosts} loading={loading} />
       </div>
     </div>
   );

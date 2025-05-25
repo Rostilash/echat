@@ -14,7 +14,6 @@ export const ChatBody = ({ isOwnId, setIsEditing, isEditing, filteredChat, setMe
     setSendText(text);
     setIsEditing(true);
   };
-  // console.log(messages);
   return (
     <div className={style.chatBody}>
       {!loading ? (
@@ -30,7 +29,7 @@ export const ChatBody = ({ isOwnId, setIsEditing, isEditing, filteredChat, setMe
               )} */}
             </p>
             <span className={style.timestamp}>{formatFullDateTime(msg.timestamp)}</span>{" "}
-            {msg.from === isOwnId && !isEditing && <button onClick={() => handleGetInfo(msg.id, msg.content)}>Редагувати</button>}
+            {/* {msg.from === isOwnId && !isEditing && <button onClick={() => handleGetInfo(msg.id, msg.content)}>Редагувати</button>} */}
           </div>
         ))
       ) : (

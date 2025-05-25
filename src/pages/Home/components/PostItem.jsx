@@ -9,9 +9,10 @@ import { UserImage } from "./UserImage";
 import { PostHeader } from "./PostHeader";
 import { useAuth } from "../../../hooks/useAuth";
 import { deletePost, fetchPosts, updatePost } from "../../../services/postsService";
+import { LoaderSmall } from "../../../components/Loader/LoaderSmall";
 
-export const PostItem = ({ post, posts, setPosts, currentUser }) => {
-  const { isOwner, findUserByUid } = useAuth();
+export const PostItem = ({ post, posts, setPosts, loading }) => {
+  const { currentUser, isOwner, findUserByUid } = useAuth();
   // function of owner id (boolian)
   const owner = isOwner(post.authorId);
 
@@ -23,8 +24,7 @@ export const PostItem = ({ post, posts, setPosts, currentUser }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
-  const { currentComentId, setCurrentComentId } = useState(null);
-  console.log(currentComentId ? currentComentId : "");
+
   // Find user by authorId
   useEffect(() => {
     if (post?.authorId) {
@@ -99,27 +99,15 @@ export const PostItem = ({ post, posts, setPosts, currentUser }) => {
       <PostActions post={post} posts={posts} setPosts={setPosts} setActiveCommentPostId={setActiveCommentPostId} isOwner={owner} />
 
       {/* Show comments  */}
-      {activeCommentPostId === post.id && post.comments && (
+      {activeCommentPostId === post.id && (
         <div className={style.comments_item}>
-          <AddComments
-            posts={posts}
-            setPosts={setPosts}
-            postId={activeCommentPostId}
-            currentUser={currentUser}
-            setCurrentComentId={setCurrentComentId}
-          />
+          <AddComments posts={posts} setPosts={setPosts} postId={activeCommentPostId} currentUser={currentUser} />
 
           {post.comments.length > 0 ? (
             post.comments.map((comment) => (
-              <Comments
-                key={comment.id}
-                comment={comment}
-                currentUser={currentUser}
-                posts={posts}
-                setPosts={setPosts}
-                postId={post.id}
-                commentId={comment.id}
-              />
+              <div key={comment.id}>
+                <Comments comment={comment} currentUser={currentUser} posts={posts} setPosts={setPosts} postId={post.id} />
+              </div>
             ))
           ) : (
             <p className={style.no_comments_text}>Коментарі відсутні...</p>
