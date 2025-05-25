@@ -43,8 +43,6 @@ export const Profile = () => {
   // Posts OutletContent
   const userPosts = (posts || []).filter((post) => post.authorId === user?.id);
 
-  console.log(userPosts);
-
   const tabComponents = {
     posts: Posts,
     media: Media,

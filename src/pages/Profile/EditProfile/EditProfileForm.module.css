@@ -35,7 +35,9 @@
   border: 2px solid var(--echat-color);
 }
 .userProfileImage {
-  position: relative;
+  position: absolute;
+  left: 50px;
+  top: 150px;
   z-index: 5;
 }
 

@@ -40,7 +40,7 @@ export const useImageUpload = () => {
 
   const addGifPreview = (url) => {
     setGifPreview(url);
-    setImageFile(null); // чисто на всяк випадок
+    setImageFile(null);
     setImagePreview(null);
   };
 

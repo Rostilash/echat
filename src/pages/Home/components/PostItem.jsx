@@ -10,14 +10,13 @@ import { PostHeader } from "./PostHeader";
 import { useAuth } from "../../../hooks/useAuth";
 import { deletePost, fetchPosts, updatePost } from "../../../services/postsService";
 import { LoaderSmall } from "../../../components/Loader/LoaderSmall";
+import { Input } from "../../../components/Input/Input";
+import { Button } from "../../../components/Button/Button";
 
 export const PostItem = ({ post, posts, setPosts, loading }) => {
   const { currentUser, isOwner, findUserByUid } = useAuth();
   // function of owner id (boolian)
   const owner = isOwner(post.authorId);
-
-  // find the user by uid from store
-  const [postAuthor, setPostAuthor] = useState(null);
 
   // Actions
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
@@ -25,7 +24,8 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
 
-  // Find user by authorId
+  // find the user by authorId from Firestore
+  const [postAuthor, setPostAuthor] = useState(null);
   useEffect(() => {
     if (post?.authorId) {
       findUserByUid(post.authorId).then(setPostAuthor);
@@ -65,7 +65,7 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
         <PostHeader timeStamp={post.timestamp} author={postAuthor} />
 
         {/* Dropdown menu */}
-        {owner && (
+        {!isEditing && (
           <PostDropdown
             onEdit={handleOpenModal}
             onDelete={handleDelete}
@@ -77,13 +77,20 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
         )}
       </div>
 
+      {/* body */}
       <div className={style.post_content}>
         {/* Post text */}
         {isEditing ? (
           <div className={style.message_content}>
             <textarea value={editText} onChange={(e) => setEditText(e.target.value)} />
-            <button onClick={() => handleSaveEdit()}>Зберегти</button>
-            <button onClick={() => setIsEditing(false)}>Скасувати</button>
+            <div className={style.buttons}>
+              <Button onClick={() => handleSaveEdit()} type="submit" size="small" variant="secondary">
+                Підтвердити
+              </Button>
+              <Button onClick={() => setIsEditing(false)} size="small" variant="secondary">
+                Відмінити
+              </Button>
+            </div>
           </div>
         ) : (
           <div className={style.message_content}>

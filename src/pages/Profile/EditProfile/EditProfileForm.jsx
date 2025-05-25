@@ -16,6 +16,7 @@ export const EditProfileForm = ({ setPosts }) => {
   const [fadeOut, setFadeOut] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
     name: currentUser?.name || "",
@@ -38,24 +39,51 @@ export const EditProfileForm = ({ setPosts }) => {
       </div>
     );
   }
-
   const navigate = useNavigate();
   const { profileImage, headerImage, id: uid } = currentUser;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Очистити помилку при зміні поля
+    setFormErrors((prev) => ({ ...prev, [name]: null }));
+
     if (name === "nickname") {
       const allowed = /^[a-zA-Z0-9_]*$/;
-      if (!allowed.test(value)) return;
+      if (!allowed.test(value)) {
+        setFormErrors((prev) => ({
+          ...prev,
+          nickname: "Можна вводити лише англійські букви, цифри та _",
+        }));
+        return;
+      }
     }
+    console.log(value);
+    if (name === "name" && value.toLowerCase() === "сука") {
+      setFormErrors((prev) => ({
+        ...prev,
+        name: "Сам ти такий :)",
+      }));
+      return;
+    }
+
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrorMessage(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = {};
 
-    const hasChanges = Object.keys(form).some((key) => form[key] !== currentUser[key]);
+    const hasChanges = Object.keys(form).some((key) => {
+      if (key === "password" && form[key] === "") return false;
+      const formValue = form[key] ?? "";
+      const currentValue = currentUser[key] ?? "";
+
+      return formValue.toString().trim() !== currentValue.toString().trim();
+    });
+    console.log("form:", form);
+    console.log("currentUser:", currentUser);
 
     if (!hasChanges) {
       setErrorMessage("Ви нічого не змінили");
@@ -67,18 +95,21 @@ export const EditProfileForm = ({ setPosts }) => {
       }, 3100);
       return;
     }
-
+    // for uniq nicknames
     if (!form.nickname || !/^[a-zA-Z0-9_]+$/.test(form.nickname)) {
       setErrorMessage("Нікнейм може містити лише латинські літери, цифри та символ _");
       return;
     }
 
     const users = JSON.parse(localStorage.getItem("users")) || [];
-
     const nicknameTaken = users.some((user) => user.nickname === form.nickname && user.email !== currentUser.email);
 
     if (nicknameTaken) {
-      setErrorMessage("Цей нікнейм вже зайнятий");
+      newErrors.nickname = "Цей нікнейм вже зайнятий";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
       return;
     }
 
@@ -98,7 +129,7 @@ export const EditProfileForm = ({ setPosts }) => {
         setFadeOut(false);
       }, 3100);
 
-      navigate(`/echat/profile/${encodeURIComponent(form.nickname)}`);
+      navigate(`/echat/profile/${encodeURIComponent(uid)}`);
     } catch (error) {
       setErrorMessage("Сталася помилка при оновленні профілю");
       console.error("Update user profile error:", error);
@@ -136,10 +167,9 @@ export const EditProfileForm = ({ setPosts }) => {
 
   return (
     <div className={style.profile}>
-      <h1 style={{ position: "relative", zIndex: "1000", color: "var(--text-color)" }}>Редагувати профіль</h1>
-      {/* Main photo */}
       <div className={style.userImages}>
         <div className={style.userProfileImage}>
+          {/* load profile image */}
           <ImageUpload
             uploadKey="profileImage"
             maxSizeKB={50}
@@ -150,7 +180,7 @@ export const EditProfileForm = ({ setPosts }) => {
             iconPath="https://cdn-icons-png.flaticon.com/128/13407/13407013.png"
           />
         </div>
-
+        {/* load header image */}
         <div className={style.userHeaderImage}>
           <ImageUpload
             uploadKey="headerImage"
@@ -164,13 +194,13 @@ export const EditProfileForm = ({ setPosts }) => {
         </div>
       </div>
 
-      {/* Password */}
+      {/* change Password */}
       <div className={style.passwordBlock} title="Змінити пароль">
         <Button onClick={() => setShowModal(true)}>Змінити пароль</Button>
         {showModal && <ChangePasswordModal onClose={() => setShowModal(false)} setSuccessMessage={setSuccessMessage} />}
       </div>
 
-      {/* form */}
+      {/* User updating form */}
       <form className={style.form} onSubmit={handleSubmit} noValidate>
         {errorMessage && <p className={`error ${fadeOut ? "fadeOut" : ""}`}>{errorMessage}</p>}
         {successMessage && <p className={`success ${fadeOut ? "fadeOut" : ""}`}>{successMessage}</p>}
@@ -183,7 +213,7 @@ export const EditProfileForm = ({ setPosts }) => {
             value={form[name]}
             onChange={handleChange}
             placeholder={placeholder}
-            error={errorMessage}
+            error={formErrors[name]}
             size="no_left_padding"
             border="bordRadLow"
           />
@@ -194,7 +224,7 @@ export const EditProfileForm = ({ setPosts }) => {
         <Button type="submit">Зберегти зміни</Button>
       </form>
 
-      {/* delete Current user */}
+      {/* delete Current user for testing */}
       <Button type="text" onClick={handleDelete}>
         Видалити Аккуант
       </Button>

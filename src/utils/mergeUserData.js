@@ -11,6 +11,10 @@ export const mergeUserData = (oldUser, newData) => {
     bookmarks: oldUser.bookmarks || [],
     followers: oldUser.followers || [],
     following: oldUser.following || [],
-    nickname: newData.nickname || oldUser.nickname,
+
+    // Поля, які можуть бути змінені, але не повинні бути "" або falsy
+    nickname: newData.nickname?.trim() || oldUser.nickname,
+    profileImage: newData.profileImage?.trim() || oldUser.profileImage,
+    headerImage: newData.headerImage?.trim() || oldUser.headerImage,
   };
 };

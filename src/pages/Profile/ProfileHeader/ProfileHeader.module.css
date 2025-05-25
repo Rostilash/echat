@@ -57,9 +57,9 @@
   z-index: 1;
 }
 .background_image img {
-  max-height: 302px;
+  max-height: 280px;
   width: 100%;
-  object-fit: cover;
+  /* object-fit: cover; */
 }
 
 /* body */

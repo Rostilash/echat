@@ -10,7 +10,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
   const navigate = useNavigate();
 
   const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt, id } = user;
-  console.log(user);
+
   const dayjsFormat = formatFullDateTime(createdAt);
 
   const { theme, toggleTheme } = useTheme();

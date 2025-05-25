@@ -20,7 +20,7 @@ export const PostList = ({ posts, setPosts, loading }) => {
   const handleScroll = () => {
     const container = containerRef.current;
     if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
-      setVisibleCount((prev) => Math.min(prev + 5, posts.length)); // add +5 post
+      setVisibleCount((prev) => Math.min(prev + 10, posts.length)); // add +5 post
     }
   };
 
