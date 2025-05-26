@@ -59,7 +59,7 @@ export const Home = () => {
     // Update local state
     setPosts(updatedPosts);
   };
-  console.log(getFilteredPosts());
+
   return (
     <div className={style.main_page}>
       {/* Сreate Post */}

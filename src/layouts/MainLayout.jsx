@@ -8,7 +8,7 @@ import { fetchPosts } from "../services/postsService";
 import { getLikesCount, hasUserLiked } from "../services/likesService";
 import { getRepostsCount, hasUserReposted } from "../services/repostsService";
 import { getBookmarksCount, hasUserBookmarked } from "../services/bookmarksService";
-import { fetchCommentsByPostId, hasUserLikedComment } from "../services/commentsService";
+import { fetchCommentsByPostId } from "../services/commentsService";
 
 export const MainLayout = () => {
   const { currentUser } = useAuth();

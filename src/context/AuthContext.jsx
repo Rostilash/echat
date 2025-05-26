@@ -140,6 +140,8 @@ export const AuthProvider = ({ children }) => {
       }
 
       const userDoc = userSnapshot.docs[0];
+
+      // save values that if we dont use them in progress
       const mergedUser = mergeUserData(userDoc.data(), newUserData);
 
       await updateDoc(userDoc.ref, mergedUser);
@@ -248,10 +250,10 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: "Старий пароль невірний" };
     }
 
-    // Оновлення пароля в Firestore
+    // Update users Firestore
     await updateDoc(doc(db, "users", userDoc.id), { password: newPassword });
 
-    // Оновлення локального користувача, якщо це він
+    // update local user if it == current user
     if (currentUser?.email === email) {
       const updatedUser = { ...currentUser, password: newPassword };
       setCurrentUser(updatedUser);
@@ -322,11 +324,11 @@ export const AuthProvider = ({ children }) => {
   const deleteCurrentUser = async (emailConfirmation) => {
     if (!currentUser) return { success: false, message: "Користувача не знайдено." };
 
-    // 1️⃣  Перевірка локальних даних
+    // 1️⃣ local validation
     if (currentUser.email.toLowerCase() !== emailConfirmation.trim().toLowerCase()) return { success: false, message: "E-mail не збігається." };
 
     try {
-      // 2️⃣  Додаткова перевірка у Firestore
+      // 2️⃣ Firestore
       const userRef = doc(db, "users", currentUser.uid);
       const userSnap = await getDoc(userRef);
 
@@ -336,10 +338,10 @@ export const AuthProvider = ({ children }) => {
       if (firestoreEmail.toLowerCase() !== emailConfirmation.trim().toLowerCase())
         return { success: false, message: "E-mail у Firestore не збігається." };
 
-      // 3️⃣  Видалення документа
+      // 3️⃣ Delete document
       await deleteDoc(userRef);
 
-      // 4️⃣  Очищення локального стану
+      // 4️⃣ Remove local state
       localStorage.removeItem("currentUser");
       setCurrentUser(null);
       navigate("/echat/register/me");
