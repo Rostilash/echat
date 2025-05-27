@@ -66,6 +66,12 @@
   cursor: pointer;
 }
 
+.password_hint {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
   .register_form {
     max-width: 100%;

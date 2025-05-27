@@ -57,7 +57,7 @@ export const Register = ({ onClose, setLoginForm }) => {
     setSuccessMessage("");
 
     if (formData.name.length < 6) {
-      newErrors.name = "Ім'я повинно містити щонайменше 6 символи";
+      newErrors.name = "Ім'я повинно містити щонайменше 6 символів";
     }
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -65,14 +65,19 @@ export const Register = ({ onClose, setLoginForm }) => {
       newErrors.email = "Введіть коректний Email";
     }
 
-    if (formData.password.length < 6) {
+    const password = formData.password;
+    if (password.length < 6) {
       newErrors.password = "Пароль повинен містити щонайменше 6 символів";
+    } else if (!/[a-z]/.test(password)) {
+      newErrors.password = "Пароль повинен містити хоча б одну малу літеру";
+    } else if (!/[A-Z]/.test(password)) {
+      newErrors.password = "Пароль повинен містити хоча б одну велику літеру";
     }
 
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formErrors = validateForm();
@@ -95,13 +100,16 @@ export const Register = ({ onClose, setLoginForm }) => {
     register(formData);
 
     // if register successfully log in
-    login(formData.email, formData.password);
-    setSuccessMessage("Реєстрація успішна!");
-
-    setTimeout(() => {
-      setSuccessMessage("");
-      navigate("/echat/", { replace: true });
-    }, 1500);
+    const isLoginSuccessful = await login(formData.email, formData.password);
+    if (isLoginSuccessful) {
+      setSuccessMessage("Реєстрація успішна!");
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/echat/", { replace: true });
+      }, 1000);
+    } else {
+      setErrorMessage("Щось пішло не так при вході після реєстрації.");
+    }
   };
 
   return (
@@ -110,6 +118,8 @@ export const Register = ({ onClose, setLoginForm }) => {
         <CloseButton onClose={onClose} />
 
         <h2>Реєстрація</h2>
+        <p className={style.password_hint}>Пароль має містити щонайменше 6 символів, одну **велику** та одну **малу** літеру.</p>
+
         {!successMessage && <p className={style.success_message}>{successMessage}</p>}
         {successMessage && <p className={style.error_message}>{successMessage}</p>}
 

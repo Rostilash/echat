@@ -36,17 +36,25 @@ export const Login = ({ onClose, setRegisterForm }) => {
 
   const validateForm = () => {
     let isValid = true;
+    setEmailError("");
+    setPasswordError("");
+    setErrorMessage("");
 
-    // Validation email
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(formData.email)) {
-      setEmailError("❌ Некоректний email");
+      setEmailError("Некоректний email");
       isValid = false;
     }
 
-    // Validation password
-    if (formData.password.length < 6) {
-      setPasswordError("❌ Пароль повинен бути не менше 6 символів");
+    const password = formData.password;
+    if (password.length < 6) {
+      setPasswordError("Пароль повинен містити щонайменше 6 символів");
+      isValid = false;
+    } else if (!/[a-z]/.test(password)) {
+      setPasswordError("Пароль повинен містити хоча б одну малу літеру");
+      isValid = false;
+    } else if (!/[A-Z]/.test(password)) {
+      setPasswordError("Пароль повинен містити хоча б одну велику літеру");
       isValid = false;
     }
 
@@ -73,7 +81,9 @@ export const Login = ({ onClose, setRegisterForm }) => {
     <div className={style.login_wrapper}>
       <form className={style.login_form} onSubmit={handleSubmit}>
         <CloseButton onClose={onClose} />
+
         <h2>Вхід</h2>
+        <p className={style.password_hint}>Пароль має містити щонайменше 6 символів, одну **велику** та одну **малу** літеру.</p>
         <p>
           Новий користувач?{" "}
           <span className={style.termsLink} onClick={setRegisterForm}>
