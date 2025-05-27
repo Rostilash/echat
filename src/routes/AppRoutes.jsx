@@ -1,9 +1,7 @@
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { Home } from "../pages/Home/Home";
-import { Register } from "../pages/Register/Register";
-import { Login } from "../pages/Login/Login";
 import { News } from "../pages/News/News";
 import { TopPlaces } from "../pages/TopPlaces/TopPlaces";
 import { ProtectedRoute } from "./../components/ProtectedRoute/ProtectedRoute";
@@ -14,6 +12,8 @@ import { PrePage } from "./../pages/PrePage/PrePage";
 import { Weather } from "./../pages/Weather/Weather";
 import { MessagesWithProvider } from "../pages/Messages/components/MessagesWithProvider";
 import { Movies } from "../pages/Movies/Movies";
+import { Register } from "../components/Register/Register";
+import { Login } from "../components/Login/Login";
 
 export const AppRoutes = () => {
   return (

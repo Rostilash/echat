@@ -31,7 +31,12 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
       </div>
 
       <div className={s.head}>
-        <ToMainPage />
+        {isEditing && (
+          <span onClick={() => setIsEditing(false)} style={{ cursor: "pointer" }}>
+            &#8592; Повернутися
+          </span>
+        )}
+        {!isEditing && <ToMainPage />}
 
         <div className={s.head_user_info}>
           <span className={s.user_name}>{name}</span>

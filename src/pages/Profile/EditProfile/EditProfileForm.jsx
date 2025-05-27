@@ -3,16 +3,16 @@ import style from "./EditProfileForm.module.css";
 import { useAuth } from "../../../hooks/useAuth";
 import { Input } from "../../../components/Input/Input";
 import { Button } from "../../../components/Button/Button";
-import { ChangePasswordModal } from "../../ChangePasswordModal/ChangePasswordModal";
 import { mergeUserData } from "../../../utils/mergeUserData";
 import { useNavigate } from "react-router-dom";
 import { LoaderSmall } from "./../../../components/Loader/LoaderSmall";
 import { LoadingImages } from "./Structure/LoadingImages/LoadingImages";
+import { ChangePasswordModal } from "../../../components/ChangePasswordModal/ChangePasswordModal";
 
 export const EditProfileForm = ({ setPosts }) => {
   // useContext our user
   const { currentUser, updateUserProfile, updateUser, deleteCurrentUser } = useAuth();
-
+  ChangePasswordModal;
   const [fadeOut, setFadeOut] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);

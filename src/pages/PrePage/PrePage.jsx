@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import style from "./PrePage.module.css";
 import { Link } from "react-router-dom";
-import { Login } from "./../Login/Login";
-import { Register } from "./../Register/Register";
 import { Button } from "./../../components/Button/Button";
+import { Register } from "../../components/Register/Register";
+import { Login } from "../../components/Login/Login";
 
 export const PrePage = () => {
   const [isRightSideHidden, setIsRightSideHidden] = useState(null);

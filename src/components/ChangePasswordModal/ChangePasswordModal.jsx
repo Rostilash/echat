@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import style from "./ChangePasswordModal.module.css";
 import { AuthContext } from "../../context/AuthContext";
-import { Input } from "./../../components/Input/Input";
-import { CloseButton } from "./../../components/Button/CloseButton";
-import { Button } from "./../../components/Button/Button";
+import { Input } from "../Input/Input";
+import { CloseButton } from "../Button/CloseButton";
+import { Button } from "../Button/Button";
 
 export const ChangePasswordModal = ({ onClose, setShowModal }) => {
   const { currentUser, changePassword, verifyOldPassword } = useContext(AuthContext);

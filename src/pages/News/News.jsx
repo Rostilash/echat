@@ -14,7 +14,6 @@ export const News = () => {
       try {
         const response = await fetch(proxyUrl);
         const data = await response.json();
-        console.log(data);
         setArticles(data.items || []);
       } catch (error) {
         console.error("Помилка при завантаженні новин:", error);

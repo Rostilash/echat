@@ -8,9 +8,9 @@ import { Likes } from "./Tabs/Likes";
 import { Reposts } from "./Tabs/Reposts";
 import { Bookmarks } from "./Tabs/Bookmarks";
 import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
-import { EditProfileForm } from "./EditProfile/EditProfileForm";
 import { useOutletContext, useParams } from "react-router-dom";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
+import { EditProfileForm } from "./EditProfile/EditProfileForm";
 
 export const Profile = () => {
   // URL params

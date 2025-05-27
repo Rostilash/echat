@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import style from "./Login.module.css";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "./../../hooks/useAuth";
-import { Button } from "../../components/Button/Button";
-import { Input } from "./../../components/Input/Input";
-import { CloseButton } from "../../components/Button/CloseButton";
+import { useAuth } from "../../hooks/useAuth";
+import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
+import { CloseButton } from "../Button/CloseButton";
 
 export const Login = ({ onClose, setRegisterForm }) => {
   const navigate = useNavigate();
