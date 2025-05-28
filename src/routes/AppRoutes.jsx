@@ -20,7 +20,7 @@ export const AppRoutes = () => {
     <Routes>
       {/* Main page */}
       <Route
-        path="/echat/"
+        path="/"
         element={
           <PrivateRoute>
             <MainLayout />
@@ -36,20 +36,20 @@ export const AppRoutes = () => {
       </Route>
 
       {/* for messages */}
-      <Route path="/echat/message/" element={<AuthLayout />}>
+      <Route path="message" element={<AuthLayout />}>
         <Route path=":uid" element={<MessagesWithProvider />} />
       </Route>
 
       {/* Loading page without header and footer  */}
-      <Route path="/echat/register/" element={<AuthLayout />}>
-        <Route path="me/" element={<PrePage />} />
-        <Route path="r/" element={<Register />} />
-        <Route path="l/" element={<Login />} />
+      <Route path="register" element={<AuthLayout />}>
+        <Route path="me" element={<PrePage />} />
+        <Route path="r" element={<Register />} />
+        <Route path="l" element={<Login />} />
       </Route>
 
       {/* Admin panel  */}
       <Route
-        path="/echat/admin-panel"
+        path="admin-panel"
         element={
           <ProtectedRoute requiredRole="admin">
             <AdminPanel />
@@ -58,7 +58,7 @@ export const AppRoutes = () => {
       />
 
       {/* Redirect to main page */}
-      <Route path="*" element={<Navigate to="/echat/" />} />
+      {/* <Route path="*" element={<Navigate to="/" />} /> */}
     </Routes>
   );
 };

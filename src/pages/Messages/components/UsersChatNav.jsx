@@ -4,7 +4,7 @@ import style from "../styles/ChatSideBar.module.css";
 export const UsersChatNav = ({ user, chatMessage, currentUserId, UrlID }) => {
   const partnerId = user?.uid;
   // redirect path when click on LINK
-  const path = "/echat/message/" + partnerId;
+  const path = "/message/" + partnerId;
 
   // filtering actions for actions in chat
   const hasUnread = chatMessage.some((msg) => !msg.isRead && msg.to === currentUserId && msg.from === partnerId);

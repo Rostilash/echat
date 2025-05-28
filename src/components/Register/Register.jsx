@@ -105,7 +105,7 @@ export const Register = ({ onClose, setLoginForm }) => {
       setSuccessMessage("Реєстрація успішна!");
       setTimeout(() => {
         setSuccessMessage("");
-        navigate("/echat/", { replace: true });
+        navigate("/", { replace: true });
       }, 1000);
     } else {
       setErrorMessage("Щось пішло не так при вході після реєстрації.");

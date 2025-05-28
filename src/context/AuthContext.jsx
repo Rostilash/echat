@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
       await signOut(auth);
       localStorage.removeItem("currentUser");
       setCurrentUser(null);
-      navigate("/echat/register/me");
+      navigate("/register/me");
     } catch (err) {
       console.error("Logout error:", err.message);
     }
@@ -313,7 +313,7 @@ export const AuthProvider = ({ children }) => {
       await signOut(auth);
       localStorage.removeItem("currentUser");
       setCurrentUser(null);
-      navigate("/echat/register/me");
+      navigate("/register/me");
 
       return { success: true };
     } catch (error) {

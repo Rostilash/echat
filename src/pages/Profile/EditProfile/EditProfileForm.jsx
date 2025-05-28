@@ -129,7 +129,7 @@ export const EditProfileForm = ({ setPosts }) => {
         setFadeOut(false);
       }, 3100);
 
-      navigate(`/echat/profile/${encodeURIComponent(uid)}`);
+      navigate(`/profile/${encodeURIComponent(uid)}`);
     } catch (error) {
       setErrorMessage("Сталася помилка при оновленні профілю");
       console.error("Update user profile error:", error);

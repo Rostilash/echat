@@ -23,21 +23,21 @@ export const Sidebar = ({ selectedPostFilter }) => {
   const mainLinks = [
     {
       key: "main",
-      path: "/echat/",
+      path: "/",
       handleClick: () => selectedPostFilter(null),
       image: "https://cdn-icons-png.flaticon.com/128/15527/15527317.png",
       message: "Головна",
     },
     {
       key: "top",
-      path: "/echat/top-places",
+      path: "/top-places",
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/5650/5650649.png",
       message: "Топ місця",
     },
     {
       key: "messages",
-      path: `/echat/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
+      path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
       message: "Повідомлення",
@@ -45,21 +45,21 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "movies",
-      path: `/echat/movies`,
+      path: `/movies`,
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/6815/6815074.png",
       message: "Фільми",
     },
     {
       key: "news",
-      path: "/echat/news",
+      path: "/news",
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/10288/10288957.png",
       message: "Новини",
     },
     {
       key: "weather",
-      path: "/echat/weather",
+      path: "/weather",
       handleClick: () => selectedPostFilter(null),
       image: "https://cdn-icons-png.flaticon.com/128/8918/8918108.png",
       message: "Погода",
@@ -70,7 +70,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     mainLinks.push(
       {
         key: "profile",
-        path: `/echat/profile/${currentUser?.id}`,
+        path: `/profile/${currentUser?.id}`,
         handleClick: null,
         image: "https://cdn-icons-png.flaticon.com/128/9068/9068871.png",
         message: "Профіль",

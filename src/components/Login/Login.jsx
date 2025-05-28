@@ -16,7 +16,7 @@ export const Login = ({ onClose, setRegisterForm }) => {
 
   useEffect(() => {
     if (currentUser && currentUser.isLoggedIn) {
-      navigate("/echat/", { replace: true });
+      navigate("/", { replace: true });
     }
   }, [currentUser, navigate]);
 
@@ -71,7 +71,7 @@ export const Login = ({ onClose, setRegisterForm }) => {
     const isLoginSuccessful = await login(formData.email, formData.password);
 
     if (isLoginSuccessful) {
-      navigate("/echat/", { replace: true });
+      navigate("/", { replace: true });
     } else {
       setErrorMessage("Невірний email або пароль");
     }

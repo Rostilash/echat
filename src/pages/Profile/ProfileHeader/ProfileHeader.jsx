@@ -17,7 +17,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
 
   const handleBack = () => {
     if (!isEditing) {
-      navigate("/echat/");
+      navigate("/");
     }
     setIsEditing(false);
   };

@@ -1,6 +1,5 @@
 import { useMessages } from "../../../context/MessageContext";
 import style from "../styles/Messages.module.css";
-import { useState } from "react";
 import { Button } from "./../../../components/Button/Button";
 
 export const ChatActions = ({ currentUser, chatId, isEditing, setIsEditing, setSendText, sendText, messageIdToEdit }) => {
