@@ -6,7 +6,7 @@ export const getPostActionArray = ({ post, handlers, isOwner, isAuthorComment })
       handleClick: () => handlers.handleClickComment(post.id),
       activeImage: "https://cdn-icons-png.flaticon.com/128/2190/2190552.png",
       defaultImage: "https://cdn-icons-png.flaticon.com/128/16689/16689811.png",
-      count: post.comments.length,
+      count: post.comments?.length ?? "",
     },
     {
       key: "likes",

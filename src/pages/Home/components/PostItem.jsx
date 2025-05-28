@@ -24,6 +24,7 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
 
   // find the user by authorId from Firestore
   const [postAuthor, setPostAuthor] = useState(null);
+
   useEffect(() => {
     if (post?.authorId) {
       findUserByUid(post.authorId).then(setPostAuthor);

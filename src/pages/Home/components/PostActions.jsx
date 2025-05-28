@@ -29,7 +29,7 @@ export const PostActions = ({ post, posts, setPosts, setActiveCommentPostId, isO
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
 
-  const isAuthorComment = post.comments.some((comment) => comment.authorId === currentUser?.id);
+  const isAuthorComment = (post.comments || []).some((comment) => comment.authorId === currentUser?.id);
 
   //Array for our ActionButtons
   const actionButtons = getPostActionArray({

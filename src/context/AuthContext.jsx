@@ -9,6 +9,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [isUserInitialized, setIsUserInitialized] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +26,8 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(null);
         localStorage.removeItem("currentUser");
       }
+
+      setIsUserInitialized(true);
     });
 
     return () => unsubscribe();
@@ -341,6 +344,7 @@ export const AuthProvider = ({ children }) => {
         isOwner,
         findUserByUid,
         deleteCurrentUser,
+        isUserInitialized,
       }}
     >
       {children}

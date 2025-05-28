@@ -9,9 +9,10 @@ import { getLikesCount, hasUserLiked } from "../services/likesService";
 import { getRepostsCount, hasUserReposted } from "../services/repostsService";
 import { getBookmarksCount, hasUserBookmarked } from "../services/bookmarksService";
 import { fetchCommentsByPostId } from "../services/commentsService";
+import { LoaderSmall } from "./../components/Loader/LoaderSmall";
 
 export const MainLayout = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, isUserInitialized } = useAuth();
 
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -20,14 +21,17 @@ export const MainLayout = () => {
 
   // Upload all posts
   useEffect(() => {
+    if (!isUserInitialized || !currentUser) return;
+
     const loadPosts = async () => {
       setLoading(true);
       const fetchedPosts = await fetchPosts();
       setPosts(fetchedPosts);
       setLoading(false);
     };
+
     loadPosts();
-  }, []);
+  }, [isUserInitialized, currentUser]);
 
   //load stats(actions) on post later
   useEffect(() => {
@@ -45,11 +49,12 @@ export const MainLayout = () => {
             getLikesCount(postId),
             getRepostsCount(postId),
             getBookmarksCount(postId),
-            hasUserLiked(postId, currentUser.id),
-            hasUserReposted(postId, currentUser.id),
-            hasUserBookmarked(postId, currentUser.id),
+            hasUserLiked(postId, currentUser?.id),
+            hasUserReposted(postId, currentUser?.id),
+            hasUserBookmarked(postId, currentUser?.id),
             fetchCommentsByPostId(postId),
           ]);
+
           return { ...post, likes, reposts, bookmarks, userLiked, userReposted, userBookmarked, comments };
         })
       );
@@ -102,7 +107,13 @@ export const MainLayout = () => {
     <div className={style.layout}>
       <Sidebar selectedPostFilter={setSelectedFilter} />
       <main className={style.content}>
-        <Outlet context={{ posts: displayPosts, setPosts, selectedFilter, loading }} />
+        {isUserInitialized && !loading ? (
+          <Outlet context={{ posts: displayPosts, setPosts, selectedFilter, loading }} />
+        ) : (
+          <div className="loader_center">
+            <LoaderSmall />
+          </div>
+        )}
       </main>
       <Rightbar onSelectFilter={setSelectedFilter} posts={posts} users={users} />
     </div>
