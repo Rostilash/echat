@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import style from "./Movies.module.css";
 
 export const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -79,11 +80,11 @@ export const Movies = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className={style.container}>
       <div style={{ marginBottom: "20px", display: "flex", gap: "10px", alignItems: "center" }}>
         <input
           type="text"
-          placeholder="Введіть назву фільму на англійській"
+          placeholder="Введіть на англійській"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ padding: "8px", width: "300px" }}
@@ -102,7 +103,7 @@ export const Movies = () => {
       {loading && <div>Завантаження...</div>}
       {!loading && movies.length === 0 && <p>Фільми не знайдено.</p>}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
+      <div className={style.movies_items}>
         {!loading &&
           movies.map((movie) => {
             const translatedGenre = genreMap[movie.genres?.[0]] || movie.genres?.[0];

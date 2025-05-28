@@ -37,6 +37,18 @@
 
 @media (max-width: 768px) {
   .login_wrapper {
+    min-height: 70vh;
+    /* background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); */
     padding: 0;
+  }
+  .rightSide {
+    padding: 0;
+  }
+}
+@media (max-width: 480px) {
+  .sidebar {
+    height: 30vh;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
   }
 }

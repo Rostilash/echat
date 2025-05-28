@@ -15,7 +15,7 @@
 
 @media (max-width: 768px) {
   .content {
-    min-width: 680px;
+    min-width: 350px;
   }
   .layout {
     flex-direction: column;

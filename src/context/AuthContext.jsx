@@ -1,6 +1,13 @@
 import { createContext, useState, useEffect } from "react";
 import { collection, query, where, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser as deleteAuthUser } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  deleteUser as deleteAuthUser,
+  getAuth,
+} from "firebase/auth";
 import { db, auth } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { mergeUserData } from "../utils/mergeUserData";
@@ -101,6 +108,7 @@ export const AuthProvider = ({ children }) => {
 
       const newUser = {
         ...userDataWithoutPassword,
+        id: uid,
         uid,
         isLoggedIn: true,
         nickname,
@@ -180,6 +188,50 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Profile update error:", error);
       return false;
+    }
+  };
+
+  const updateUser = async (newUserData) => {
+    try {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.error("Користувач не авторизований");
+        return;
+      }
+
+      const uid = currentUser.uid;
+      const userRef = doc(db, "users", uid);
+
+      await updateDoc(userRef, newUserData);
+
+      if (typeof setCurrentUser === "function") {
+        setCurrentUser((prev) => ({
+          ...prev,
+          ...newUserData,
+        }));
+      }
+    } catch (error) {
+      console.error("Помилка при оновленні користувача:", error);
+    }
+  };
+
+  const verifyOldPassword = async (email, oldPassword) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      return { success: false, message: "Користувач не авторизований" };
+    }
+
+    try {
+      const credential = EmailAuthProvider.credential(email, oldPassword);
+      await reauthenticateWithCredential(user, credential);
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: "Старий пароль невірний" };
     }
   };
 
@@ -337,6 +389,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         register,
         updateUserProfile,
+        verifyOldPassword,
+        updateUser,
         changePassword,
         setCurrentUser,
         followUser,

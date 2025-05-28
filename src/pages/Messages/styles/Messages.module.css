@@ -98,3 +98,54 @@
   border-radius: 10px;
   cursor: pointer;
 }
+
+@media (max-width: 480px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chatHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .chatBody {
+    padding: 1rem;
+  }
+
+  .myMessage,
+  .theirMessage {
+    max-width: 90%; /* більше простору на маленьких екранах */
+    font-size: 0.9rem;
+  }
+
+  .textarea {
+    font-size: 1rem;
+    min-height: 50px;
+  }
+
+  .sendButton {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .searchChat {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    height: 30vh;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .chatArea {
+    height: 70vh;
+    overflow-y: auto;
+  }
+}

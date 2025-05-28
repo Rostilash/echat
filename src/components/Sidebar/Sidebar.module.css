@@ -47,6 +47,7 @@
   border-radius: 8px;
   transition: background-color 0.3s ease;
 }
+
 .menuItem:hover {
   background-color: #d3d3d3;
 }
@@ -124,7 +125,7 @@
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
-    height: 60px;
+    height: 80px;
     position: fixed;
     bottom: 0;
     top: auto;
@@ -135,15 +136,20 @@
     border-right: none;
     background-color: var(--bg-color);
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-around;
     z-index: 999;
     transition: background-color 0.3s, color 0.3s;
+    background-color: #e7e7e7;
   }
 
+  .menuItem {
+    padding: 0px 15px;
+    justify-content: center;
+  }
   .menu {
     flex-direction: row;
-    gap: 1.5rem;
+    gap: 2px;
   }
 
   .authLinks {

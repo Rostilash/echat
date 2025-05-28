@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export const UserImage = ({ author }) => {
   return (
     <div className={style.user_image}>
-      <Link to={`/profile/${author?.id}`}>
+      <Link to={`/profile/${author?.uid}`}>
         <img
           src={(author?.id && (author?.profileImage || author.authorImg)) || "https://cdn-icons-png.flaticon.com/128/1837/1837625.png"}
           alt="user"

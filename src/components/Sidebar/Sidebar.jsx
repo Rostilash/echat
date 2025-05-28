@@ -13,6 +13,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
   const [openQuitMenu, setOpenQuitMenu] = useState(false);
 
   const messages = getUserChats(currentUser?.id) || [];
+
   const hasUnread = messages.some((chat) => chat.messages.some((msg) => msg.to === currentUser?.nickname && !msg.isRead));
 
   const handleOpenQuitOption = () => {
@@ -41,7 +42,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
       handleClick: null,
       image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
       message: "Повідомлення",
-      // chatMessage: hasUnread,
+      chatMessage: hasUnread,
     },
     {
       key: "movies",
@@ -84,19 +85,57 @@ export const Sidebar = ({ selectedPostFilter }) => {
       // }
     );
   }
+  const mainMobileLinks = [
+    {
+      key: "news",
+      path: "/news",
+      handleClick: null,
+      image: "https://cdn-icons-png.flaticon.com/128/10288/10288957.png",
+    },
+    {
+      key: "movies",
+      handleClick: null,
+      path: `/movies`,
+      image: "https://cdn-icons-png.flaticon.com/128/6815/6815074.png",
+    },
+    {
+      key: "main",
+      path: "/",
+      handleClick: () => selectedPostFilter(null),
+      image: "https://cdn-icons-png.flaticon.com/128/15527/15527317.png",
+      style: { width: "40px", height: "40px" },
+    },
+    {
+      key: "messages",
+      path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
+      handleClick: null,
+      image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
+      chatMessage: hasUnread,
+    },
+    {
+      key: "weather",
+      path: "/weather",
+      handleClick: () => selectedPostFilter(null),
+      image: "https://cdn-icons-png.flaticon.com/128/8918/8918108.png",
+    },
+  ];
+
+  const filteredLinks = isMobile ? mainMobileLinks.filter((link) => ["news", "movies", "main", "messages", "weather"].includes(link.key)) : mainLinks;
 
   return (
     <aside className={style.sidebar}>
       <div className={style.menu}>
-        <div className={style.logo}>
-          <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/3665/3665930.png" />
-          chat
-        </div>
+        {!isMobile && (
+          <div className={style.logo}>
+            <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/3665/3665930.png" />
+            chat
+          </div>
+        )}
 
-        {mainLinks.map(({ key, path, handleClick, image, message, chatMessage }) => (
+        {filteredLinks.map(({ key, path, handleClick, image, message, chatMessage, style: customStyle }) => (
           <Link key={key} to={path} className={style.menuItem} onClick={handleClick}>
-            <img src={image} alt="icon" />
-            <span>{message}</span>
+            <img src={image} alt="icon" style={customStyle} />
+            {!isMobile && <span>{message}</span>}
             {chatMessage && <span className={style.unreadDot}></span>}
           </Link>
         ))}

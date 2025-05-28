@@ -9,7 +9,7 @@ import { ToMainPage } from "./../../../components/Button/Links/ToMainPage";
 export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsEditing, isOwner }) => {
   const navigate = useNavigate();
 
-  const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt, id } = user;
+  const { name, profileImage, headerImage, nickname, region, website, followers = [], following = [], createdAt, uid } = user;
 
   const dayjsFormat = formatFullDateTime(createdAt);
 
@@ -58,7 +58,7 @@ export const ProfileHeader = ({ user, postsCount, onEditClick, isEditing, setIsE
               </div>
 
               {/* Write message and Following button */}
-              {!isOwner && <UserLink userId={id} />}
+              {!isOwner && <UserLink userId={uid} />}
               <div className={s.body_right}>
                 {isOwner && (
                   <Button onClick={onEditClick} variant="empty">

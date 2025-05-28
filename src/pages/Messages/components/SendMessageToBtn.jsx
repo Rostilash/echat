@@ -17,7 +17,7 @@ export const UserLink = ({ userId }) => {
 
     // Redirect to user with this nickname
     if (updatedUser) {
-      await updateUser(updatedUser); // оновити контекст, якщо треба
+      await updateUser(updatedUser);
       navigate(`/message/${userId}`);
     }
   };

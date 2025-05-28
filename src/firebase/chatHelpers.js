@@ -4,6 +4,7 @@ import { db } from "../firebase/config";
 export const createMutualChatConnection = async (currentUser, targetUserId) => {
   if (!currentUser || !targetUserId) return;
 
+  console.log(currentUser);
   const currentUid = currentUser.uid;
 
   const usersRef = collection(db, "users");

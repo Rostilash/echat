@@ -19,7 +19,7 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
   useEffect(() => {
     const fetchAuthors = async () => {
       // 1. Filter only unique authorIds that are not currentUser.id
-      const uniqueAuthorIds = [...new Set(posts.filter((post) => post.authorId && post.authorId !== currentUser.id).map((post) => post.authorId))];
+      const uniqueAuthorIds = [...new Set(posts.filter((post) => post.authorId && post.authorId !== currentUser.uid).map((post) => post.authorId))];
 
       // 2. We make queries for each id
       const users = await Promise.all(uniqueAuthorIds.map((uid) => findUserByUid(uid)));
@@ -28,18 +28,20 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
       setRecommendedUsers(users);
     };
 
-    if (posts.length > 0 && currentUser?.id) {
+    if (posts.length > 0 && currentUser?.uid) {
       fetchAuthors();
     }
   }, [posts, currentUser]);
-
-  const recomendedUsers = posts.filter((post) => post.authorId !== currentUser.id);
-  const visibleRecomendedUsers = recommendedUsers.slice(0, visibleUsers);
 
   // show more +3
   const handleShowMore = () => {
     setVisibleUsers((prev) => prev + 3);
   };
+
+  const recomendedUsers = posts.filter((post) => post.authorId !== currentUser.uid);
+  const visibleRecomendedUsers = recommendedUsers.slice(0, visibleUsers);
+  const filteredUsers = visibleRecomendedUsers.filter((user) => user != null && user.uid);
+  const filteredFollowerUsers = filteredUsers.filter((user) => !user.followers.includes(currentUser.uid));
 
   return (
     <aside className={style.rightbar}>
@@ -57,7 +59,7 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
       <div className={style.news_block}>
         <h2>Рекомендовані</h2>
 
-        {visibleRecomendedUsers.map((user) => (
+        {filteredFollowerUsers.map((user) => (
           <RecomendedUsers key={user.id} user={user} />
         ))}
 

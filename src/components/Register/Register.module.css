@@ -3,7 +3,6 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  /* background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); */
 }
 
 .register_form {
@@ -51,16 +50,6 @@
   }
 }
 
-/* .register_form select {
-  padding: 0.8rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  width: 180px;
-  margin-left: auto;
-  margin-right: auto;
-} */
-
 .enter {
   color: var(--echat-color);
   cursor: pointer;
@@ -75,8 +64,11 @@
 @media (max-width: 768px) {
   .register_form {
     max-width: 100%;
+    min-height: 70vh;
+    /* background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); */
   }
   .register_wrapper {
+    min-height: 80vh;
     padding: 0;
   }
 }

@@ -19,7 +19,7 @@ export const RecomendedUsers = ({ user }) => {
           </div>
         </div>
         <div className={style.newsOptions}>
-          <FollowButton userId={user.id} />
+          <FollowButton userId={user.uid} />
         </div>
       </div>
     </div>

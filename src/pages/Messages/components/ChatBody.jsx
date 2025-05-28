@@ -22,14 +22,14 @@ export const ChatBody = ({ isOwnId, setIsEditing, isEditing, filteredChat, setMe
             <p>
               {msg.content}
               {/* Delete the message */}
-              {/* {msg.from === isOwnId  && (
+              {/* {msg.from === isOwnId && (
                 <Button onClick={() => deleteMessage(msg.id)} variant="danger" size="small">
                   x
                 </Button>
               )} */}
             </p>
             <span className={style.timestamp}>{formatFullDateTime(msg.timestamp)}</span>{" "}
-            {/* {msg.from === isOwnId && !isEditing && <button onClick={() => handleGetInfo(msg.id, msg.content)}>Редагувати</button>} */}
+            {msg.from === isOwnId && !isEditing && <button onClick={() => handleGetInfo(msg.id, msg.content)}>Редагувати</button>}
           </div>
         ))
       ) : (

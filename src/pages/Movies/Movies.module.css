@@ -1,5 +1,23 @@
+.container {
+  padding: 20px;
+  margin-bottom: 50px;
+}
 .movies {
   display: grid;
   grid-template-columns: 2fr 5fr;
   gap: 10px;
+}
+.movies_items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .movies {
+    grid-template-columns: 2fr 5fr;
+    margin-bottom: 50px;
+  }
+  .movies_items {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
