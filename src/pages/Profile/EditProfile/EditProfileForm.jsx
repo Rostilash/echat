@@ -12,7 +12,7 @@ import { ChangePasswordModal } from "../../../components/ChangePasswordModal/Cha
 export const EditProfileForm = ({ setPosts }) => {
   // useContext our user
   const { currentUser, updateUserProfile, updateUser, deleteCurrentUser } = useAuth();
-  ChangePasswordModal;
+
   const [fadeOut, setFadeOut] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -20,7 +20,6 @@ export const EditProfileForm = ({ setPosts }) => {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
     name: currentUser?.name || "",
-    password: "",
     nickname: currentUser?.nickname || "",
     email: currentUser?.email || "",
     profileImage: currentUser?.profileImage || "",
@@ -45,7 +44,6 @@ export const EditProfileForm = ({ setPosts }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Очистити помилку при зміні поля
     setFormErrors((prev) => ({ ...prev, [name]: null }));
 
     if (name === "nickname") {
@@ -58,7 +56,7 @@ export const EditProfileForm = ({ setPosts }) => {
         return;
       }
     }
-    console.log(value);
+
     if (name === "name" && value.toLowerCase() === "сука") {
       setFormErrors((prev) => ({
         ...prev,
@@ -168,6 +166,7 @@ export const EditProfileForm = ({ setPosts }) => {
     <div className={style.profile}>
       <LoadingImages currentUser={currentUser} profileImage={profileImage} updateUser={updateUser} headerImage={headerImage} uid={uid} />
 
+      <span className={style.about_message}>Щоб змінити зображення ти можеш на нього натиснути і завантажити своє...</span>
       {/* change Password */}
       <div className={style.passwordBlock} title="Змінити пароль">
         <Button onClick={() => setShowModal(true)} size="small">
@@ -177,7 +176,7 @@ export const EditProfileForm = ({ setPosts }) => {
       </div>
       {/* User updating form */}
       <form className={style.form} onSubmit={handleSubmit} noValidate>
-        <h1>Редагування</h1>
+        <h1>Редагування профілю</h1>
 
         {errorMessage && <p className={`error ${fadeOut ? "fadeOut" : ""}`}>{errorMessage}</p>}
         {successMessage && <p className={`success ${fadeOut ? "fadeOut" : ""}`}>{successMessage}</p>}
@@ -198,7 +197,7 @@ export const EditProfileForm = ({ setPosts }) => {
 
         <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="Про себе" className={style.textarea} />
 
-        <Button type="submit">Зберегти зміни</Button>
+        <Button type="submit">Зберегти</Button>
       </form>
 
       {/* delete Current user for testing */}

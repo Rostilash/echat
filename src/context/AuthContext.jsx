@@ -7,6 +7,8 @@ import {
   onAuthStateChanged,
   deleteUser as deleteAuthUser,
   getAuth,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import { db, auth } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
@@ -154,6 +156,10 @@ export const AuthProvider = ({ children }) => {
       const userDoc = snapshot.docs[0];
       const mergedUser = mergeUserData(userDoc.data(), newUserData);
 
+      if (!mergedUser.password) {
+        delete mergedUser.password;
+      }
+
       await updateDoc(userDoc.ref, mergedUser);
 
       const updatedUser = { ...mergedUser, id: userDoc.id };
@@ -217,7 +223,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const verifyOldPassword = async (email, oldPassword) => {
+  const verifyOldPassword = async (oldPassword) => {
     const auth = getAuth();
     const user = auth.currentUser;
 
@@ -226,12 +232,13 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const credential = EmailAuthProvider.credential(email, oldPassword);
+      const credential = EmailAuthProvider.credential(user.email, oldPassword.trim());
       await reauthenticateWithCredential(user, credential);
 
       return { success: true };
     } catch (error) {
-      return { success: false, message: "Старий пароль невірний" };
+      console.error("reauth error:", error.code, error.message);
+      return { success: false, message: "Старий пароль невірний або сесія недійсна" };
     }
   };
 

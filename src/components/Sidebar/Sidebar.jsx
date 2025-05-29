@@ -26,21 +26,21 @@ export const Sidebar = ({ selectedPostFilter }) => {
       key: "main",
       path: "/",
       handleClick: () => selectedPostFilter(null),
-      image: "https://cdn-icons-png.flaticon.com/128/15527/15527317.png",
+      image: "/menu_icons/home.png",
       message: "Головна",
     },
     {
       key: "top",
       path: "/top-places",
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/5650/5650649.png",
+      image: "/menu_icons/top.png",
       message: "Топ місця",
     },
     {
       key: "messages",
       path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
+      image: "/menu_icons/messages.png",
       message: "Повідомлення",
       chatMessage: hasUnread,
     },
@@ -48,21 +48,21 @@ export const Sidebar = ({ selectedPostFilter }) => {
       key: "movies",
       path: `/movies`,
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/6815/6815074.png",
+      image: "/menu_icons/movie.png",
       message: "Фільми",
     },
     {
       key: "news",
       path: "/news",
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/10288/10288957.png",
+      image: "/menu_icons/news.png",
       message: "Новини",
     },
     {
       key: "weather",
       path: "/weather",
       handleClick: () => selectedPostFilter(null),
-      image: "https://cdn-icons-png.flaticon.com/128/8918/8918108.png",
+      image: "/menu_icons/weather.png",
       message: "Погода",
     },
   ];
@@ -73,7 +73,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
         key: "profile",
         path: `/profile/${currentUser?.id}`,
         handleClick: null,
-        image: "https://cdn-icons-png.flaticon.com/128/9068/9068871.png",
+        image: "/menu_icons/profile.png",
         message: "Профіль",
       }
       // {
@@ -90,33 +90,33 @@ export const Sidebar = ({ selectedPostFilter }) => {
       key: "news",
       path: "/news",
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/10288/10288957.png",
+      image: "/menu_icons/news.png",
     },
     {
       key: "movies",
       handleClick: null,
       path: `/movies`,
-      image: "https://cdn-icons-png.flaticon.com/128/6815/6815074.png",
+      image: "/menu_icons/movie.png",
     },
     {
       key: "main",
       path: "/",
       handleClick: () => selectedPostFilter(null),
-      image: "https://cdn-icons-png.flaticon.com/128/15527/15527317.png",
+      image: "/menu_icons/home.png",
       style: { width: "40px", height: "40px" },
     },
     {
       key: "messages",
       path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
       handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/724/724689.png",
+      image: "/menu_icons/messages.png",
       chatMessage: hasUnread,
     },
     {
       key: "weather",
       path: "/weather",
       handleClick: () => selectedPostFilter(null),
-      image: "https://cdn-icons-png.flaticon.com/128/8918/8918108.png",
+      image: "/menu_icons/weather.png",
     },
   ];
 
@@ -126,10 +126,10 @@ export const Sidebar = ({ selectedPostFilter }) => {
     <aside className={style.sidebar}>
       <div className={style.menu}>
         {!isMobile && (
-          <div className={style.logo}>
-            <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/3665/3665930.png" />
-            chat
-          </div>
+          <Link className={style.logo} to="/">
+            <img className={style.icon} src="/menu_icons/echat_text.png" />
+            {/* chat */}
+          </Link>
         )}
 
         {filteredLinks.map(({ key, path, handleClick, image, message, chatMessage, style: customStyle }) => (

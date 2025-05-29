@@ -38,7 +38,7 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
     setVisibleUsers((prev) => prev + 3);
   };
 
-  const recomendedUsers = posts.filter((post) => post.authorId !== currentUser.uid);
+  // const recomendedUsers = posts.filter((post) => post.authorId !== currentUser.uid);
   const visibleRecomendedUsers = recommendedUsers.slice(0, visibleUsers);
   const filteredUsers = visibleRecomendedUsers.filter((user) => user != null && user.uid);
   const filteredFollowerUsers = filteredUsers.filter((user) => !user.followers.includes(currentUser.uid));
@@ -63,7 +63,7 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
           <RecomendedUsers key={user.id} user={user} />
         ))}
 
-        {visibleUsers < recomendedUsers.length && (
+        {visibleUsers < filteredFollowerUsers.length && (
           <div className={style.newsItem} onClick={handleShowMore} style={{ cursor: "pointer" }}>
             <p className={style.newsSeeMore_msg}>Показати більше</p>
           </div>

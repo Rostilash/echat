@@ -18,27 +18,35 @@
   position: relative;
 }
 
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .register_form h2 {
   text-align: center;
 }
 
 .success_message {
   position: absolute;
-  left: 0;
+  left: 210px;
   top: 0;
   color: #16a34a;
   font-weight: bold;
   animation: fadeIn 0.5s ease-in;
+  text-align: center;
 }
 
 .error_message {
   position: absolute;
-  left: 0;
+  left: 210px;
   top: 0;
   color: rgb(228, 91, 91);
   font-weight: bold;
   padding: 10px;
   animation: fadeIn 0.5s ease-in;
+  text-align: center;
 }
 
 @keyframes fadeIn {

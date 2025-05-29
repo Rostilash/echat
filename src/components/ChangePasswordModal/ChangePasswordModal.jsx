@@ -15,7 +15,7 @@ export const ChangePasswordModal = ({ onClose, setShowModal }) => {
   const [error, setError] = useState("");
 
   const handleVerifyOldPassword = async () => {
-    const result = await verifyOldPassword(currentUser.email, oldPassword);
+    const result = await verifyOldPassword(oldPassword);
 
     if (!result.success) {
       setError(result.message);
@@ -23,7 +23,7 @@ export const ChangePasswordModal = ({ onClose, setShowModal }) => {
     }
 
     setError("");
-    setStep(2); // переходимо до наступного кроку
+    setStep(2);
   };
 
   const handleChangePassword = async () => {

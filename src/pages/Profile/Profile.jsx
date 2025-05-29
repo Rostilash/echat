@@ -11,10 +11,12 @@ import { ProfileHeader } from "./ProfileHeader/ProfileHeader";
 import { useOutletContext, useParams } from "react-router-dom";
 import { LoaderSmall } from "./../../components/Loader/LoaderSmall";
 import { EditProfileForm } from "./EditProfile/EditProfileForm";
+import { useMediaQuery } from "./../../hooks/useMediaQuery";
 
 export const Profile = () => {
   // URL params
   const { uid } = useParams();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // load user & posts from localStorage
   const { currentUser, updateUser, isOwner, findUserByUid } = useAuth();
@@ -95,13 +97,13 @@ export const Profile = () => {
       {isEditing && isOwner ? (
         <EditProfileForm setPosts={setPosts} />
       ) : (
-        <>
-          <Tabs current={tab} onChange={setTab} tabs={tabsName} isOwner={isOwner} />
+        <div style={{ marginBottom: "100px" }}>
+          <Tabs current={tab} onChange={setTab} tabs={tabsName} isOwner={isOwner} isMobile={isMobile} />
 
           {ActiveTabComponent && (
             <ActiveTabComponent posts={userPosts} user={user} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
           )}
-        </>
+        </div>
       )}
     </div>
   );

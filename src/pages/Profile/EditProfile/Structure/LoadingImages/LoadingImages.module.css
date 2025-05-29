@@ -27,8 +27,17 @@
   border-radius: 50%;
   height: 100px;
   width: 100px;
-  border: 1px solid var(--text-color);
+  border: 2px solid var(--text-color);
 }
 .userProfileImage img:hover {
   border: 1px solid var(--echat-color);
+}
+
+@media (max-width: 768px) {
+  .userProfileImage {
+    position: absolute;
+    left: 20px;
+    top: 100px;
+    z-index: 5;
+  }
 }

@@ -6,12 +6,13 @@ export const Tabs = ({ tabs = [], current, onChange, ...props }) => {
     <div className={styles.tabsWrapper}>
       {tabs.map((tab) => (
         <button key={tab.key} className={`${styles.tabItem} ${current === tab.key ? styles.active : ""}`} onClick={() => onChange(tab.key)}>
-          {/* {tab.icon && (
-            <span className={styles.icon}>
-              <img src={tab.icon} alt="icon" />
-            </span>
-          )} */}
-          {tab.label}
+          {!props.isMobile
+            ? tab.label
+            : tab.icon && (
+                <span className={styles.icon}>
+                  <img src={tab.icon} alt="icon" />
+                </span>
+              )}
         </button>
       ))}
     </div>

@@ -12,15 +12,16 @@
   transition: background-color 0.3s, color 0.3s;
 }
 .logo {
-  font-size: 18px;
+  /* font-size: 18px; */
   font-weight: 900;
   padding-left: 5px;
   color: var(--echat-color);
 }
 .icon {
   margin-left: 8px;
-  width: 38px;
-  height: 38px;
+  /* width: 38px; */
+  height: 32px;
+  cursor: pointer;
 }
 
 .unreadDot {
@@ -125,22 +126,21 @@
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
-    height: 80px;
+    height: 60px;
     position: fixed;
     bottom: 0;
     top: auto;
     left: 0;
     right: 0;
-    padding: 0.5rem 1rem;
     border-top: 1px solid var(--border-color);
     border-right: none;
     background-color: var(--bg-color);
     flex-direction: row;
-    align-items: flex-start;
+    /* align-items: flex-start; */
     justify-content: space-around;
     z-index: 999;
     transition: background-color 0.3s, color 0.3s;
-    background-color: #e7e7e7;
+    background-color: var(--bg-color);
   }
 
   .menuItem {
@@ -149,7 +149,7 @@
   }
   .menu {
     flex-direction: row;
-    gap: 2px;
+    /* gap: 2px; */
   }
 
   .authLinks {

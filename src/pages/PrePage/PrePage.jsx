@@ -18,7 +18,8 @@ export const PrePage = () => {
   return (
     <div className={style.wrapper}>
       <div className={style.leftSide}>
-        <h1 className={style.brandTitle}>Echat</h1>
+        <img src="/menu_icons/echat_white.png" alt="" />
+        <h1 className={style.brandTitle}>chat</h1>
       </div>
       {/* main page  */}
       {isRightSideHidden === null && (
@@ -48,7 +49,7 @@ export const PrePage = () => {
 
           <Button size="extra-large" position="center" onClick={handleRegisterClick}>
             Створити профіль
-            <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/3665/3665930.png" />
+            <img className={style.icon} src="/menu_icons/echat_white.png" />
           </Button>
 
           <p className={style.terms}>

@@ -58,7 +58,7 @@ export const AppRoutes = () => {
       />
 
       {/* Redirect to main page */}
-      {/* <Route path="*" element={<Navigate to="/" />} /> */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

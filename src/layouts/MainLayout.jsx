@@ -49,9 +49,9 @@ export const MainLayout = () => {
             getLikesCount(postId),
             getRepostsCount(postId),
             getBookmarksCount(postId),
-            hasUserLiked(postId, currentUser?.id),
-            hasUserReposted(postId, currentUser?.id),
-            hasUserBookmarked(postId, currentUser?.id),
+            hasUserLiked(postId, currentUser?.uid),
+            hasUserReposted(postId, currentUser?.uid),
+            hasUserBookmarked(postId, currentUser?.uid),
             fetchCommentsByPostId(postId),
           ]);
 
@@ -85,13 +85,13 @@ export const MainLayout = () => {
   }, [posts, currentUser]);
 
   // Synchronizing localStorage when changing posts
-  useEffect(() => {
-    const prevPosts = localStorage.getItem("posts");
-    const currentPosts = JSON.stringify(posts);
-    if (prevPosts !== currentPosts) {
-      localStorage.setItem("posts", currentPosts);
-    }
-  }, [posts]);
+  // useEffect(() => {
+  //   const prevPosts = localStorage.getItem("posts");
+  //   const currentPosts = JSON.stringify(posts);
+  //   if (prevPosts !== currentPosts) {
+  //     localStorage.setItem("posts", currentPosts);
+  //   }
+  // }, [posts]);
 
   //Mark for update users letter from fireBase
   const [users, setUsers] = useState([]);

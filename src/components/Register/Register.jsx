@@ -5,11 +5,12 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
 import { CloseButton } from "../Button/CloseButton";
+import { LoaderSmall } from "./../Loader/LoaderSmall";
 
 export const Register = ({ onClose, setLoginForm }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errors, setErrors] = useState({});
-
+  const [loading, setLoading] = useState(false);
   const { register, login } = useAuth();
   const [formData, setFormData] = useState({
     id: Date.now().toString(),
@@ -79,25 +80,25 @@ export const Register = ({ onClose, setLoginForm }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
+    setLoading(true);
 
     // Check if there is such a user in localstorage
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const userExists = users.some((user) => user.email === formData.email);
+    // const users = JSON.parse(localStorage.getItem("users")) || [];
+    // const userExists = users.some((user) => user.email === formData.email);
 
-    if (userExists) {
-      setSuccessMessage("Користувач з таким Email вже існує...");
-      return;
-    }
+    // if (userExists) {
+    //   setSuccessMessage("Користувач з таким Email вже існує...");
+    //   return;
+    // }
 
     // register the user
-    register(formData);
+    // register(formData);
 
     // if register successfully log in
     const isLoginSuccessful = await login(formData.email, formData.password);
@@ -106,6 +107,7 @@ export const Register = ({ onClose, setLoginForm }) => {
       setTimeout(() => {
         setSuccessMessage("");
         navigate("/", { replace: true });
+        setLoading(false);
       }, 1000);
     } else {
       setErrorMessage("Щось пішло не так при вході після реєстрації.");
@@ -117,11 +119,19 @@ export const Register = ({ onClose, setLoginForm }) => {
       <form className={style.register_form} onSubmit={handleSubmit}>
         <CloseButton onClose={onClose} />
 
+        {loading && (
+          <div className={style.loading}>
+            <span className="load_center">
+              <LoaderSmall />
+            </span>
+            {!successMessage && <p className={style.success_message}>{successMessage}</p>}
+          </div>
+        )}
         <h2>Реєстрація</h2>
+
         <p className={style.password_hint}>Пароль має містити щонайменше 6 символів, одну **велику** та одну **малу** літеру.</p>
 
-        {!successMessage && <p className={style.success_message}>{successMessage}</p>}
-        {successMessage && <p className={style.error_message}>{successMessage}</p>}
+        {!successMessage && <p className={style.error_message}>{successMessage}</p>}
 
         <Input
           name="name"

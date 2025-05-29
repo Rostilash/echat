@@ -7,7 +7,15 @@
   position: relative;
   width: 100%;
 }
-
+.about_message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  text-align: center;
+  color: aliceblue;
+  z-index: 10;
+}
 .profile h1 {
   text-align: center;
 }
@@ -31,12 +39,13 @@
   resize: vertical;
   width: 360px;
   margin: 0 auto;
+  background-color: var(--bg-color);
 }
 
 .passwordBlock {
   position: absolute;
-  top: 0px;
-  right: 20px;
+  top: 100px;
+  right: 50px;
   margin-top: 2rem;
 }
 
@@ -56,4 +65,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .profile {
+    margin-bottom: 100px;
+  }
 }
