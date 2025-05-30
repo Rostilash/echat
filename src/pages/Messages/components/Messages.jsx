@@ -21,17 +21,27 @@ export const Messages = ({ UrlID }) => {
   // Searching in chat
   const [filteredChat, setFilteredChat] = useState([]);
   // Take information about selected user by URL chatId
+  const [hideNavBar, setHideNavBar] = useState(false);
 
-  const selectedUser = allUsers.find((u) => u.id === UrlID);
+  const selectedUser = allUsers.find((u) => u.uid === UrlID);
+
+  const handleHideNav = () => {
+    setHideNavBar((prev) => !prev);
+  };
 
   return (
-    <div className={style.container}>
+    <div className={`${style.container} ${hideNavBar ? style.noSidebar : style.withSidebar}`}>
       {/* Left Sidebar */}
-      <ChatSideBar users={allUsers} deleteAllUserChats={deleteAllUserChats} allMessages={allMessages} ownerUid={ownerUid} UrlID={UrlID} />
+
+      <div style={{ display: hideNavBar ? "none" : "block" }}>
+        <ChatSideBar users={allUsers} deleteAllUserChats={deleteAllUserChats} allMessages={allMessages} ownerUid={ownerUid} UrlID={UrlID} />
+      </div>
+
       {/* Right Chat Area */}
+
       <div className={style.chatArea}>
         {/* need to add messages */}
-        <ChatHeader selectedUser={selectedUser} setFilteredChat={setFilteredChat} />
+        <ChatHeader selectedUser={selectedUser} setFilteredChat={setFilteredChat} handleHideNav={handleHideNav} hideNavBar={hideNavBar} />
         {/* Main chat body page (setEdit by id)*/}
         <ChatBody
           filteredChat={filteredChat}

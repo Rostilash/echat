@@ -1,9 +1,22 @@
+/* Messages.module.css */
 .container {
   display: grid;
-  grid-template-columns: 2fr 5fr;
   height: 100vh;
   background: #f8f9fa;
   font-family: Arial, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.withSidebar {
+  grid-template-columns: 2fr 5fr;
+}
+
+.noSidebar {
+  grid-template-columns: 1fr;
+}
+
+.chatArea {
+  overflow: hidden;
 }
 
 .chatArea {

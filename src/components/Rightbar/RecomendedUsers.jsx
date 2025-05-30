@@ -13,7 +13,8 @@ export const RecomendedUsers = ({ user }) => {
           <UserImage author={user} />
           <div className={style.newsTitles}>
             <p className={style.newsName}>
-              {user.name} <img src="https://cdn-icons-png.flaticon.com/128/7641/7641727.png" alt="verified" />
+              {/* change "!" latter. (put for view page) */}
+              {user.name} {!user.emailVerified && <img src="https://cdn-icons-png.flaticon.com/128/7641/7641727.png" alt="verified" />}
             </p>
             <p className={style.newsInfoText}>@{user.nickname}</p>
           </div>

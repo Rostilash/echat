@@ -2,7 +2,7 @@ import { Input } from "../../../components/Input/Input";
 import { useMessages } from "../../../context/MessageContext";
 import style from "../styles/Messages.module.css";
 
-export const ChatHeader = ({ selectedUser, setFilteredChat }) => {
+export const ChatHeader = ({ selectedUser, setFilteredChat, handleHideNav, hideNavBar }) => {
   const { messages } = useMessages();
 
   //find chat values
@@ -27,6 +27,7 @@ export const ChatHeader = ({ selectedUser, setFilteredChat }) => {
               {selectedUser.name} <span className={style.username}>{selectedUser.nickname}</span>
             </h2>
             {selectedUser.isOnline && <span className={style.onlineText}>Онлайн</span>}
+            <button onClick={handleHideNav}>{hideNavBar ? "Показати меню" : "Сховати меню"}</button>
           </>
         )}
       </div>

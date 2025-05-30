@@ -11,7 +11,9 @@ export const PostHeader = ({ timeStamp, author }) => {
       <div className={style.user_name}>
         <p>
           {author?.name || author.authorName}{" "}
-          <img src="https://cdn-icons-png.flaticon.com/128/7887/7887079.png" alt="icon" style={{ height: "12px", width: "12px" }} />
+          {author.emailVerified && (
+            <img src="https://cdn-icons-png.flaticon.com/128/7641/7641727.png" alt="icon" style={{ height: "16px", width: "16px" }} />
+          )}
         </p>
         <span>@{author?.nickname || author.authorUsername}</span>
         <div className={style.dot_wrapper}>

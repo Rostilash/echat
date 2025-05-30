@@ -101,7 +101,7 @@ export const Profile = () => {
           <Tabs current={tab} onChange={setTab} tabs={tabsName} isOwner={isOwner} isMobile={isMobile} />
 
           {ActiveTabComponent && (
-            <ActiveTabComponent posts={userPosts} user={user} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
+            <ActiveTabComponent posts={posts} user={user} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
           )}
         </div>
       )}

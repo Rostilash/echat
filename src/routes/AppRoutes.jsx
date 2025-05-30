@@ -41,10 +41,10 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Loading page without header and footer  */}
-      <Route path="register" element={<AuthLayout />}>
-        <Route path="me" element={<PrePage />} />
-        <Route path="r" element={<Register />} />
-        <Route path="l" element={<Login />} />
+      <Route path="/" element={<AuthLayout />}>
+        <Route path="pre-page" element={<PrePage />} />
+        <Route path="register" element={<Register />} />
+        <Route path="login" element={<Login />} />
       </Route>
 
       {/* Admin panel  */}

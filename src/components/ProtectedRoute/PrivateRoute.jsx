@@ -7,7 +7,7 @@ export const PrivateRoute = ({ children }) => {
 
   // If the user is not logged in, redirect to the PreLoad page
   if (!currentUser || !currentUser.isLoggedIn) {
-    return <Navigate to="/register/me" replace />;
+    return <Navigate to="/pre-page" replace />;
   }
 
   // If the user is authorized, return the desired component

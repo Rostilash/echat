@@ -6,7 +6,7 @@ import { generateNewsBlocks } from "./../../utils/generateNewsBlocks";
 import { RecomendedUsers } from "./RecomendedUsers";
 import { useAuth } from "../../hooks/useAuth";
 
-export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
+export const Rightbar = ({ onSelectFilter, posts = [] }) => {
   const { currentUser, findUserByUid } = useAuth();
 
   const [visibleBlocks, setVisibleBlocks] = useState(3);
@@ -18,14 +18,25 @@ export const Rightbar = ({ onSelectFilter, posts = [], users }) => {
 
   useEffect(() => {
     const fetchAuthors = async () => {
-      // 1. Filter only unique authorIds that are not currentUser.id
-      const uniqueAuthorIds = [...new Set(posts.filter((post) => post.authorId && post.authorId !== currentUser.uid).map((post) => post.authorId))];
+      try {
+        const uniqueAuthorIds = [...new Set(posts.filter((post) => post.authorId && post.authorId !== currentUser.uid).map((post) => post.authorId))];
 
-      // 2. We make queries for each id
-      const users = await Promise.all(uniqueAuthorIds.map((uid) => findUserByUid(uid)));
+        const users = await Promise.all(
+          uniqueAuthorIds.map(async (uid) => {
+            if (!uid) return null;
+            try {
+              return await findUserByUid(uid);
+            } catch (e) {
+              console.error("Помилка при отриманні користувача з uid:", uid, e);
+              return null;
+            }
+          })
+        );
 
-      // 3. Save in the state
-      setRecommendedUsers(users);
+        setRecommendedUsers(users.filter(Boolean));
+      } catch (error) {
+        console.error("Помилка при завантаженні авторів:", error);
+      }
     };
 
     if (posts.length > 0 && currentUser?.uid) {

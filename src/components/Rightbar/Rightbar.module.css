@@ -1,9 +1,7 @@
 .rightbar {
-  min-width: 380px;
   background-color: var(--bg-color);
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border-left: 2px solid var(--border-color);
-  position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
@@ -22,7 +20,7 @@
 .news_block {
   border: 1px solid var(--border-color);
   border-radius: 15px;
-  padding: 15px;
+  padding: 5px;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -36,7 +34,9 @@
   border-radius: 8px;
   transition: background-color 0.3s;
 }
-
+.newsName {
+  cursor: pointer;
+}
 /* Dots */
 .newsOptions {
   display: flex;
@@ -63,7 +63,7 @@
   text-align: left;
   gap: 5px;
   overflow: hidden;
-  max-width: 255px;
+  width: fit-content;
 }
 .newsInfoText {
   font-size: 12px;
@@ -76,19 +76,7 @@
   flex-wrap: wrap;
   word-break: break-word;
 }
-.newsName {
-  font-size: 16px;
-  color: var(--text-color);
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  /* padding: 0 10; */
-}
-.newsName img {
-  height: 16px;
-  width: 16px;
-}
+
 .newsSeeMore_msg {
   text-align: left;
   letter-spacing: 1px;

@@ -4,7 +4,7 @@ import { UsersChatNav } from "./UsersChatNav";
 import { Button } from "./../../../components/Button/Button";
 import { useState } from "react";
 
-export const ChatSideBar = ({ users, allMessages, deleteAllUserChats, ownerUid, UrlID }) => {
+export const ChatSideBar = ({ users, allMessages, deleteAllUserChats, ownerUid, UrlID, handleHideNav }) => {
   // Search users in chat
   const [filteredUsers, setFilteredUsers] = useState([]);
 
