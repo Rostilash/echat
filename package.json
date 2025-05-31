@@ -13,6 +13,7 @@
     "dayjs": "^1.11.13",
     "emoji-picker-react": "^4.12.2",
     "firebase": "^11.7.3",
+    "ignore": "^7.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.5.2"
