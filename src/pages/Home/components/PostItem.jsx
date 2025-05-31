@@ -10,6 +10,7 @@ import { PostHeader } from "./PostHeader";
 import { useAuth } from "../../../hooks/useAuth";
 import { deletePost, fetchPosts, updatePost } from "../../../services/postsService";
 import { ChangeText } from "../../../components/Modal/ChangeText/ChangeText";
+import { useExtractTags } from "../utils/useExtractTags";
 
 export const PostItem = ({ post, posts, setPosts, loading }) => {
   const { currentUser, isOwner, findUserByUid } = useAuth();
@@ -43,9 +44,17 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
   };
 
   // Save post text into state
+
   const handleSaveEdit = async () => {
-    await updatePost(post.id, { text: editText });
-    const updatedPosts = await fetchPosts();
+    // get tegs from text
+    const tags = useExtractTags(editText);
+
+    // Update post text and tegs
+    await updatePost(post.id, { text: editText, tags });
+
+    // Update Local UI
+    const updatedPosts = posts.map((p) => (p.id === post.id ? { ...p, text: editText, tags } : p));
+
     setPosts(updatedPosts);
     setIsEditing(false);
   };

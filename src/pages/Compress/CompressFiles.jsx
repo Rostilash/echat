@@ -9,12 +9,22 @@ export const CompressFiles = () => {
   const [isInverted, setIsInverted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Assets/Fishing Village URP/3D Objects/**/*.assbin
   const handleFileChange = async (e) => {
     setLoading(true);
+    setInputKey(0);
+    setUploadFiles([]);
 
     setTimeout(() => {
       const files = Array.from(e.target.files);
-      const ig = ignore().add(ignoreRules);
+      const normalizedRules = ignoreRules
+        .split("\n")
+        .map((rule) => rule.trim())
+        .filter(Boolean)
+        .map((rule) => rule.replace(/\/{2,}/g, "/"))
+        .join("\n");
+
+      const ig = ignore().add(normalizedRules);
 
       const filtered = files.filter((file) => {
         const rawPath = file.webkitRelativePath || file.name;
@@ -25,7 +35,7 @@ export const CompressFiles = () => {
       setUploadFiles(filtered);
       setLoading(false);
       setInputKey((prev) => prev + 1);
-    }, 0); // дозволяє React оновити DOM перед фільтрацією
+    }, 0);
   };
 
   const handleInverce = () => {
@@ -60,13 +70,24 @@ export const CompressFiles = () => {
         <div className={style.formSection}>
           <button onClick={handleInverce}>{!isInverted ? "Додати" : "Відняти"}</button>
           <h2>{!isInverted ? "Віднімання Елементів" : "Додавання Елементів"}</h2>
-          <textarea rows={6} value={ignoreRules} onChange={(e) => setIgnoreRules(e.target.value)} placeholder=".gitignore rules here" />
+          <textarea
+            rows={6}
+            value={ignoreRules}
+            onChange={(e) => setIgnoreRules(e.target.value)}
+            placeholder="Правила для завантаження файлів тут ...
+          "
+          />
           <input key={inputKey} type="file" webkitdirectory="true" directory="" multiple onChange={handleFileChange} />
         </div>
 
         <div className={style.filesSection}>
-          {loading && <p>Відбувається завантаження</p>}
-          {uploadFiles.length > 0 ? (
+          {loading && (
+            <div className={style.loader}>
+              <img src="https://media.tenor.com/0chWb5VggvAAAAAM/pizzaninjas-pizza-ninjas.gif" alt="" />
+            </div>
+          )}
+
+          {uploadFiles.length > 0 && (
             <>
               <p>
                 Загальний розмір: <strong>{formatBytes(totalSize)}</strong>
@@ -80,8 +101,6 @@ export const CompressFiles = () => {
                 ))}
               </ul>
             </>
-          ) : (
-            <p>Не додано жодного файлу</p>
           )}
         </div>
       </div>

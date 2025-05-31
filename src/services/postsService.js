@@ -31,3 +31,11 @@ export const deletePost = async (postId) => {
   const postRef = doc(db, "posts", postId);
   await deleteDoc(postRef);
 };
+
+export const updatePostTags = async (postId, tags) => {
+  const postRef = doc(db, "posts", postId);
+  await updateDoc(postRef, {
+    tags,
+    updatedAt: serverTimestamp(),
+  });
+};

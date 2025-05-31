@@ -67,6 +67,7 @@ export const MainLayout = () => {
           const oldP = postsWithStats[i];
           return (
             p.id === oldP.id &&
+            p.text === oldP.text &&
             p.likes === oldP.likes &&
             p.reposts === oldP.reposts &&
             p.bookmarks === oldP.bookmarks &&

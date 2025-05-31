@@ -15,11 +15,28 @@ export const BookmarkedMovies = () => {
       if (!currentUser) return;
 
       setLoading(true);
-      const ids = await getBookmarkedMovieIds(currentUser.uid);
+      try {
+        const ids = await getBookmarkedMovieIds(currentUser?.uid);
+        const validIds = ids.filter((id) => typeof id === "number" || typeof id === "string");
 
-      const moviesData = await Promise.all(ids.map((id) => fetchMovieDetails(id)));
-      setMovies(moviesData);
-      setLoading(false);
+        const moviesData = await Promise.all(
+          validIds.map(async (id) => {
+            console.log("Fetching movie with id:", id);
+            try {
+              return await fetchMovieDetails(id);
+            } catch (err) {
+              console.error(`Error fetching movie ${id}:`, err);
+              return null;
+            }
+          })
+        );
+
+        setMovies(moviesData.filter(Boolean)); // видаляємо null
+      } catch (err) {
+        console.error("Failed to load bookmarked movies:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadBookmarkedMovies();
