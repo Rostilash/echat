@@ -1,4 +1,5 @@
 .rightbar {
+  min-width: 300px;
   background-color: var(--bg-color);
   padding: 0.5rem 0.5rem;
   border-left: 2px solid var(--border-color);

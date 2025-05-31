@@ -164,7 +164,6 @@ export const MessageProvider = ({ children, chatId, currentUser }) => {
 
   // Delete
   const deleteMessage = async (messageId) => {
-    console.log(messageId);
     try {
       const messageRef = doc(db, "chats", userA_userB, "messages", messageId);
       await deleteDoc(messageRef);

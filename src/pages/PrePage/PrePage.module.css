@@ -133,16 +133,22 @@
   .socialButtons {
     width: 100%;
   }
+
   .leftSide {
     width: 100%;
     max-height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 5px;
   }
-
+  .leftSide img {
+    height: 34px;
+    width: 34px;
+  }
   .brandTitle {
-    font-size: 48px;
+    padding-bottom: 5px;
+    font-size: 38px;
   }
 
   .rightSide {

@@ -53,6 +53,7 @@
 .menuItem:hover {
   background-color: #d3d3d3;
 }
+
 .menuItem img {
   width: 24px;
   height: 24px;
@@ -135,23 +136,27 @@
     right: 0;
     border-top: 1px solid var(--border-color);
     border-right: none;
-    background-color: var(--bg-color);
     flex-direction: row;
     padding: 0;
-    /* align-items: flex-start; */
     justify-content: space-around;
     z-index: 999;
     transition: background-color 0.3s, color 0.3s;
-    background-color: var(--bg-color);
+    background-color: rgba(230, 230, 230, 0.84);
   }
 
+  .menu {
+    flex-direction: row;
+    gap: 0px;
+  }
   .menuItem {
     padding: 0px 15px;
     justify-content: center;
   }
-  .menu {
-    flex-direction: row;
-    /* gap: 2px; */
+  .menuItem:hover {
+    height: 100%;
+    width: 100%;
+    border-radius: 0px;
+    background-color: #5858583d;
   }
 
   .authLinks {

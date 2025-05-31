@@ -22,7 +22,7 @@ export const Messages = ({ UrlID }) => {
   const [filteredChat, setFilteredChat] = useState([]);
   // Take information about selected user by URL chatId
   const [hideNavBar, setHideNavBar] = useState(false);
-
+  // Selected user by uid
   const selectedUser = allUsers.find((u) => u.uid === UrlID);
 
   const handleHideNav = () => {

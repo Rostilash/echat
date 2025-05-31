@@ -6,7 +6,10 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
+.sendButton:disabled {
+  background-color: rgba(131, 130, 130, 0.26);
+  cursor: not-allowed;
+}
 /* COLOR OPTIONS */
 .default {
   background-color: var(--echat-color);
@@ -20,7 +23,7 @@
 }
 .google {
   background-color: #db4437;
-  color: #f2f2f2;
+  color: white;
 }
 .facebook {
   background-color: #3b5998;

@@ -14,6 +14,7 @@ import { MessagesWithProvider } from "../pages/Messages/components/MessagesWithP
 import { Movies } from "../pages/Movies/Movies";
 import { Register } from "../components/Register/Register";
 import { Login } from "../components/Login/Login";
+import { CompressFiles } from "../pages/Compress/CompressFiles";
 
 export const AppRoutes = () => {
   return (
@@ -45,6 +46,7 @@ export const AppRoutes = () => {
         <Route path="pre-page" element={<PrePage />} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
+        <Route path="compress" element={<CompressFiles />} />
       </Route>
 
       {/* Admin panel  */}
