@@ -9,6 +9,8 @@ import {
   getAuth,
   EmailAuthProvider,
   reauthenticateWithCredential,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { db, auth } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
@@ -381,6 +383,59 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const signInWithGoogleDrive = async () => {
+    const provider = new GoogleAuthProvider();
+    // Додаємо скоуп для доступу до Google Drive файлів
+    provider.addScope("https://www.googleapis.com/auth/drive.file");
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      console.log("Успішний вхід у Google Drive");
+      return { success: true, accessToken: token };
+    } catch (err) {
+      if (err.code === "auth/popup-closed-by-user") {
+        console.warn("Користувач закрив вікно входу.");
+      } else {
+        console.error("Інша помилка при авторизації:", err);
+      }
+      return { success: false, error: err };
+    }
+  };
+
+  const uploadFileToDrive = async (file, accessToken) => {
+    try {
+      const metadata = {
+        name: file.name,
+        mimeType: file.type,
+      };
+
+      const form = new FormData();
+      form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+      form.append("file", file);
+
+      const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: form,
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error.message);
+      }
+
+      const data = await res.json();
+      return { success: true, data };
+    } catch (error) {
+      console.error("Upload to Drive error:", error);
+      return { success: false, error };
+    }
+  };
+
   const ownerNickName = currentUser?.nickname;
   const ownerUid = currentUser?.uid;
 
@@ -406,6 +461,8 @@ export const AuthProvider = ({ children }) => {
         findUserByUid,
         deleteCurrentUser,
         isUserInitialized,
+        signInWithGoogleDrive,
+        uploadFileToDrive,
       }}
     >
       {children}

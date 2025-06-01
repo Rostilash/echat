@@ -38,7 +38,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "messages",
-      path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
+      path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.uid}`,
       handleClick: null,
       image: "/menu_icons/messages.png",
       message: "Повідомлення",
@@ -71,7 +71,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     mainLinks.push(
       {
         key: "profile",
-        path: `/profile/${currentUser?.id}`,
+        path: `/profile/${currentUser?.uid}`,
         handleClick: null,
         image: "/menu_icons/profile.png",
         message: "Профіль",
@@ -107,7 +107,7 @@ export const Sidebar = ({ selectedPostFilter }) => {
     },
     {
       key: "messages",
-      path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.id}`,
+      path: `/message/${currentUser?.chatUsers?.[currentUser.chatUsers.length - 1] || currentUser?.uid}`,
       handleClick: null,
       image: "/menu_icons/messages.png",
       chatMessage: hasUnread,
@@ -118,6 +118,12 @@ export const Sidebar = ({ selectedPostFilter }) => {
       handleClick: () => selectedPostFilter(null),
       image: "/menu_icons/weather.png",
     },
+    // {
+    //   key: "profile",
+    //   path: `/profile/${currentUser?.uid}`,
+    //   handleClick: () => selectedPostFilter(null),
+    //   image: "/menu_icons/profile.png",
+    // },
   ];
 
   const filteredLinks = isMobile ? mainMobileLinks.filter((link) => ["news", "movies", "main", "messages", "weather"].includes(link.key)) : mainLinks;

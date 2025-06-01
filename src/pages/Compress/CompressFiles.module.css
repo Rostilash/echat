@@ -36,7 +36,7 @@
 }
 
 .filesSection {
-  flex: 1;
+  flex: 0.7;
   background: #f2f2f2;
   border-radius: 8px;
   padding: 1rem;

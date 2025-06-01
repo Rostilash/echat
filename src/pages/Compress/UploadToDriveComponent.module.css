@@ -1,0 +1,56 @@
+.container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9fb;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
+
+button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  margin: 12px 0;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+button:hover {
+  background-color: #357ae8;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+input[type="file"] {
+  margin: 16px 0;
+  font-size: 16px;
+}
+
+.message {
+  margin-top: 20px;
+  font-weight: 600;
+  color: #333;
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
+  min-height: 24px;
+
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}

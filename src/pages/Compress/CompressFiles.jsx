@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import JSZip from "jszip";
 import ignore from "ignore";
 import style from "./CompressFiles.module.css";
+import { UploadToDriveComponent } from "./UploadToDriveComponent";
 
 export const CompressFiles = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
@@ -24,7 +26,20 @@ export const CompressFiles = () => {
         .map((rule) => rule.replace(/\/{2,}/g, "/"))
         .join("\n");
 
-      const ig = ignore().add(normalizedRules);
+      const expandedRules = normalizedRules
+        .split("\n")
+        .flatMap((rule) => {
+          const regexMatch = rule.match(/^\/?\[([A-Za-z])([A-Za-z])\](.+)/);
+          if (regexMatch) {
+            const lower = regexMatch[1].toLowerCase() + regexMatch[3];
+            const upper = regexMatch[1].toUpperCase() + regexMatch[3];
+            return [lower, upper];
+          }
+          return [rule];
+        })
+        .join("\n");
+
+      const ig = ignore().add(expandedRules);
 
       const filtered = files.filter((file) => {
         const rawPath = file.webkitRelativePath || file.name;
@@ -64,20 +79,47 @@ export const CompressFiles = () => {
     return "📁";
   };
 
+  const handleSaveFiles = async () => {
+    if (uploadFiles.length === 0) return;
+
+    const zip = new JSZip();
+
+    uploadFiles.forEach((file) => {
+      const path = file.webkitRelativePath || file.name;
+      zip.file(path, file);
+    });
+
+    const content = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(content);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "filtered_files.zip";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className={style.container}>
       <div className={style.modal}>
         <div className={style.formSection}>
-          <button onClick={handleInverce}>{!isInverted ? "Додати" : "Відняти"}</button>
-          <h2>{!isInverted ? "Віднімання Елементів" : "Додавання Елементів"}</h2>
-          <textarea
-            rows={6}
-            value={ignoreRules}
-            onChange={(e) => setIgnoreRules(e.target.value)}
-            placeholder="Правила для завантаження файлів тут ...
+          <div style={{ border: "1px solid grey", padding: "10px" }}>
+            <button onClick={handleInverce}>{!isInverted ? "Додати" : "Відняти"}</button>
+            <h2>{!isInverted ? "Віднімання Елементів" : "Додавання Елементів"}</h2>
+            <textarea
+              rows={6}
+              value={ignoreRules}
+              onChange={(e) => setIgnoreRules(e.target.value)}
+              placeholder="Правила для завантаження файлів тут ...
           "
-          />
-          <input key={inputKey} type="file" webkitdirectory="true" directory="" multiple onChange={handleFileChange} />
+            />
+            <input key={inputKey} type="file" webkitdirectory="true" directory="" multiple onChange={handleFileChange} />
+            <button onClick={handleSaveFiles}>Зберегти відібрані файли (.zip)</button>
+          </div>
+          <div style={{ border: "1px solid grey" }}>
+            <h2>Тестування з отриманням Auth 2.0 з google та додавання у свій disk</h2>
+            <UploadToDriveComponent />
+          </div>
         </div>
 
         <div className={style.filesSection}>
