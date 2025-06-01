@@ -9,7 +9,7 @@
   text-align: center;
 }
 
-button {
+.container button {
   background-color: #4285f4;
   color: white;
   border: none;
@@ -22,7 +22,7 @@ button {
   user-select: none;
 }
 
-button:hover {
+.container button:hover {
   background-color: #357ae8;
   transform: scale(1.05);
 }

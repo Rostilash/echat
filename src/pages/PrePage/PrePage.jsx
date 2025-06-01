@@ -29,7 +29,7 @@ export const PrePage = () => {
 
           {/* Social buttons */}
           <div className={style.socialButtons}>
-            <span style={{ backgroundColor: "rgba(255, 255, 255, 0.842);" }}> Тимчасово не працює</span>
+            <span style={{ backgroundColor: "rgba(255, 255, 255, 0.842)" }}> Тимчасово не працює</span>
             <Button size="extra-large" position="center" variant="facebook" disabled title="Тимчасово не працює">
               Увійти через Facebook
               <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/15047/15047435.png" />

@@ -15,6 +15,7 @@ import {
 import { db, auth } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { mergeUserData } from "../utils/mergeUserData";
+import { getMimeType } from "../utils/compress/getMimeType";
 
 export const AuthContext = createContext();
 
@@ -52,24 +53,31 @@ export const AuthProvider = ({ children }) => {
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const userData = { ...snapshot.docs[0].data(), id: snapshot.docs[0].id };
+        userData.isLoggedIn = true;
+
+        await updateDoc(snapshot.docs[0].ref, { isLoggedIn: true });
+
         setCurrentUser(userData);
         localStorage.setItem("currentUser", JSON.stringify(userData));
       }
-
       return true;
     } catch (error) {
       console.error("Login error:", error.code, error.message);
-
       return false;
     }
   };
 
   const logout = async () => {
     try {
+      if (currentUser?.id) {
+        const userRef = doc(db, "users", currentUser.id);
+        await updateDoc(userRef, { isLoggedIn: false });
+      }
       await signOut(auth);
+
       localStorage.removeItem("currentUser");
       setCurrentUser(null);
-      navigate("/register/me");
+      navigate("/pre-page");
     } catch (err) {
       console.error("Logout error:", err.message);
     }
@@ -385,8 +393,11 @@ export const AuthProvider = ({ children }) => {
 
   const signInWithGoogleDrive = async () => {
     const provider = new GoogleAuthProvider();
-    // Додаємо скоуп для доступу до Google Drive файлів
+
     provider.addScope("https://www.googleapis.com/auth/drive.file");
+    provider.setCustomParameters({
+      prompt: "consent", // Force re-authentication of access
+    });
 
     try {
       const result = await signInWithPopup(auth, provider);
@@ -406,9 +417,11 @@ export const AuthProvider = ({ children }) => {
 
   const uploadFileToDrive = async (file, accessToken) => {
     try {
+      const mimeType = getMimeType(file);
+
       const metadata = {
         name: file.name,
-        mimeType: file.type,
+        mimeType: mimeType,
       };
 
       const form = new FormData();
@@ -435,7 +448,6 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error };
     }
   };
-
   const ownerNickName = currentUser?.nickname;
   const ownerUid = currentUser?.uid;
 

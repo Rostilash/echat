@@ -28,26 +28,22 @@ export const News = () => {
   return (
     <div className={style.news_main}>
       <div className={style.news_content}>
-        <h2>Останні новини України(НВ)</h2>
+        <h2>Останні новини України (НВ)</h2>
         {loading ? (
           <div className={style.loader}>
             <LoaderSmall />
           </div>
         ) : (
-          <ul style={{ listStyle: "none", padding: 0 }}>
+          <ul className={style.news_list}>
             {articles.map((article) => (
-              <li key={article.guid} style={{ marginBottom: "25px", borderBottom: "1px solid #ccc", paddingBottom: "15px" }}>
-                {article.enclosure?.link && (
-                  <img
-                    src={article.enclosure.link}
-                    alt={article.title}
-                    style={{ width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "8px" }}
-                  />
-                )}
-                <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "#0077cc" }}>
-                  <h3>{article.title}</h3>
-                </a>
-                <p style={{ fontSize: "14px", color: "#555" }}>{new Date(article.pubDate).toLocaleString("uk-UA")}</p>
+              <li key={article.guid} className={style.news_item}>
+                {article.enclosure?.link && <img src={article.enclosure.link} alt={article.title} className={style.news_image} />}
+                <div className={style.news_body}>
+                  <a href={article.link} target="_blank" rel="noopener noreferrer" className={style.news_title}>
+                    {article.title}
+                  </a>
+                  <p className={style.news_date}>{new Date(article.pubDate).toLocaleString("uk-UA")}</p>
+                </div>
               </li>
             ))}
           </ul>

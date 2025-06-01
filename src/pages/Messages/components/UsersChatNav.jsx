@@ -11,6 +11,7 @@ export const UsersChatNav = ({ user, chatMessage, currentUserId, UrlID }) => {
   const currentChat = partnerId.includes(UrlID);
   const lastMessage = chatMessage.at(-1);
   const isMyMessage = lastMessage?.from === currentUserId;
+  const online = user.isLoggedIn;
 
   return (
     <Link to={path}>
@@ -19,7 +20,7 @@ export const UsersChatNav = ({ user, chatMessage, currentUserId, UrlID }) => {
         <div className={style.userInfo}>
           <div className={style.userHeader}>
             {user.name}
-            {user.isLoggedIn && <span className={style.onlineDot}></span>}
+            {online && <span className={style.onlineDot}></span>}
             {hasUnread && <span className={style.unreadDot}></span>}
           </div>
           <p className={style.lastMessage}>

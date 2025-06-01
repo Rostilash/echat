@@ -21,7 +21,7 @@ export const UploadToDriveComponent = () => {
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setMessage(""); // Очистити повідомлення при виборі нового файлу
+    setMessage("");
   };
 
   const handleUpload = async () => {

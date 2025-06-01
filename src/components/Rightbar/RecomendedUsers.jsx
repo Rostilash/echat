@@ -10,7 +10,8 @@ export const RecomendedUsers = ({ user }) => {
     <div className={style.newsItem}>
       <div className={style.newsContent}>
         <div className={style.recommended_info}>
-          <UserImage author={user} />
+          {/* <span>{!user.isLogedIn && <p>зайшов</p>}</span> */}
+          <UserImage author={user} online={user.isLoggedIn} />
           <div className={style.newsTitles}>
             <p className={style.newsName}>
               {/* change "!" latter. (put for view page) */}

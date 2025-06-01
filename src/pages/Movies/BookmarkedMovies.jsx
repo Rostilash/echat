@@ -3,7 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { fetchMovieDetails, getBookmarkedMovieIds, hasUserBookmarkedMovie, toggleMovieBookmark } from "./../../services/bookmarksService";
 import { Action } from "../Home/components/Action";
 
-export const BookmarkedMovies = () => {
+export const BookmarkedMovies = ({ user }) => {
   const { currentUser } = useAuth();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export const BookmarkedMovies = () => {
 
       setLoading(true);
       try {
-        const ids = await getBookmarkedMovieIds(currentUser?.uid);
+        const ids = await getBookmarkedMovieIds(user?.uid);
         const validIds = ids.filter((id) => typeof id === "number" || typeof id === "string");
 
         const moviesData = await Promise.all(
@@ -40,7 +40,7 @@ export const BookmarkedMovies = () => {
     };
 
     loadBookmarkedMovies();
-  }, [currentUser]);
+  }, [user]);
 
   const handleBookmark = async (movieId) => {
     if (!currentUser) {
@@ -67,7 +67,7 @@ export const BookmarkedMovies = () => {
   return (
     <div>
       {movies.length === 0 ? (
-        <p style={{ textAlign: "center" }}>Немає збережених.</p>
+        <p style={{ textAlign: "center" }}></p>
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
           {movies.map((movie) => (

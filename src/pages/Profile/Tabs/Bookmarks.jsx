@@ -1,19 +1,18 @@
-import style from "../Profile.module.css";
 import { PostItem } from "../../Home/components/PostItem";
 import { BookmarkedMovies } from "../../Movies/BookmarkedMovies";
 
-export const Bookmarks = ({ posts, setPosts, currentUser, updatePost }) => {
-  const bookmarksPosts = (posts || []).filter((post) => post?.userBookmarked === true);
+export const Bookmarks = ({ posts, setPosts, user, currentUser, updatePost }) => {
+  const isOwner = user.uid === currentUser.uid;
+  // for while we ignore people who is not the owner
+  if (!isOwner) return;
 
-  // if (bookmarksPosts.length === 0) {
-  //   return <p className={style.no_posts_message}>У вас ще немає жодного репосту...</p>;
-  // }
+  const bookmarksPosts = (posts || []).filter((post) => isOwner && post?.userBookmarked === true);
 
   return (
     <div style={{ position: "relative" }}>
-      <BookmarkedMovies />
+      <BookmarkedMovies user={user} />
       {bookmarksPosts.map((post) => (
-        <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
+        <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={user} updatePost={updatePost} />
       ))}
     </div>
   );

@@ -63,7 +63,7 @@
 .post_content img {
   height: auto;
   max-height: 400px;
-  min-width: 550px;
+  min-width: 600px;
   object-fit: cover;
   display: block;
   border-radius: 15px;

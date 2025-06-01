@@ -177,18 +177,19 @@ export const Movies = () => {
             );
           })}
       </div>
-
-      <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "10px" }}>
-        <button onClick={handlePrevPage} disabled={page === 1}>
-          ⬅ Попередня
-        </button>
-        <span>
-          Сторінка {page} з {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={page === totalPages}>
-          Наступна ➡
-        </button>
-      </div>
+      {!loading && (
+        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "10px" }}>
+          <button onClick={handlePrevPage} disabled={page === 1}>
+            ⬅ Попередня
+          </button>
+          <span>
+            Сторінка {page} з {totalPages}
+          </span>
+          <button onClick={handleNextPage} disabled={page === totalPages}>
+            Наступна ➡
+          </button>
+        </div>
+      )}
       {/* Our modal window */}
       {showModal && selectedMovie && (
         <div className={style.modalBackdrop} onClick={closeModal}>

@@ -1,18 +1,18 @@
-import style from "../Profile.module.css";
+import { useUserPostInteractions } from "../../../hooks/useUserPostInteractions";
 import { PostItem } from "../../Home/components/PostItem";
 
-export const Likes = ({ posts, setPosts, currentUser, updatePost }) => {
-  const likedPosts = (posts || []).filter((post) => post?.userLiked === true);
+export const Likes = ({ posts, setPosts, user, currentUser, updateUser }) => {
+  const { postIds: likedPostIds, loading } = useUserPostInteractions({
+    collectionName: "postLikes",
+    userId: user?.uid,
+  });
 
-  if (likedPosts.length === 0) {
-    return <p className={style.no_posts_message}>У вас ще немає жодного лайку ...</p>;
-  }
+  const likedPosts = posts.filter((post) => likedPostIds.includes(post.id));
 
-  return (
-    <div style={{ position: "relative" }}>
-      {likedPosts.map((post) => (
-        <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updatePost={updatePost} />
-      ))}
-    </div>
-  );
+  if (loading) return <p>Завантаження лайків...</p>;
+  if (likedPosts.length === 0) return <p>Немає лайканих постів.</p>;
+
+  return likedPosts.map((post) => (
+    <PostItem key={post.id} post={post} posts={posts} setPosts={setPosts} currentUser={currentUser} updateUser={updateUser} />
+  ));
 };

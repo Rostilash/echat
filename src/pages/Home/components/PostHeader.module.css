@@ -1,6 +1,16 @@
 .user_image {
   display: flex;
   justify-content: center;
+  position: relative;
+}
+.isOnline {
+  background-color: green;
+  height: 8px;
+  width: 8px;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 .user_image img {
   height: 40px;

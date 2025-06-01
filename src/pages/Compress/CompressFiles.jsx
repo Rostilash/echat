@@ -3,6 +3,7 @@ import JSZip from "jszip";
 import ignore from "ignore";
 import style from "./CompressFiles.module.css";
 import { UploadToDriveComponent } from "./UploadToDriveComponent";
+import { useNavigate } from "react-router-dom";
 
 export const CompressFiles = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
@@ -10,6 +11,8 @@ export const CompressFiles = () => {
   const [inputKey, setInputKey] = useState(0);
   const [isInverted, setIsInverted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   // Assets/Fishing Village URP/3D Objects/**/*.assbin
   const handleFileChange = async (e) => {
@@ -58,6 +61,8 @@ export const CompressFiles = () => {
   };
 
   const totalSize = uploadFiles.reduce((acc, file) => acc + file.size, 0);
+  const totalCount = uploadFiles.length;
+  const pngCount = uploadFiles.reduce((acc, file) => acc + (file.name.endsWith(".png") ? 1 : 0), 0);
 
   const formatBytes = (bytes) => {
     if (bytes === 0) return "0 B";
@@ -99,19 +104,22 @@ export const CompressFiles = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleReturn = () => {
+    navigate("/");
+  };
   return (
     <div className={style.container}>
       <div className={style.modal}>
         <div className={style.formSection}>
           <div style={{ border: "1px solid grey", padding: "10px" }}>
-            <button onClick={handleInverce}>{!isInverted ? "Додати" : "Відняти"}</button>
-            <h2>{!isInverted ? "Віднімання Елементів" : "Додавання Елементів"}</h2>
+            <button onClick={handleReturn}>Повернутися до головної сторінки</button> |{" "}
+            <button onClick={handleInverce}>{!isInverted ? "Додати файли" : "Фільтрувати файл"}</button>
+            <h2>{!isInverted ? "Фільтрування Елементів (ignore)" : "Додавання вибраних Елементів"}</h2>
             <textarea
               rows={6}
               value={ignoreRules}
               onChange={(e) => setIgnoreRules(e.target.value)}
-              placeholder="Правила для завантаження файлів тут ...
-          "
+              placeholder="Правила для завантаження файлів тут ... (Наприклад ввести *jpg - отримуєш всі jpg файли з файлу) "
             />
             <input key={inputKey} type="file" webkitdirectory="true" directory="" multiple onChange={handleFileChange} />
             <button onClick={handleSaveFiles}>Зберегти відібрані файли (.zip)</button>
@@ -133,6 +141,12 @@ export const CompressFiles = () => {
             <>
               <p>
                 Загальний розмір: <strong>{formatBytes(totalSize)}</strong>
+              </p>
+              <p>
+                Кількість завантажених файлів: <strong>{totalCount}</strong>{" "}
+              </p>
+              <p>
+                png файлів було: <strong>{pngCount ? pngCount : ""}</strong>
               </p>
               <ul>
                 {uploadFiles.map((file, index) => (

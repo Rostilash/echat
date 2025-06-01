@@ -45,7 +45,7 @@
   max-height: 600px;
 }
 
-button {
+.formSection button {
   padding: 0.5rem 1rem;
   background-color: #0070f3;
   color: white;
@@ -55,7 +55,7 @@ button {
   transition: background 0.2s ease-in-out;
 }
 
-button:hover {
+.formSection button:hover {
   background-color: #005dc1;
 }
 

@@ -1,16 +1,16 @@
-import style from "./PostItem.module.css";
-import { useState, useEffect } from "react";
-import { PostActions } from "./PostActions";
-import { PostDropdown } from "./PostDropdown";
-import { PostImage } from "./PostImage";
-import { AddComments } from "../comments/AddComments";
-import { Comments } from "../comments/Comments";
-import { UserImage } from "./UserImage";
-import { PostHeader } from "./PostHeader";
+import { useEffect, useState } from "react";
+import { ChangeText } from "../../../components/Modal/ChangeText/ChangeText";
 import { useAuth } from "../../../hooks/useAuth";
 import { deletePost, fetchPosts, updatePost } from "../../../services/postsService";
-import { ChangeText } from "../../../components/Modal/ChangeText/ChangeText";
+import { AddComments } from "../comments/AddComments";
+import { Comments } from "../comments/Comments";
 import { useExtractTags } from "../utils/useExtractTags";
+import { PostActions } from "./PostActions";
+import { PostDropdown } from "./PostDropdown";
+import { PostHeader } from "./PostHeader";
+import { PostImage } from "./PostImage";
+import style from "./PostItem.module.css";
+import { UserImage } from "./UserImage";
 
 export const PostItem = ({ post, posts, setPosts, loading }) => {
   const { currentUser, isOwner, findUserByUid } = useAuth();
@@ -44,7 +44,6 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
   };
 
   // Save post text into state
-
   const handleSaveEdit = async () => {
     // get tegs from text
     const tags = useExtractTags(editText);
@@ -68,7 +67,7 @@ export const PostItem = ({ post, posts, setPosts, loading }) => {
     <div className={`${style.post} ${isDeleting ? style.fadeOut : ""}`}>
       {/* Header (name,image,nickname,time) */}
       <div className={style.post_header}>
-        <UserImage author={postAuthor} />
+        <UserImage author={postAuthor} online={postAuthor?.isLoggedIn} />
 
         <PostHeader timeStamp={post.timestamp} author={postAuthor} />
 
