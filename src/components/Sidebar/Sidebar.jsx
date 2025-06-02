@@ -65,26 +65,22 @@ export const Sidebar = ({ selectedPostFilter }) => {
       image: "/menu_icons/weather.png",
       message: "Погода",
     },
+    {
+      key: "profile",
+      path: `/profile/${currentUser?.uid}`,
+      handleClick: null,
+      image: "/menu_icons/profile.png",
+      message: "Профіль",
+    },
+    {
+      key: "filter",
+      path: `/filter-files`,
+      handleClick: null,
+      image: "https://cdn-icons-png.flaticon.com/128/16782/16782505.png",
+      message: "Фільтр файлів",
+    },
   ];
 
-  if (!isMobile) {
-    mainLinks.push(
-      {
-        key: "profile",
-        path: `/profile/${currentUser?.uid}`,
-        handleClick: null,
-        image: "/menu_icons/profile.png",
-        message: "Профіль",
-      }
-      // {
-      //   key: "other_actions",
-      //   path: null,
-      //   handleClick: null,
-      //   image: "https://cdn-icons-png.flaticon.com/128/8106/8106905.png",
-      //   message: "Інші дії",
-      // }
-    );
-  }
   const mainMobileLinks = [
     {
       key: "news",

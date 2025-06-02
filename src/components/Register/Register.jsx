@@ -9,6 +9,7 @@ import { LoaderSmall } from "./../Loader/LoaderSmall";
 
 export const Register = ({ onClose, setLoginForm }) => {
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { register, login } = useAuth();
@@ -86,31 +87,32 @@ export const Register = ({ onClose, setLoginForm }) => {
       setErrors(formErrors);
       return;
     }
+
     setLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
-    // Check if there is such a user in localstorage
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const userExists = users.some((user) => user.email === formData.email);
+    try {
+      await register(formData);
 
-    if (userExists) {
-      setSuccessMessage("Користувач з таким Email вже існує...");
-      return;
-    }
+      const isLoginSuccessful = await login(formData.email, formData.password);
 
-    // register the user
-    register(formData);
-
-    // if register successfully log in
-    const isLoginSuccessful = await login(formData.email, formData.password);
-    if (isLoginSuccessful) {
-      setSuccessMessage("Реєстрація успішна!");
-      setTimeout(() => {
-        setSuccessMessage("");
-        navigate("/", { replace: true });
+      if (isLoginSuccessful) {
+        setSuccessMessage("Реєстрація успішна!");
+        setTimeout(() => {
+          setSuccessMessage("");
+          navigate("/", { replace: true });
+          setLoading(false);
+        }, 1000);
+      } else {
+        setErrorMessage("Щось пішло не так при вході після реєстрації.");
         setLoading(false);
-      }, 1000);
-    } else {
-      setErrorMessage("Щось пішло не так при вході після реєстрації.");
+      }
+    } catch (err) {
+      setErrorMessage(err.message);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,7 +126,6 @@ export const Register = ({ onClose, setLoginForm }) => {
             <span className="load_center">
               <LoaderSmall />
             </span>
-            {!successMessage && <p className={style.success_message}>{successMessage}</p>}
           </div>
         )}
         <h2>Реєстрація</h2>
@@ -132,7 +133,7 @@ export const Register = ({ onClose, setLoginForm }) => {
         <p className={style.password_hint}>Пароль має містити щонайменше 6 символів, одну **велику** та одну **малу** літеру.</p>
 
         {!successMessage && <p className={style.error_message}>{successMessage}</p>}
-
+        {errorMessage && <p className={style.error_message}>{errorMessage}</p>}
         <Input
           name="name"
           type="text"

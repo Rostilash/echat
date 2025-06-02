@@ -4,6 +4,8 @@ import ignore from "ignore";
 import style from "./FilterFiles.module.css";
 import { UploadToDriveComponent } from "./UploadToDriveComponent";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/Button/Button";
+import { Input } from "../../components/Input/Input";
 
 export const FilterFiles = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
@@ -11,6 +13,8 @@ export const FilterFiles = () => {
   const [inputKey, setInputKey] = useState(0);
   const [isInverted, setIsInverted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
 
   const navigate = useNavigate();
 
@@ -107,6 +111,28 @@ export const FilterFiles = () => {
   const handleReturn = () => {
     navigate("/");
   };
+  if (!authorized) {
+    return (
+      <div className={style.container}>
+        <div className={style.modal}>
+          <h2>Введіть пароль для доступу</h2>
+          <Input type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Пароль" />
+          <Button
+            onClick={() => {
+              if (passwordInput === "secret") {
+                setAuthorized(true);
+              } else {
+                alert("Неправильний пароль");
+              }
+            }}
+          >
+            Увійти
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={style.container}>
       <div className={style.modal}>

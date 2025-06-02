@@ -153,7 +153,10 @@ export const AuthProvider = ({ children }) => {
       setCurrentUser(newUser);
       localStorage.setItem("currentUser", JSON.stringify(newUser));
     } catch (error) {
-      console.error("Registration error:", error.message);
+      if (error.code === "auth/email-already-in-use") {
+        throw new Error("Користувач з таким Email вже існує.");
+      }
+      throw new Error("Сталася помилка при реєстрації: " + error.message);
     }
   };
 
@@ -397,9 +400,12 @@ export const AuthProvider = ({ children }) => {
     provider.addScope("https://www.googleapis.com/auth/drive.file");
     provider.setCustomParameters({
       prompt: "consent", // Force re-authentication of access
+      access_type: "offline",
     });
 
     try {
+      await signOut(auth);
+
       const result = await signInWithPopup(auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
@@ -449,6 +455,7 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error };
     }
   };
+
   const ownerNickName = currentUser?.nickname;
   const ownerUid = currentUser?.uid;
 

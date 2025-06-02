@@ -40,7 +40,7 @@
 
 .error_message {
   position: absolute;
-  left: 210px;
+  left: 0;
   top: 0;
   color: rgb(228, 91, 91);
   font-weight: bold;
