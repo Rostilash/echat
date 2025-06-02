@@ -1,10 +1,14 @@
 import style from "./PostHeader.module.css";
 import { Link } from "react-router-dom";
+import { useAuth } from "./../../../hooks/useAuth";
 
 export const UserImage = ({ author, online }) => {
+  const { isOwner } = useAuth();
+  const owner = isOwner(author?.uid);
+
   return (
     <div className={style.user_image}>
-      {online && <span className={style.isOnline}></span>}
+      {online && !owner && <span className={style.isOnline}></span>}
 
       <Link to={`/profile/${author?.uid}`}>
         <img

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import JSZip from "jszip";
 import ignore from "ignore";
-import style from "./CompressFiles.module.css";
+import style from "./FilterFiles.module.css";
 import { UploadToDriveComponent } from "./UploadToDriveComponent";
 import { useNavigate } from "react-router-dom";
 
-export const CompressFiles = () => {
+export const FilterFiles = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [ignoreRules, setIgnoreRules] = useState(``);
   const [inputKey, setInputKey] = useState(0);

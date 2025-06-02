@@ -4,15 +4,31 @@ import { Link } from "react-router-dom";
 import { Button } from "./../../components/Button/Button";
 import { Register } from "../../components/Register/Register";
 import { Login } from "../../components/Login/Login";
+import { useAuth } from "../../hooks/useAuth";
 
 export const PrePage = () => {
   const [isRightSideHidden, setIsRightSideHidden] = useState(null);
+  const { signInWithGoogleDrive } = useAuth();
 
   const handleLoginClick = () => {
     setIsRightSideHidden("login");
   };
   const handleRegisterClick = () => {
     setIsRightSideHidden("register");
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithGoogleDrive();
+      if (result.success) {
+        // Наприклад, зберегти токен або юзера у стані
+        setMessage("Успішний вхід через Google");
+      } else {
+        setMessage("Помилка входу через Google: " + result.error.message);
+      }
+    } catch (error) {
+      setMessage("Помилка при авторизації: " + error.message);
+    }
   };
 
   return (
@@ -35,7 +51,7 @@ export const PrePage = () => {
               <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/15047/15047435.png" />
             </Button>
 
-            <Button size="extra-large" position="center" variant="google" disabled title="Тимчасово не працює">
+            <Button size="extra-large" position="center" variant="google" disabled title="Тимчасово не працює" onClick={handleGoogleSignIn}>
               Увійти через Google
               <img className={style.icon} src="https://cdn-icons-png.flaticon.com/128/720/720255.png" />
             </Button>

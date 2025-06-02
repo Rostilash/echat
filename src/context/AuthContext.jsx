@@ -403,8 +403,9 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
+      const user = result.user;
       console.log("Успішний вхід у Google Drive");
-      return { success: true, accessToken: token };
+      return { success: true, user, accessToken: token };
     } catch (err) {
       if (err.code === "auth/popup-closed-by-user") {
         console.warn("Користувач закрив вікно входу.");

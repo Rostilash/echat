@@ -89,16 +89,16 @@ export const Register = ({ onClose, setLoginForm }) => {
     setLoading(true);
 
     // Check if there is such a user in localstorage
-    // const users = JSON.parse(localStorage.getItem("users")) || [];
-    // const userExists = users.some((user) => user.email === formData.email);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const userExists = users.some((user) => user.email === formData.email);
 
-    // if (userExists) {
-    //   setSuccessMessage("Користувач з таким Email вже існує...");
-    //   return;
-    // }
+    if (userExists) {
+      setSuccessMessage("Користувач з таким Email вже існує...");
+      return;
+    }
 
     // register the user
-    // register(formData);
+    register(formData);
 
     // if register successfully log in
     const isLoginSuccessful = await login(formData.email, formData.password);

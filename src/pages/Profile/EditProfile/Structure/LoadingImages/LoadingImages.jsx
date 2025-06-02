@@ -5,6 +5,7 @@ import style from "./LoadingImages.module.css";
 export const LoadingImages = ({ currentUser, profileImage, updateUser, headerImage, uid }) => {
   return (
     <div className={style.userImages}>
+      <img src="https://cdn-icons-png.flaticon.com/128/8774/8774296.png" alt="" className={style.photoLoader} />
       <div className={style.userProfileImage}>
         {/* load profile image */}
         <ImageUpload

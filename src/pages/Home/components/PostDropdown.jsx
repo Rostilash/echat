@@ -48,7 +48,7 @@ export const PostDropdown = ({ onEdit, onDelete, item, currentUser, messageToDel
 
               <button onClick={() => openModal(item.id)}>
                 {/* <img src="https://cdn-icons-png.flaticon.com/128/17780/17780343.png" alt="delete" /> */}
-                {"   "} Видалити
+                Видалити
               </button>
             </>
           )}
