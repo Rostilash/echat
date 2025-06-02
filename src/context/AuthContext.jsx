@@ -422,13 +422,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const uploadFileToDrive = async (file, accessToken) => {
+  const uploadFileToDrive = async (file, accessToken, filename) => {
     try {
-      const mimeType = getMimeType(file);
+      const name = filename || file.name;
+
+      // Приклад, якщо getMimeType може бути невизначеним
+      const mimeType = filename && filename.endsWith(".zip") ? "application/zip" : getMimeType ? getMimeType(file) : "application/octet-stream";
 
       const metadata = {
-        name: file.name,
-        mimeType: mimeType,
+        name,
+        mimeType,
       };
 
       const form = new FormData();

@@ -72,13 +72,6 @@ export const Sidebar = ({ selectedPostFilter }) => {
       image: "/menu_icons/profile.png",
       message: "Профіль",
     },
-    {
-      key: "filter",
-      path: `/filter-files`,
-      handleClick: null,
-      image: "https://cdn-icons-png.flaticon.com/128/16782/16782505.png",
-      message: "Фільтр файлів",
-    },
   ];
 
   const mainMobileLinks = [

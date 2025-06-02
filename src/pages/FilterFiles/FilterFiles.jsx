@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import JSZip from "jszip";
 import ignore from "ignore";
 import style from "./FilterFiles.module.css";
-import { UploadToDriveComponent } from "./UploadToDriveComponent";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { UploadToDriveComponent } from "./UploadToDriveComponent";
 
 export const FilterFiles = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
@@ -111,33 +111,35 @@ export const FilterFiles = () => {
   const handleReturn = () => {
     navigate("/");
   };
-  if (!authorized) {
-    return (
-      <div className={style.container}>
-        <div className={style.modal}>
-          <h2>Введіть пароль для доступу</h2>
-          <Input type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Пароль" />
-          <Button
-            onClick={() => {
-              if (passwordInput === "secret") {
-                setAuthorized(true);
-              } else {
-                alert("Неправильний пароль");
-              }
-            }}
-          >
-            Увійти
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // Adding authorization conditions for this component
+
+  // if (!authorized) {
+  //   return (
+  //     <div className={style.container}>
+  //       <div className={style.modal}>
+  //         <h2>Введіть пароль для доступу</h2>
+  //         <Input type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Пароль" />
+  //         <Button
+  //           onClick={() => {
+  //             if (passwordInput === "secret") {
+  //               setAuthorized(true);
+  //             } else {
+  //               alert("Неправильний пароль");
+  //             }
+  //           }}
+  //         >
+  //           Увійти
+  //         </Button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={style.container}>
       <div className={style.modal}>
         <div className={style.formSection}>
-          <div style={{ border: "1px solid grey", padding: "10px" }}>
+          <div>
             <button onClick={handleReturn}>Повернутися до головної сторінки</button> |{" "}
             <button onClick={handleInverce}>{!isInverted ? "Додати файли" : "Фільтрувати файл"}</button>
             <h2>{!isInverted ? "Фільтрування Елементів (ignore)" : "Додавання вибраних Елементів"}</h2>
@@ -145,14 +147,15 @@ export const FilterFiles = () => {
               rows={6}
               value={ignoreRules}
               onChange={(e) => setIgnoreRules(e.target.value)}
-              placeholder="Правила для завантаження файлів тут ... (Наприклад ввести *jpg - отримуєш всі jpg файли з файлу) "
+              placeholder={
+                !isInverted
+                  ? "Правила для фільтрування файлів тут... (Наприклад ввести *jpg - видаляєш всі jpg файли з папки)"
+                  : "Правила для завантаження файлів тут... (Наприклад ввести *jpg - отримуєш всі jpg файли з папки)"
+              }
             />
             <input key={inputKey} type="file" webkitdirectory="true" directory="" multiple onChange={handleFileChange} />
-            <button onClick={handleSaveFiles}>Зберегти відібрані файли (.zip)</button>
-          </div>
-          <div style={{ border: "1px solid grey" }}>
-            <h2>Тестування з отриманням Auth 2.0 з google та додавання у свій disk</h2>
-            <UploadToDriveComponent />
+            <button onClick={handleSaveFiles}>Зберегти відібрані файли на комп'ютері (.zip)</button>
+            <UploadToDriveComponent selectedFiles={uploadFiles} />
           </div>
         </div>
 
