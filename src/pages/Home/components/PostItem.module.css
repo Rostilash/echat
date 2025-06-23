@@ -99,8 +99,8 @@
 @media (max-width: 768px) {
   .post_content img {
     height: auto;
-    max-height: 200px;
-    min-width: 250px;
+    max-height: 146px;
+    min-width: 266px;
     object-fit: cover;
     display: block;
     border-radius: 15px;

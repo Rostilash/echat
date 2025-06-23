@@ -2,6 +2,20 @@
   padding: 20px;
   margin-bottom: 50px;
 }
+.movie_actions {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+}
+.movie_actions input {
+  border-radius: 10px;
+}
+.movie_actions button {
+  padding: 3px;
+  font-size: 14px;
+}
 .movies {
   display: grid;
   grid-template-columns: 2fr 5fr;
@@ -54,5 +68,10 @@
   }
   .movies_items {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .movie_actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 }

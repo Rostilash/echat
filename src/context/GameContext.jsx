@@ -1,0 +1,123 @@
+import React, { useState, useEffect, createContext } from "react";
+import { db } from "./../firebase/config";
+import { collection, addDoc, getDoc, doc, updateDoc, onSnapshot, query, orderBy, limit } from "firebase/firestore";
+import { useAuth } from "../hooks/useAuth";
+
+export const GameContext = createContext();
+
+export const GameProvider = ({ children }) => {
+  const { currentUser, ownerUid } = useAuth();
+  const userName = currentUser?.name;
+
+  const [gamesList, setGamesList] = useState([]);
+  const [game, setGame] = useState({
+    playerX: null,
+    playerO: null,
+    usernamex: null,
+    usernameo: null,
+    board: Array(9).fill(""),
+    currentTurn: "X",
+    winner: null,
+    isStarted: false,
+    ditailsText: "",
+  });
+  const [gameId, setGameId] = useState(null);
+
+  useEffect(() => {
+    if (!gameId) return;
+    const unsub = onSnapshot(doc(db, "games", gameId), (doc) => {
+      if (doc.exists()) {
+        setGame(doc.data());
+      }
+    });
+
+    return () => unsub();
+  }, [gameId]);
+
+  useEffect(() => {
+    const gamesRef = collection(db, "games");
+    const q = query(gamesRef, orderBy("createdAt", "desc"), limit(20));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const gamesArray = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+
+        if (!data.winner) {
+          gamesArray.push({ id: doc.id, ...data });
+        }
+      });
+      setGamesList(gamesArray.slice(0, 10));
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const createGame = async () => {
+    const docRef = await addDoc(collection(db, "games"), {
+      playerX: ownerUid,
+      usernamex: userName,
+      usernameo: null,
+      playerO: null,
+      board: Array(9).fill(""),
+      currentTurn: "X",
+      winner: null,
+      createdAt: new Date(),
+      isStarted: false,
+      ditailsText: "",
+    });
+    setGameId(docRef.id);
+    return docRef.id;
+  };
+
+  const updateGame = async (data) => {
+    if (!gameId) return;
+    await updateDoc(doc(db, "games", gameId), data);
+  };
+
+  const joinGame = async (uid, name) => {
+    await updateGame({ playerO: uid, usernameo: name, ditailsText: "Гра почалась", isStarted: true });
+  };
+
+  const joinExistingGame = async (id, name) => {
+    setGameId(id);
+    const gameDoc = doc(db, "games", id);
+    const gameSnap = await getDoc(gameDoc);
+
+    if (gameSnap.exists()) {
+      const gameData = gameSnap.data();
+
+      if (!gameData.playerO && ownerUid !== gameData.playerX) {
+        await updateDoc(gameDoc, {
+          playerO: ownerUid,
+          isStarted: true,
+          ditailsText: "Гра почалась",
+          usernameo: name,
+        });
+      }
+    }
+  };
+
+  const makeMove = async (newBoard, turn, winner) => {
+    await updateGame({ board: newBoard, currentTurn: turn, winner: winner || null });
+  };
+
+  return (
+    <GameContext.Provider
+      value={{
+        game,
+        setGame,
+        createGame,
+        updateGame,
+        joinGame,
+        makeMove,
+        ownerUid,
+        gameId,
+        joinExistingGame,
+        gamesList,
+        userName,
+      }}
+    >
+      {children}
+    </GameContext.Provider>
+  );
+};

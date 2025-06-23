@@ -3,6 +3,7 @@ import style from "./Movies.module.css";
 import { useAuth } from "./../../hooks/useAuth";
 import { hasUserBookmarkedMovie, toggleMovieBookmark } from "../../services/bookmarksService";
 import { Action } from "../Home/components/Action";
+import { Button } from "./../../components/Button/Button";
 
 export const Movies = () => {
   const { currentUser } = useAuth();
@@ -121,7 +122,7 @@ export const Movies = () => {
 
   return (
     <div className={style.container}>
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px", alignItems: "center" }}>
+      <div className={style.movie_actions}>
         <input
           type="text"
           placeholder="Введіть на англійській"
@@ -146,7 +147,10 @@ export const Movies = () => {
           <option value="like_count">Вподобаннями</option>
         </select>
 
-        <button onClick={handleSearch}>🔍 Пошук</button>
+        <Button onClick={handleSearch} variant="empty" size="small" position="left">
+          {" "}
+          Пошук
+        </Button>
       </div>
 
       {loading && <div>Завантаження...</div>}

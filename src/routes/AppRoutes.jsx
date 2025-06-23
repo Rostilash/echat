@@ -15,6 +15,8 @@ import { Movies } from "../pages/Movies/Movies";
 import { Register } from "../components/Register/Register";
 import { Login } from "../components/Login/Login";
 import { FilterFiles } from "../pages/FilterFiles/FilterFiles";
+import { Game1 } from "../pages/Games/Game1";
+import { GameProvider } from "../context/GameContext";
 
 export const AppRoutes = () => {
   return (
@@ -47,6 +49,14 @@ export const AppRoutes = () => {
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
         <Route path="filter-files" element={<FilterFiles />} />
+        <Route
+          path="game"
+          element={
+            <GameProvider>
+              <Game1 />
+            </GameProvider>
+          }
+        />
       </Route>
 
       {/* Admin panel  */}

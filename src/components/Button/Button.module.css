@@ -45,6 +45,12 @@
 }
 
 /* Position  */
+.left {
+  display: flex;
+  align-items: start;
+  text-align: left;
+  justify-content: start;
+}
 .center {
   display: flex;
   align-items: center;
