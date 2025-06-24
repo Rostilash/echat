@@ -1,19 +1,18 @@
-export const Board = ({ board, onClick }) => {
+import React from "react";
+import style from "./Game1.module.css";
+
+export const Board = ({ board, onClick, combo, filled }) => {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 100px)" }}>
-      {board.map((cell, index) => (
+    <div className={style.main_board}>
+      {board.map((cell, idx) => (
         <div
-          key={index}
-          onClick={() => onClick(index)}
-          style={{
-            width: 100,
-            height: 100,
-            border: "1px solid black",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: 36,
-          }}
+          key={idx}
+          className={`${style.board}
+            ${cell !== "" ? style.filled : ""} 
+            ${combo.includes(idx) ? style.winnerCell : ""}
+            ${filled.includes(idx) ? style.errorCell : ""}
+            `}
+          onClick={() => onClick(idx)}
         >
           {cell}
         </div>

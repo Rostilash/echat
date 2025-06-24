@@ -10,6 +10,7 @@ export const GameProvider = ({ children }) => {
   const userName = currentUser?.name;
 
   const [gamesList, setGamesList] = useState([]);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const [game, setGame] = useState({
     playerX: null,
     playerO: null,
@@ -42,7 +43,7 @@ export const GameProvider = ({ children }) => {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
 
-        if (!data.winner) {
+        if (data.winner === "draw" || !data.winner) {
           gamesArray.push({ id: doc.id, ...data });
         }
       });
@@ -59,6 +60,8 @@ export const GameProvider = ({ children }) => {
       usernameo: null,
       playerO: null,
       board: Array(9).fill(""),
+      combo: [],
+      filled: [],
       currentTurn: "X",
       winner: null,
       createdAt: new Date(),
@@ -74,12 +77,9 @@ export const GameProvider = ({ children }) => {
     await updateDoc(doc(db, "games", gameId), data);
   };
 
-  const joinGame = async (uid, name) => {
-    await updateGame({ playerO: uid, usernameo: name, ditailsText: "Гра почалась", isStarted: true });
-  };
-
   const joinExistingGame = async (id, name) => {
     setGameId(id);
+    setIsGameStarted(true);
     const gameDoc = doc(db, "games", id);
     const gameSnap = await getDoc(gameDoc);
 
@@ -95,6 +95,7 @@ export const GameProvider = ({ children }) => {
         });
       }
     }
+    setIsGameStarted(false);
   };
 
   const makeMove = async (newBoard, turn, winner) => {
@@ -108,13 +109,14 @@ export const GameProvider = ({ children }) => {
         setGame,
         createGame,
         updateGame,
-        joinGame,
         makeMove,
         ownerUid,
         gameId,
         joinExistingGame,
         gamesList,
         userName,
+        setGameId,
+        isGameStarted,
       }}
     >
       {children}
