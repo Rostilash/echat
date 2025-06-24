@@ -1,11 +1,11 @@
 import React, { useState, useEffect, createContext } from "react";
-import { db } from "./../firebase/config";
-import { collection, addDoc, getDoc, doc, updateDoc, onSnapshot, query, orderBy, limit } from "firebase/firestore";
+import { db } from "../firebase/config";
+import { collection, addDoc, deleteDoc, getDoc, doc, updateDoc, onSnapshot, query, orderBy, limit } from "firebase/firestore";
 import { useAuth } from "../hooks/useAuth";
 
-export const GameContext = createContext();
+export const TicTacToeContext = createContext();
 
-export const GameProvider = ({ children }) => {
+export const TicTacToeProvider = ({ children }) => {
   const { currentUser, ownerUid } = useAuth();
   const userName = currentUser?.name;
 
@@ -26,9 +26,19 @@ export const GameProvider = ({ children }) => {
 
   useEffect(() => {
     if (!gameId) return;
-    const unsub = onSnapshot(doc(db, "games", gameId), (doc) => {
-      if (doc.exists()) {
-        setGame(doc.data());
+
+    let previousStarted = false;
+    const sound = new Audio("/sounds/zagruzka-novoy-igryi.mp3");
+    const unsub = onSnapshot(doc(db, "games", gameId), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setGame(data);
+
+        if (data.isStarted && !previousStarted) {
+          sound.play().catch((e) => console.warn("Помилка відтворення:", e));
+        }
+
+        previousStarted = data.isStarted;
       }
     });
 
@@ -102,8 +112,14 @@ export const GameProvider = ({ children }) => {
     await updateGame({ board: newBoard, currentTurn: turn, winner: winner || null });
   };
 
+  const deleteGame = async (id) => {
+    await deleteDoc(doc(db, "games", id));
+    setGameId(null);
+    setGame({ isStarted: false });
+  };
+
   return (
-    <GameContext.Provider
+    <TicTacToeContext.Provider
       value={{
         game,
         setGame,
@@ -117,9 +133,10 @@ export const GameProvider = ({ children }) => {
         userName,
         setGameId,
         isGameStarted,
+        deleteGame,
       }}
     >
       {children}
-    </GameContext.Provider>
+    </TicTacToeContext.Provider>
   );
 };

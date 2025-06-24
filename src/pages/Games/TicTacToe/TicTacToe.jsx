@@ -1,13 +1,26 @@
 import React, { useContext } from "react";
 import style from "./Game1.module.css";
 import { checkWinner } from "./сheckWinner";
-import { GameContext } from "../../context/GameContext";
+import { TicTacToeContext } from "../../../context/TicTacToeContext";
 import { GameList } from "./GameList";
 import { StardetGame } from "./StardetGame";
 
-export const Game1 = () => {
-  const { game, setGame, setGameId, createGame, updateGame, makeMove, ownerUid, joinExistingGame, gamesList, userName, isGameStarted } =
-    useContext(GameContext);
+export const TicTacToe = () => {
+  const {
+    game,
+    setGame,
+    gameId,
+    setGameId,
+    createGame,
+    updateGame,
+    makeMove,
+    ownerUid,
+    joinExistingGame,
+    gamesList,
+    userName,
+    isGameStarted,
+    deleteGame,
+  } = useContext(TicTacToeContext);
 
   const gameIsCreated = gamesList.some((list) => list.usernamex.includes(userName));
 
@@ -26,8 +39,11 @@ export const Game1 = () => {
 
     if (result?.winner) {
       const { winner, combo } = result;
+
       await updateGame({ ditailsText: `Переможець: ${winner === "X" ? `${game.usernamex} (X)!` : `${game.usernameo}(O)!`}`, winner, combo });
-      await makeMove(newBoard, null, winner); // currentTurn null — кінець гри
+      await makeMove(newBoard, null, winner);
+      const sound = new Audio("/sounds/zvuk-pobedyi-vyiigryisha.mp3");
+      sound.play().catch((e) => console.warn("Помилка відтворення:", e));
       return;
     } else if (isDraw) {
       await updateGame({ ditailsText: "Нічия!", winner: "draw", filled: [0, 1, 2, 3, 4, 5, 6, 7, 8] });
@@ -48,17 +64,28 @@ export const Game1 = () => {
   };
 
   const handleQuit = async () => {
-    setGameId(null);
+    const random = Math.random() > 0.5 ? "X" : "O";
     setGame({ isStarted: false, winner: null });
-    const update = await updateGame({ ditailsText: "Гра закінчена", isStarted: false });
+    await updateGame({
+      ditailsText: "Гра закінчена",
+      isStarted: false,
+      playerO: null,
+      usernameo: null,
+      currentTurn: random,
+      combo: [],
+      filled: [],
+      winner: null,
+      board: Array(9).fill(""),
+    });
   };
 
   const handleRestart = async () => {
+    const random = Math.random() > 0.5 ? "X" : "O";
     await updateGame({
       board: Array(9).fill(""),
       winner: null,
       ditailsText: "Давай, цього разу у тебе все вийде!",
-      currentTurn: "X",
+      currentTurn: random,
       combo: [],
       filled: [],
     });
@@ -130,17 +157,32 @@ export const Game1 = () => {
 
   return (
     <div>
-      <GameList userName={userName} gamesList={gamesList} isStarted={game.isStarted} ownerUid={ownerUid} joinExistingGame={joinExistingGame} />
+      <GameList
+        userName={userName}
+        gamesList={gamesList}
+        isStarted={game.isStarted}
+        ownerUid={ownerUid}
+        joinExistingGame={joinExistingGame}
+        deleteGame={deleteGame}
+      />
 
-      {!gameIsCreated && game.isStarted === false && (
+      {!gameIsCreated && game.isStarted === false ? (
         <div className={style.perentCreateButton}>
           <button className={style.createButton} onClick={handleCreateGame}>
             Cтворити гру
           </button>
         </div>
-      )}
+      ) : null}
 
-      <StardetGame game={game} handleRestart={handleRestart} handleQuit={handleQuit} handleAddSymbol={handleAddSymbol} />
+      <StardetGame
+        game={game}
+        handleRestart={handleRestart}
+        handleQuit={handleQuit}
+        handleAddSymbol={handleAddSymbol}
+        deleteGame={deleteGame}
+        ownerUid={ownerUid}
+        gameId={gameId}
+      />
     </div>
   );
 };

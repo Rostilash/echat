@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./Game1.module.css";
 import { Board } from "./Board";
-export const StardetGame = ({ game, handleRestart, handleQuit, handleAddSymbol }) => {
+export const StardetGame = ({ game, handleRestart, handleQuit, handleAddSymbol, deleteGame, ownerUid, gameId }) => {
   return (
     <>
       {game.isStarted && (
@@ -29,6 +29,16 @@ export const StardetGame = ({ game, handleRestart, handleQuit, handleAddSymbol }
           )}
 
           <Board board={game.board} combo={game.combo || []} filled={game.filled || []} onClick={handleAddSymbol} />
+
+          {game.playerX === ownerUid ? (
+            <button className={style.joinButton} onClick={() => deleteGame(gameId)}>
+              Видалити поточну гру{" "}
+            </button>
+          ) : (
+            <button className={style.joinButton} onClick={() => handleQuit()}>
+              Вийти
+            </button>
+          )}
         </div>
       )}
     </>

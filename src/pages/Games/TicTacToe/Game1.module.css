@@ -80,6 +80,7 @@ p img {
   padding: 5px;
   border: 5px solid rgba(0, 0, 0, 0.178);
   border-radius: 8px;
+  margin-bottom: 5%;
 }
 
 .board {
@@ -94,7 +95,7 @@ p img {
   font-size: 56px;
   cursor: pointer;
   transition: all 0.3s ease;
-
+  user-select: none;
   /* Тінь навколо */
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.3);
 }

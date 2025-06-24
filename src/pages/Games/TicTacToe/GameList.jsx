@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./Game1.module.css";
 
-export const GameList = ({ userName, gamesList, isStarted, ownerUid, joinExistingGame }) => {
+export const GameList = ({ userName, gamesList, isStarted, ownerUid, joinExistingGame, deleteGame }) => {
   return (
     <div className={style.mainDesctop}>
       <ul>
@@ -10,6 +10,7 @@ export const GameList = ({ userName, gamesList, isStarted, ownerUid, joinExistin
             <h2> Доступні ігри</h2>
             {gamesList.map((game) => (
               <li key={game.id} className={style.gameList}>
+                {game.playerX === ownerUid && <button onClick={() => deleteGame(game.id)}>Видалити</button>}
                 <span>Статус: {game.isStarted ? "В процесі" : "Очікування"}</span>
 
                 <span className={style.inline}>

@@ -15,8 +15,11 @@ import { Movies } from "../pages/Movies/Movies";
 import { Register } from "../components/Register/Register";
 import { Login } from "../components/Login/Login";
 import { FilterFiles } from "../pages/FilterFiles/FilterFiles";
-import { Game1 } from "../pages/Games/Game1";
-import { GameProvider } from "../context/GameContext";
+import { GamesHub } from "../pages/Games/GamesHub";
+import { TicTacToeProvider } from "../context/TicTacToeContext";
+import { TicTacToe } from "../pages/Games/TicTacToe/TicTacToe";
+import { MonopolyProvider } from "../context/MonopolyContext";
+import { MonopolyContainer } from "../pages/Games/Monopoly/MonopolyContainer";
 
 export const AppRoutes = () => {
   return (
@@ -49,12 +52,23 @@ export const AppRoutes = () => {
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
         <Route path="filter-files" element={<FilterFiles />} />
+
+        <Route path="/games" element={<GamesHub />} />
+
         <Route
-          path="game"
+          path="games/tictactoe"
           element={
-            <GameProvider>
-              <Game1 />
-            </GameProvider>
+            <TicTacToeProvider>
+              <TicTacToe />
+            </TicTacToeProvider>
+          }
+        />
+        <Route
+          path="games/monopoly"
+          element={
+            <MonopolyProvider>
+              <MonopolyContainer />
+            </MonopolyProvider>
           }
         />
       </Route>
