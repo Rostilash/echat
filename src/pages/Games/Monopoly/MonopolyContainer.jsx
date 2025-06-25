@@ -3,11 +3,18 @@ import { MonopolyContext } from "../../../context/MonopolyContext";
 import { MonoBoard } from "./MonoBoard";
 
 export const MonopolyContainer = () => {
-  const { board, players } = useContext(MonopolyContext);
-  const squareMap = board.reduce((map, square) => {
-    map[square.id] = square;
-    return map;
-  }, {});
+  const { board, players, dice, handleMove, currentPlayer, logs, gameOver, handleRestartGame } = useContext(MonopolyContext);
 
-  return <MonoBoard board={board} players={players} currentPlayer={players[0]} />;
+  return (
+    <MonoBoard
+      board={board}
+      players={players}
+      currentPlayer={currentPlayer}
+      dice={dice}
+      handleMove={handleMove}
+      logs={logs}
+      gameOver={gameOver}
+      handleRestartGame={handleRestartGame}
+    />
+  );
 };
