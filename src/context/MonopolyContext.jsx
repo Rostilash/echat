@@ -1,6 +1,10 @@
 import React, { useState, useEffect, createContext } from "react";
 import { db } from "./../firebase/config";
 import { collection, addDoc, deleteDoc, getDoc, doc, updateDoc, onSnapshot, query, orderBy, limit } from "firebase/firestore";
+import { getNextActivePlayerIndex } from "./../pages/Games/Monopoly/utils/getNextActivePlayerIndex";
+import { clearPlayerProperties } from "./../pages/Games/Monopoly/utils/clearPlayerProperties";
+import { movePlayerStepByStep } from "./../pages/Games/Monopoly/utils/movePlayerStepByStep";
+import { defaultBoard } from "../pages/Games/Monopoly/utils/defaultBoard";
 
 export const MonopolyContext = createContext();
 
@@ -51,109 +55,44 @@ export const MonopolyProvider = ({ children }) => {
       isBankrupt: false,
     },
   ]);
-  const [board, setBoard] = useState([
-    { id: 0, name: "Старт", type: "start", action: "collect", amount: 200 },
-
-    { id: 1, name: "Бульвар Медитеран", type: "property", color: "", price: 60, rent: 2, owner: null },
-    { id: 2, name: "Скриня громади", type: "chest", gift: 500 },
-    { id: 3, name: "Балтійський проспект", type: "property", color: "", price: 60, rent: 4, owner: null },
-    { id: 4, name: "Податок на прибуток", type: "tax", amount: 200 },
-
-    { id: 5, name: "Залізниця Редінг", type: "railroad", price: 200, rent: 25, owner: null, color: "" },
-
-    { id: 6, name: "Вулиця Орієнтал", type: "property", color: "", price: 100, rent: 6, owner: null },
-    { id: 7, name: "Шанс", type: "chance", color: "gold" },
-    { id: 8, name: "Вулиця Вермонт", type: "property", color: "", price: 100, rent: 6, owner: null },
-    { id: 9, name: "Вулиця Коннектикут", type: "property", color: "", price: 120, rent: 8, owner: null },
-
-    { id: 10, name: "В'язниця / Просто в гостях", type: "jail", color: "red" },
-
-    { id: 11, name: "Площа Сент-Чарльз", type: "property", color: "", price: 140, rent: 10, owner: null },
-    { id: 12, name: "Електростанція", type: "utility", price: 150, rentMultiplier: 4, owner: null, color: "" },
-    { id: 13, name: "Проспект штату", type: "property", color: "", price: 140, rent: 10, owner: null },
-    { id: 14, name: "Вулиця Вірджинія", type: "property", color: "", price: 160, rent: 12, owner: null },
-
-    { id: 15, name: "Залізниця Пенсильванія", type: "railroad", price: 200, rent: 25, owner: null, color: "" },
-
-    { id: 16, name: "Вулиця Сент-Джеймс", type: "property", color: "", price: 180, rent: 14, owner: null },
-    { id: 17, name: "Скриня громади", type: "chest", color: "gold" },
-    { id: 18, name: "Вулиця Теннессі", type: "property", color: "", price: 180, rent: 14, owner: null },
-    { id: 19, name: "Вулиця Нью-Йорк", type: "property", color: "", price: 200, rent: 16, owner: null },
-
-    { id: 20, name: "Безкоштовна стоянка", type: "parking" },
-
-    { id: 21, name: "Вулиця Кентуккі", type: "property", color: "", price: 220, rent: 18, owner: null },
-    { id: 22, name: "Шанс", type: "chance", color: "gold" },
-    { id: 23, name: "Вулиця Індіана", type: "property", color: "", price: 220, rent: 18, owner: null },
-    { id: 24, name: "Вулиця Іллінойс", type: "property", color: "", price: 240, rent: 20, owner: null },
-
-    { id: 25, name: "Залізниця Бен-Авеню", type: "railroad", price: 200, rent: 25, owner: null },
-
-    { id: 26, name: "Вулиця Атлантік", type: "property", color: "", price: 260, rent: 22, owner: null },
-    { id: 27, name: "Вулиця Вентнор", type: "property", color: "", price: 260, rent: 22, owner: null },
-    { id: 28, name: "Водоканал", type: "utility", price: 150, rentMultiplier: 4, owner: null },
-    { id: 29, name: "Вулиця Марвін Гарденс", type: "property", color: "", price: 280, rent: 24, owner: null },
-
-    { id: 30, name: "Іди у в'язницю", type: "go-to-jail", color: "red" },
-
-    { id: 31, name: "Вулиця Пасифік", type: "property", color: "", price: 300, rent: 26, owner: null },
-    { id: 32, name: "Вулиця Північна Кароліна", type: "property", color: "", price: 300, rent: 26, owner: null },
-    { id: 33, name: "Скриня громади", type: "chest" },
-    { id: 34, name: "Вулиця Пенсильванія", type: "property", color: "", price: 320, rent: 28, owner: null },
-
-    { id: 35, name: "Залізниця Шорт-Лайн", type: "railroad", price: 200, rent: 25, owner: null },
-
-    { id: 36, name: "Шанс", type: "chance" },
-    { id: 37, name: "Парк-Плейс", type: "property", color: "dark-blue", price: 350, rent: 35, owner: null },
-    { id: 38, name: "Розкішний податок", type: "tax", amount: 1000 },
-    { id: 39, name: "Бродвей", type: "property", color: "dark-blue", price: 400, rent: 5000, owner: null },
-  ]);
+  const [board, setBoard] = useState(defaultBoard);
   const [gameOver, setGameOver] = useState(false);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [logs, setLogs] = useState([]);
   const [dice, setDice] = useState([0, 0]);
 
-  const getNextActivePlayerIndex = (players, currentIndex) => {
-    const totalPlayers = players.length;
-    let nextIndex = (currentIndex + 1) % totalPlayers;
-    while (players[nextIndex].isBankrupt) {
-      nextIndex = (nextIndex + 1) % totalPlayers;
-      if (nextIndex === currentIndex) break;
-    }
-
-    return nextIndex;
-  };
-
-  const clearPlayerProperties = (player) => {
-    const propertiesToClear = [...player.properties];
-    setTimeout(() => {
-      setBoard((prevBoard) => prevBoard.map((cell) => (propertiesToClear.includes(cell.id) ? { ...cell, owner: null, color: "" } : cell)));
-    }, 0);
-  };
-
   useEffect(() => {
     const alivePlayers = players.filter((p) => !p.isBankrupt);
-
+    // if only last player he is a winner
     if (alivePlayers.length === 1) {
       const winner = alivePlayers[0];
       setLogs((prev) => [...prev, `🎉 ${winner.name} переміг з сумою ${winner.money}$!`]);
-      clearPlayerProperties(winner);
+      clearPlayerProperties(winner, setBoard);
       setGameOver(true);
       return;
     }
-
+    // if current player bankrupt throw next player
     const currentPlayer = players[currentPlayerIndex];
     if (currentPlayer?.isBankrupt) {
       const nextIndex = getNextActivePlayerIndex(players, currentPlayerIndex);
       setCurrentPlayerIndex(nextIndex);
     }
 
+    // if player in jail
     if (currentPlayer?.inJail) {
+      if (currentPlayer.jailTurns > 1) {
+        setPlayers((prev) => prev.map((p) => (p.id === currentPlayer.id ? { ...p, jailTurns: p.jailTurns - 1 } : p)));
+
+        setLogs((prev) => [...prev, `${currentPlayer.name} ще ${currentPlayer.jailTurns - 1} хід(ів) у в'язниці`]);
+      } else {
+        setPlayers((prev) => prev.map((p) => (p.id === currentPlayer.id ? { ...p, jailTurns: 0, inJail: false } : p)));
+
+        setLogs((prev) => [...prev, `${currentPlayer.name} вийшов з в'язниці`]);
+      }
+
+      // go to next player
       const nextIndex = getNextActivePlayerIndex(players, currentPlayerIndex);
       setCurrentPlayerIndex(nextIndex);
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) => (player.id === currentPlayer.id ? { ...player, jailTurns: 0, inJail: false } : player))
-      );
     }
   }, [players, currentPlayerIndex]);
 
@@ -161,42 +100,75 @@ export const MonopolyProvider = ({ children }) => {
     const d1 = Math.ceil(Math.random() * 6);
     const d2 = Math.ceil(Math.random() * 6);
     setDice([d1, d2]);
+
+    // need to update this later
+    if (d1 === d2) {
+      setLogs((prev) => [...prev, `Ти отримав два однакові числа ти везуча шляпа`]);
+    }
     const result = d1 + d2;
     return result;
   };
 
-  const handleMove = () => {
+  const handleMove = async () => {
     if (gameOver) return;
-    setLogs([]);
+    // setLogs([]);
 
     const steps = rollDice();
-    if (players.length === 0) {
-      console.log("hello");
+    // const steps = 7;
+
+    const currentPlayer = players[currentPlayerIndex];
+    if (!currentPlayer || currentPlayer.isBankrupt) return;
+    if (currentPlayerIndex === players[currentPlayerIndex]) return;
+    // сopy user data
+    const currentPosition = currentPlayer.position;
+    const newPosition = (currentPosition + steps) % board.length;
+
+    // --- animate player moves ---
+    await movePlayerStepByStep(currentPlayerIndex, steps, setPlayers, board);
+
+    // --- result players cell id ---
+    let landedSquare = board[newPosition];
+    const logsBuffer = [];
+
+    let stepsFromChance = 0;
+    if (landedSquare.type === "chance") {
+      stepsFromChance = rollDice();
+      // stepsFromChance = 5;
     }
+
     setPlayers((prevPlayers) => {
-      const currentPlayer = prevPlayers[currentPlayerIndex];
+      const updatedPlayers2 = [...prevPlayers];
+      const player = { ...updatedPlayers2[currentPlayerIndex] };
 
-      const player = {
-        ...currentPlayer,
-        properties: [...currentPlayer.properties],
-      };
-
-      let newPosition = (player.position + steps) % board.length;
-      const logsBuffer = [];
-
-      // --- Старт ---
-      if (player.position + steps >= board.length) {
+      if (currentPosition + steps >= board.length) {
         player.money += 200;
         logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
       }
-
-      if (currentPlayer.isBankrupt) {
-        logsBuffer.push(`${currentPlayer.name} вибув з гри`);
-        return prevPlayers;
+      // ---chance---
+      if (landedSquare.type !== "chance") {
+        player.position = newPosition;
       }
+      let chancePosition = null;
+      if (landedSquare.type === "chance") {
+        chancePosition = (steps + stepsFromChance) % board.length;
 
-      player.position = newPosition;
-      const landedSquare = board[newPosition];
+        if (player.position + stepsFromChance >= board.length) {
+          player.money += 200;
+          logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
+        }
+        movePlayerStepByStep(currentPlayerIndex, stepsFromChance, setPlayers, board);
+
+        // player.position = chancePosition;
+        logsBuffer.push(
+          `${player.name} потрапив на поле "${landedSquare.name}". Випало + ${stepsFromChance} бонус і опинився на ${chancePosition + 1} клітинку`
+        );
+
+        landedSquare = board[chancePosition];
+      }
+      if (landedSquare.type === "go_to_jail") {
+        player.position = 10;
+        landedSquare = board[10];
+      }
 
       // --- Купівля ---
       if (["property", "railroad", "utility"].includes(landedSquare.type) && !landedSquare.owner) {
@@ -205,9 +177,10 @@ export const MonopolyProvider = ({ children }) => {
           if (confirmBuy) {
             player.money -= landedSquare.price;
             player.properties.push(landedSquare.id);
+            const finalPosition = chancePosition !== null ? chancePosition : newPosition;
 
             setBoard((prevBoard) => {
-              return prevBoard.map((square, idx) => (idx === newPosition ? { ...square, owner: player.id, color: player.color } : square));
+              return prevBoard.map((square, idx) => (idx === finalPosition ? { ...square, owner: player.id, color: player.color } : square));
             });
 
             logsBuffer.push(`${player.name} купив ${landedSquare.name}`);
@@ -219,27 +192,28 @@ export const MonopolyProvider = ({ children }) => {
       // --- Податок ---
       if (landedSquare.type === "tax") {
         player.money -= landedSquare.amount;
-        logsBuffer.push(`${player.name} сплатив податок за ${landedSquare.name}  ${landedSquare.amount}$`);
+        logsBuffer.push(`${player.name} сплатив "${landedSquare.name}" - ${landedSquare.amount}$`);
 
         if (player.money < 0) {
           logsBuffer.push(`${player.name} збанкрутував і вибуває з гри 💸`);
 
-          clearPlayerProperties(player);
+          clearPlayerProperties(player, setBoard);
           player.isBankrupt = true;
           player.properties = [];
           player.position = null;
         }
       }
       // --- Подарунок ---
-      if (landedSquare.type === " chest") {
+      if (landedSquare.type === "chest") {
         player.money += landedSquare.gift;
-        logsBuffer.push(`${player.name} отримав подарунок ${landedSquare.gift}$`);
+        logsBuffer.push(`${player.name} потрапив на ${landedSquare.name} та отримав подарунок ${landedSquare.gift}$`);
       }
       // --- В’язниця ---
       if (landedSquare.type === "jail") {
         logsBuffer.push(`${player.name} потрапив у в'язницю`);
         player.inJail = true;
-        player.jailTurns += 1;
+        player.jailTurns += 2;
+        landedSquare = board[10];
       }
       // --- Оренда ---
       let updatedPlayers = prevPlayers.map((p) => {
@@ -254,7 +228,7 @@ export const MonopolyProvider = ({ children }) => {
 
           if (player.money < 0) {
             logsBuffer.push(`${player.name} збанкрутував і вибуває з гри 💸`);
-            clearPlayerProperties(player);
+            clearPlayerProperties(player, setBoard);
             player.properties = [];
             player.isBankrupt = true;
             player.position = null;
@@ -274,7 +248,7 @@ export const MonopolyProvider = ({ children }) => {
       return updatedPlayers;
     });
 
-    // Перехід до наступного гравця
+    // Go to next player
     setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
   };
 

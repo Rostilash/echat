@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import style from "./styles/MonoBoard.module.css";
 import { PlayersInfo } from "./PlayersInfo";
 
 export const MonoBoard = ({ board, players, currentPlayer, handleMove, dice, logs, gameOver, handleRestartGame }) => {
   const diceResult = dice[0] + dice[1];
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [logs]);
 
   return (
     <div className={style.container}>
@@ -72,7 +77,10 @@ export const MonoBoard = ({ board, players, currentPlayer, handleMove, dice, log
           </>
         )}
 
-        <span>{logs && logs.map((log, i) => <p key={i}>{log}</p>)}</span>
+        <span className={style.game_logs}>
+          {logs && logs.map((log, i) => <p key={i}>{log}</p>)}
+          <span ref={bottomRef} />
+        </span>
       </div>
     </div>
   );
