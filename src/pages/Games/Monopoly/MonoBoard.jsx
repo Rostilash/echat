@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import style from "./styles/MonoBoard.module.css";
 import { PlayersInfo } from "./PlayersInfo";
+import { useOutletContext } from "react-router-dom";
 
-export const MonoBoard = ({ board, players, currentPlayer, handleMove, dice, logs, gameOver, handleRestartGame }) => {
+export const MonoBoard = () => {
+  const { players, board, currentPlayer, handleMove, handleRestartGame, logs, dice, gameOver } = useOutletContext();
+
   const diceResult = dice[0] + dice[1];
   const bottomRef = useRef(null);
 

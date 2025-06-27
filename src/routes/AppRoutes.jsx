@@ -20,6 +20,9 @@ import { TicTacToeProvider } from "../context/TicTacToeContext";
 import { TicTacToe } from "../pages/Games/TicTacToe/TicTacToe";
 import { MonopolyProvider } from "../context/MonopolyContext";
 import { MonopolyContainer } from "../pages/Games/Monopoly/MonopolyContainer";
+import { MonoBoard } from "../pages/Games/Monopoly/MonoBoard";
+import { MonopolyLanding } from "./../pages/Games/Monopoly/MonopolyLanding";
+import { MonopolyLobby } from "../pages/Games/Monopoly/MonopolyLobby";
 
 export const AppRoutes = () => {
   return (
@@ -70,7 +73,11 @@ export const AppRoutes = () => {
               <MonopolyContainer />
             </MonopolyProvider>
           }
-        />
+        >
+          <Route path="list" element={<MonopolyLanding />} />
+          <Route path="lobby/:id" element={<MonopolyLobby />} />
+          <Route path="board/:id" element={<MonoBoard />} />
+        </Route>
       </Route>
 
       {/* Admin panel  */}

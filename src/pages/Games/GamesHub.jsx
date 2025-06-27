@@ -9,7 +9,7 @@ export const GamesHub = () => {
           <Link to="/games/tictactoe">Хрестики-нулики(TicTacToe)</Link>
         </li>
         <li>
-          <Link to="/games/monopoly">Монополія(Мonopoly)</Link>
+          <Link to="/games/monopoly/list">Монополія(Мonopoly)</Link>
         </li>
 
         {/* інші ігри */}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "./../firebase/config";
-import { collection, addDoc, deleteDoc, getDoc, doc, updateDoc, onSnapshot, query, orderBy, limit } from "firebase/firestore";
+import { collection, addDoc, where, deleteDoc, getDoc, doc, updateDoc, onSnapshot, query, orderBy, limit } from "firebase/firestore";
 import { getNextActivePlayerIndex } from "./../pages/Games/Monopoly/utils/getNextActivePlayerIndex";
 import { clearPlayerProperties } from "./../pages/Games/Monopoly/utils/clearPlayerProperties";
 import { movePlayerStepByStep } from "./../pages/Games/Monopoly/utils/movePlayerStepByStep";
@@ -55,6 +56,9 @@ export const MonopolyProvider = ({ children }) => {
       isBankrupt: false,
     },
   ]);
+  // list of games
+  const [games, setGames] = useState([]);
+
   const [board, setBoard] = useState(defaultBoard);
   const [gameOver, setGameOver] = useState(false);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -95,6 +99,44 @@ export const MonopolyProvider = ({ children }) => {
       setCurrentPlayerIndex(nextIndex);
     }
   }, [players, currentPlayerIndex]);
+
+  // 🔁 Listen game, if status === started then all players will navigate to board id from params
+  // useEffect(() => {
+  //   const unsub = onSnapshot(doc(db, "monogames", id), (docSnap) => {
+  //     if (docSnap.exists()) {
+  //       const data = docSnap.data();
+  //       setLogs(data.logs);
+  //       setPlayers(data.players);
+  //       setBoard(data.board);
+  //       setCurrentPlayerIndex(data.setCurrentPlayerIndex);
+
+  //       if (data.status === "started") {
+  //         navigate(`/games/monopoly/board/${id}`);
+  //       }
+
+  //       // Якщо гравець вже є
+  //       if (data.players.some((p) => p.id === currentUser?.id)) {
+  //         setIsJoined(true);
+  //       }
+  //     }
+  //   });
+
+  //   return () => unsub();
+  // }, [id, currentUser?.id, navigate]);
+
+  useEffect(() => {
+    const q = query(collection(db, "monogames"), where("status", "==", "waiting"));
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setGames(list);
+    });
+
+    return () => unsub();
+  }, []);
 
   const rollDice = () => {
     const d1 = Math.ceil(Math.random() * 6);
@@ -252,6 +294,17 @@ export const MonopolyProvider = ({ children }) => {
     setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
   };
 
+  const fireBaseCreateGame = async (navigate) => {
+    const docRef = await addDoc(collection(db, "monogames"), {
+      status: "waiting",
+      board: board || defaultBoard,
+      players: [],
+      logs: [],
+      currentPlayerIndex: 0,
+    });
+    navigate(`/lobby/${docRef.uid}`);
+  };
+
   const handleRestartGame = () => {
     setPlayers((prev) =>
       prev.map((player) => ({
@@ -283,14 +336,19 @@ export const MonopolyProvider = ({ children }) => {
     <MonopolyContext.Provider
       value={{
         players,
-        setPlayers,
+        games,
         board,
         currentPlayer: players[currentPlayerIndex],
         dice,
         logs,
-        handleMove,
         gameOver,
+        handleMove,
         handleRestartGame,
+        fireBaseCreateGame,
+        setLogs,
+        setPlayers,
+        setBoard,
+        setCurrentPlayerIndex,
       }}
     >
       {children}
