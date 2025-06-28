@@ -4,7 +4,6 @@
   align-items: flex-start;
   justify-content: center;
   position: relative;
-  /* padding: 2rem; */
 }
 
 .player_icons {
@@ -37,7 +36,7 @@
 .cell {
   border: 1px solid #999;
   background-color: #00000009;
-  font-size: 0.6rem;
+  font-size: 0.8rem;
   text-align: center;
   padding: 6px;
   display: flex;
@@ -80,8 +79,8 @@
   margin-top: 4px;
   color: red;
 }
-/* user */
 
+/* user */
 .userInfo {
   display: flex;
   flex-direction: column;
@@ -99,10 +98,25 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.roll {
+  min-height: 45px;
+}
+.roll button {
+  padding: 15px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  box-shadow: inset 1px 1px 5px black;
+}
+.roll button:hover {
+  transform: scale(1.05);
+  box-shadow: 2px 2px 10px black;
+}
 .game_logs {
   max-height: 400px;
   overflow: auto;
-  /* border: 1px solid #ccc; */
   padding: 10px;
   box-sizing: border-box;
 }

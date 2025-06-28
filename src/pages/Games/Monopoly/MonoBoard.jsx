@@ -4,15 +4,32 @@ import { PlayersInfo } from "./PlayersInfo";
 import { useOutletContext } from "react-router-dom";
 
 export const MonoBoard = () => {
-  const { players, board, currentPlayer, handleMove, handleRestartGame, logs, dice, gameOver } = useOutletContext();
+  const {
+    players,
+    board,
+    currentPlayer,
+    handleMove,
+    logs,
+    dice,
+    currentTurnPlayerId,
+    currentPlayerIndex,
+    isRolled,
+    gameOver,
+    handleRestartGame,
+    handleDeleteGame,
+  } = useOutletContext();
 
   const diceResult = dice[0] + dice[1];
   const bottomRef = useRef(null);
+
+  const ifCurrentPlayer = currentPlayer?.id === currentTurnPlayerId && !isRolled && !gameOver;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 
+  const canDeleteGame = currentTurnPlayerId === currentPlayer?.id && players[0]?.id === currentTurnPlayerId;
+  console.log(players);
   return (
     <div className={style.container}>
       <div className={style.board}>
@@ -42,6 +59,8 @@ export const MonoBoard = () => {
                           d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0"
                         />
                       </svg>
+                    ) : p.token !== "" ? (
+                      <p>{p.token}</p>
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -68,17 +87,17 @@ export const MonoBoard = () => {
         ))}
       </div>
       <div className={style.userInfo}>
+        <span>{canDeleteGame && <button onClick={handleDeleteGame}>Видалити поточну гру</button>}</span>
+
         <span>
-          <PlayersInfo currentPlayerId={currentPlayer.id} players={players} />
+          <PlayersInfo currentPlayerId={currentTurnPlayerId} players={players} />
         </span>
-        {gameOver ? (
-          <button onClick={handleRestartGame}>Переіграти</button>
-        ) : (
-          <>
-            <p>{dice[0] + "🎲 " + dice[1] + "🎲 = " + diceResult + "🎲"} </p>
-            <button onClick={handleMove}>Кинути кубики 🎲</button>
-          </>
-        )}
+        <div className={style.roll}>
+          {!gameOver && <button onClick={handleRestartGame}>Переіграти</button>}
+          <p>{dice[0] + "🎲 " + dice[1] + "🎲 = " + diceResult + "🎲"} </p>
+
+          {ifCurrentPlayer && <button onClick={() => handleMove(currentPlayerIndex)}>Кинути кубики 🎲</button>}
+        </div>
 
         <span className={style.game_logs}>
           {logs && logs.map((log, i) => <p key={i}>{log}</p>)}

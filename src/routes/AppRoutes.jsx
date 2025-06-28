@@ -18,11 +18,11 @@ import { FilterFiles } from "../pages/FilterFiles/FilterFiles";
 import { GamesHub } from "../pages/Games/GamesHub";
 import { TicTacToeProvider } from "../context/TicTacToeContext";
 import { TicTacToe } from "../pages/Games/TicTacToe/TicTacToe";
-import { MonopolyProvider } from "../context/MonopolyContext";
-import { MonopolyContainer } from "../pages/Games/Monopoly/MonopolyContainer";
 import { MonoBoard } from "../pages/Games/Monopoly/MonoBoard";
 import { MonopolyLanding } from "./../pages/Games/Monopoly/MonopolyLanding";
 import { MonopolyLobby } from "../pages/Games/Monopoly/MonopolyLobby";
+import { MonopolyProviderWrapper } from "../pages/Games/Monopoly/MonopolyProviderWrapper ";
+import { MonopolyContainer } from "../pages/Games/Monopoly/MonopolyContainer";
 
 export const AppRoutes = () => {
   return (
@@ -66,17 +66,12 @@ export const AppRoutes = () => {
             </TicTacToeProvider>
           }
         />
-        <Route
-          path="games/monopoly"
-          element={
-            <MonopolyProvider>
-              <MonopolyContainer />
-            </MonopolyProvider>
-          }
-        >
-          <Route path="list" element={<MonopolyLanding />} />
-          <Route path="lobby/:id" element={<MonopolyLobby />} />
-          <Route path="board/:id" element={<MonoBoard />} />
+        <Route path="games/monopoly" element={<MonopolyProviderWrapper />}>
+          <Route element={<MonopolyContainer />}>
+            <Route path="list" element={<MonopolyLanding />} />
+            <Route path="lobby/:id" element={<MonopolyLobby />} />
+            <Route path="board/:id" element={<MonoBoard />} />
+          </Route>
         </Route>
       </Route>
 

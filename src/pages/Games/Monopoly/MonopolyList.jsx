@@ -18,7 +18,7 @@ export const MonopolyList = ({ games }) => {
           {games.map((game) => (
             <li key={game.id}>
               Гра №{game.id.slice(0, 6)} — {game.players.length} гравців
-              <button onClick={() => handleJoin(game.id)}>Приєднатися</button>
+              {game.players.length > 0 && <button onClick={() => handleJoin(game.id)}>Приєднатися</button>}
             </li>
           ))}
         </ul>

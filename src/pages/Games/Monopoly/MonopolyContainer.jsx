@@ -1,13 +1,9 @@
-import React, { useContext } from "react";
-import { MonopolyContext } from "../../../context/MonopolyContext";
+import { useContext } from "react";
 import { Outlet } from "react-router-dom";
+import { MonopolyContext } from "../../../context/MonopolyContext";
 
 export const MonopolyContainer = () => {
   const context = useContext(MonopolyContext);
 
-  return (
-    <div>
-      <Outlet context={context} />
-    </div>
-  );
+  return <Outlet context={context} />;
 };

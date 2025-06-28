@@ -4,7 +4,7 @@ export const defaultBoard = [
   { id: 1, name: "Бульвар Медитеран", type: "property", color: "", price: 60, rent: 2, owner: null },
   { id: 2, name: "Скриня громади", type: "chest", color: "#ddf3f7", gift: 500 },
   { id: 3, name: "Балтійський проспект", type: "property", color: "", price: 60, rent: 4, owner: null },
-  { id: 4, name: "Податок на прибуток", type: "tax", amount: 200 },
+  { id: 4, name: "Податок на прибуток", type: "tax_income", amount: 200 },
 
   { id: 5, name: "Залізниця Редінг", type: "railroad", price: 200, rent: 25, owner: null, color: "" },
 
