@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "./../firebase/config";
-import { collection, addDoc, where, getDoc, doc, updateDoc, deleteDoc, onSnapshot, query, arrayUnion } from "firebase/firestore";
+import { collection, addDoc, where, doc, updateDoc, deleteDoc, onSnapshot, query, arrayUnion } from "firebase/firestore";
 import { getNextActivePlayerIndex } from "./../pages/Games/Monopoly/utils/getNextActivePlayerIndex";
 import { clearPlayerProperties } from "./../pages/Games/Monopoly/utils/clearPlayerProperties";
 import { movePlayerStepByStep } from "./../pages/Games/Monopoly/utils/movePlayerStepByStep";
@@ -14,9 +14,9 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  const [players, setPlayers] = useState([]);
-  // list of games
+  // list of created games
   const [games, setGames] = useState([]);
+  const [players, setPlayers] = useState([]);
   const [board, setBoard] = useState(defaultBoard);
   const [logs, setLogs] = useState([]);
   const [dice, setDice] = useState([0, 0]);
@@ -28,16 +28,14 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const [isRolled, setIsRolled] = useState(false);
   const [status, setStatus] = useState(null);
 
-  console.log(status);
-
   useEffect(() => {
     let isProcessing = false;
 
     const handleTurnState = async () => {
-      if (isProcessing || status === "waiting") return;
+      if (isProcessing || status !== "started") return;
       isProcessing = true;
-
       const alivePlayers = players.filter((p) => !p.isBankrupt);
+
       if (alivePlayers.length === 1 && !gameOver) {
         const winner = alivePlayers[0];
         const updatedLogs = [...logs, `🎉 ${winner.name} переміг з сумою ${winner.money}$!`];
@@ -95,7 +93,6 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     handleTurnState();
   }, [status, currentPlayerIndex]);
-
   // 🔁 Listen game onSnapshot, if status === started then all players will navigate to board id from params
   useEffect(() => {
     if (!gameId) return;
@@ -122,11 +119,11 @@ export const MonopolyProvider = ({ children, gameId }) => {
         if (data.players.some((p) => p.id === currentUser?.id)) {
           setIsJoined(true);
         }
+        setIsRolled(false);
       }
-      setIsRolled(false);
     });
 
-    setLobbyLoading(false);
+    // setLobbyLoading(false);
     return () => unsub();
   }, [gameId, currentUser?.id, navigate, status]);
 
@@ -184,6 +181,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     const currentPlayer = players[id];
 
     if (!currentPlayer || currentPlayer.isBankrupt) return;
+
     const currentPosition = currentPlayer.position;
     let newPosition = (currentPosition + steps) % board.length;
     let logsBuffer = [];
@@ -200,8 +198,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
     }
 
     let landedSquare = updatedBoard[newPosition];
-
     let finalPosition = newPosition;
+
     // -- chance --
     if (landedSquare.type === "chance") {
       const bonusSteps = rollDice();
@@ -249,6 +247,20 @@ export const MonopolyProvider = ({ children, gameId }) => {
             color: player.color,
           };
 
+          // const matchedCombos = getWinDefaultCombo(player.properties);
+          const matchedCombos = [1, 3];
+          // need to upgrade logic in future
+          if (matchedCombos.length > 1) {
+            const previousBuildable = player.buildableCells || [];
+            const newBuildable = [...new Set(matchedCombos.flat())];
+            const willUpdate = previousBuildable.length < newBuildable.length;
+            console.log(willUpdate);
+            if (willUpdate) {
+              player.buildableCells = newBuildable;
+              console.log(player.buildableCells);
+              logsBuffer.push(`У ${player.name} з'явилася монополія !`);
+            }
+          }
           if (landedSquare.type === "railroad") {
             updatedBoard = await updateRailroadRents(player.id, updatedBoard);
           }
@@ -308,24 +320,79 @@ export const MonopolyProvider = ({ children, gameId }) => {
     const nextPlayerIndex = getNextActivePlayerIndex(updatedPlayers, currentPlayerIndex);
     const nextPlayerId = updatedPlayers[nextPlayerIndex]?.id || null;
 
-    // update local State
-    setPlayers(updatedPlayers);
-    setBoard(updatedBoard);
-    setLogs((prev) => [...prev, ...logsBuffer]);
-    setCurrentPlayerIndex(nextPlayerIndex);
-    setCurrentTurnPlayerId(nextPlayerId);
+    if (JSON.stringify(players) !== JSON.stringify(updatedPlayers)) {
+      // update local State
+      setPlayers(updatedPlayers);
+      setBoard(updatedBoard);
+      setLogs((prev) => [...prev, ...logsBuffer]);
+      setCurrentPlayerIndex(nextPlayerIndex);
+      setCurrentTurnPlayerId(nextPlayerId);
 
-    // 🔁 update in Firebase
-    await updateDoc(doc(db, "monogames", gameId), {
-      players: updatedPlayers,
-      board: updatedBoard,
-      // while testing
-      // logs: [...logsBuffer],
-      logs: [...logs, ...logsBuffer],
-      currentPlayerIndex: nextPlayerIndex,
-      currentTurnPlayerId: nextPlayerId,
-    });
+      // 🔁 update in Firebase
+      await updateDoc(doc(db, "monogames", gameId), {
+        players: updatedPlayers,
+        board: updatedBoard,
+        // while testing
+        // logs: [...logsBuffer],
+        logs: [...logs, ...logsBuffer],
+        currentPlayerIndex: nextPlayerIndex,
+        currentTurnPlayerId: nextPlayerId,
+      });
+    }
     setIsRolled(false);
+  };
+
+  const upgradeCityRent = async (cityId, price, upgradeLevel) => {
+    const player = players.find((p) => p.id === currentUser.id);
+
+    if (!player) {
+      console.warn("Гравець не знайдений");
+      return;
+    }
+
+    if ((upgradeLevel || 0) >= 5) {
+      console.log("Максимальний рівень апгрейду досягнуто");
+      setLogs([`Максимальний рівень апгрейду досягнуто`]);
+
+      return;
+    }
+
+    if (player.money < price) {
+      setLogs([`У вас не виставчає грошей для оновлення`]);
+      console.log("Недостатньо грошей для апгрейду");
+      return;
+    }
+
+    const updatedBoard = board.map((cell) => {
+      if (cell.id === cityId) {
+        return {
+          ...cell,
+          rent: cell.rent * 3,
+          price: cell.price * 2,
+          upgradeLevel: (cell.upgradeLevel || 0) + 1,
+        };
+      }
+      return cell;
+    });
+
+    const updatedPlayers = players.map((p) => {
+      if (p.id === currentUser.id) {
+        return { ...p, money: p.money - price };
+      }
+      return p;
+    });
+
+    setBoard(updatedBoard);
+    setPlayers(updatedPlayers);
+    // try {
+    //   await updateDoc(doc(db, "monogames", gameId), {
+    //     board: updatedBoard,
+    //     players: updatedPlayers,
+    //   });
+    //   console.log("Успішне оновлення");
+    // } catch (error) {
+    //   console.error("Помилка оновлення:", error);
+    // }
   };
 
   const fireBaseCreateGame = async (navigate) => {
@@ -424,6 +491,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
     navigate(`/games/monopoly/list`);
   };
 
+  const player = players.find((player) => player.id === currentUser.id);
+
   return (
     <MonopolyContext.Provider
       value={{
@@ -431,7 +500,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
         players,
         games,
         board,
-        currentPlayer: currentUser,
+        currentPlayer: player,
         currentTurnPlayerId,
         currentPlayerIndex,
         dice,
@@ -443,10 +512,11 @@ export const MonopolyProvider = ({ children, gameId }) => {
         handleJoinGame,
         handleDeleteGame,
         fireBaseCreateGame,
-        setLogs,
-        setPlayers,
-        setBoard,
-        setCurrentPlayerIndex,
+        // setLogs,
+        // setPlayers,
+        // setBoard,
+        // setCurrentPlayerIndex,
+        upgradeCityRent,
         lobbyLoading,
         isJoined,
         isRolled,

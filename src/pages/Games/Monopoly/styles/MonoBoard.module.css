@@ -120,3 +120,20 @@
   padding: 10px;
   box-sizing: border-box;
 }
+
+.updatingBlock {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+}
+.updatingItem {
+  border: 1px solid black;
+  padding: 5px;
+}
+.canBuildLabel {
+  display: flex;
+  flex-direction: column;
+}
