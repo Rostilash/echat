@@ -137,3 +137,12 @@
   display: flex;
   flex-direction: column;
 }
+.confirm_window {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirm_window button {
+  padding: 10px 15px;
+}

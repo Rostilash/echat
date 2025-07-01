@@ -18,6 +18,11 @@ export const MonoBoard = () => {
     gameOver,
     handleRestartGame,
     handleDeleteGame,
+    confirmPurchaseHandler,
+    continueMoveAfterRefusal,
+    handleConfirmBuyout,
+    pendingPurchase,
+    pendingBuyout,
   } = useOutletContext();
 
   const diceResult = dice[0] + dice[1];
@@ -31,17 +36,21 @@ export const MonoBoard = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 
-  const canUpdate = board.filter((city) => currentPlayer?.buildableCells.includes(city.id));
-
   const handleUpgradeCity = (cityId, price, upgradeLevel) => {
     upgradeCityRent(cityId, price, upgradeLevel);
   };
 
+  const cancelPurchase = () => {
+    continueMoveAfterRefusal();
+  };
+
   return (
     <div className={style.container}>
+      {/* Our bord */}
       <div className={style.board}>
         {board.map((cell, index) => {
           const canBuild = currentPlayer?.buildableCells?.includes(cell.id);
+
           return (
             <div
               key={cell.id}
@@ -57,11 +66,11 @@ export const MonoBoard = () => {
               </strong>
               <strong className={style.rent}>{cell.rent ? `$${cell.rent}` : ""}</strong>
 
-              {canBuild && (
+              {ifCurrentPlayer && canBuild && (
                 <div className={style.canBuildLabel}>
                   <>
-                    <span>🏠 Можна будувати за {cell.price}</span>
-                    <button onClick={() => handleUpgradeCity(cell.id, cell.price, (cell.upgradeLevel = ""))}>Строїти</button>
+                    <span>🏠 Можна купити за {cell.price}</span>
+                    <button onClick={() => handleUpgradeCity(cell.id, cell.price, (cell.upgradeLevel = ""))}>Будувати</button>
                   </>
                 </div>
               )}
@@ -113,13 +122,35 @@ export const MonoBoard = () => {
           );
         })}
       </div>
+
+      {/* users info */}
       <div className={style.userInfo}>
-        <span>{canDeleteGame && <button onClick={handleDeleteGame}>Видалити поточну гру</button>}</span>
+        {!gameOver && canDeleteGame && <button onClick={handleDeleteGame}>Видалити поточну гру</button>}
+        {!gameOver && canDeleteGame && <button onClick={handleRestartGame}>Переіграти</button>}
+
         <span>
           <PlayersInfo currentPlayerId={currentTurnPlayerId} players={players} />
         </span>
+        {pendingPurchase && (
+          <div className={style.confirm_window}>
+            <p>
+              {currentTurnPlayerId === pendingPurchase.playerId?.name} Купити {pendingPurchase.cell.name} за {pendingPurchase.cell.price}
+              $?
+            </p>
+            <button onClick={confirmPurchaseHandler}>Купити</button>
+            <button onClick={cancelPurchase}>Відмовитись</button>
+          </div>
+        )}
+        {pendingBuyout && (
+          <div className="modal">
+            <p>
+              {players.find((p) => p.id === pendingBuyout.buyerId)?.name}, хочеш викупити {pendingBuyout.cell.name} за {pendingBuyout.price}$?
+            </p>
+            <button onClick={handleConfirmBuyout}>Викупити</button>
+            <button onClick={cancelPurchase}>Відмовитись</button>
+          </div>
+        )}
         <div className={style.roll}>
-          {gameOver && <button onClick={handleRestartGame}>Переіграти</button>}
           <p>{dice[0] + "🎲 " + dice[1] + "🎲 = " + diceResult + "🎲"} </p>
           {ifCurrentPlayer && <button onClick={() => handleMove(currentPlayerIndex)}>Кинути кубики 🎲</button>}
         </div>
