@@ -44,26 +44,62 @@ export const MonoBoard = () => {
     continueMoveAfterRefusal();
   };
 
+  const topRow = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const bottomRow = [29, 28, 27, 26, 25, 24, 23, 22, 21, 20];
+  const leftCol = [31, 32, 33, 34, 35, 36, 37, 38, 39];
+  const rightCol = [11, 12, 13, 14, 15, 16, 17, 18, 19];
+
+  const getFlagPositionClass = (index) => {
+    if (topRow.includes(index)) return style.flagBottom;
+    if (bottomRow.includes(index)) return style.flagTop;
+    if (leftCol.includes(index)) return style.flagRight;
+    if (rightCol.includes(index)) return style.flagLeft;
+    return "";
+  };
+
+  const topRowtext = [1, 3, 6, 8, 9];
+  const bottomRowtext = [29, 28, 27, 26, 25, 24, 23, 22, 21, 20];
+  const leftColtext = [31, 32, 34, 37, 39];
+  const rightColtext = [11, 13, 14, 16, 18, 19];
+
+  const getTextPositionClass = (index) => {
+    if (topRowtext.includes(index)) return style.textBottom;
+    if (bottomRowtext.includes(index)) return style.textTop;
+    if (leftColtext.includes(index)) return style.textRight;
+    if (rightColtext.includes(index)) return style.textLeft;
+    return "";
+  };
+
   return (
     <div className={style.container}>
       {/* Our bord */}
       <div className={style.board}>
         {board.map((cell, index) => {
           const canBuild = currentPlayer?.buildableCells?.includes(cell.id);
+          const isCorner = ["p1", "p11", "p21", "p31"].includes(`p${cell.id + 1}`);
 
           return (
             <div
               key={cell.id}
-              className={`${style.cell} ${canBuild ? style.canBuild : ""}`}
+              className={`${style.cell} ${canBuild ? style.canBuild : ""} ${isCorner ? style.corner : ""}`}
               style={{
                 gridArea: `p${cell.id + 1}`,
-                backgroundColor: canBuild ? `white` : `${cell.color}`,
                 border: canBuild ? `10px solid ${cell.color}` : "none",
+                backdropFilter: canBuild ? "blur(10px)" : "none",
+                WebkitBackdropFilter: canBuild ? "blur(4px)" : "none",
               }}
             >
-              <strong className={style.number}>
-                <p>{cell.id + 1}</p>
-              </strong>
+              <div
+                className={style.cellBackground}
+                style={{
+                  backgroundColor: canBuild ? `white` : `${cell.color}`,
+                }}
+              />
+
+              {cell.type === "property" && <div className={`${style.colorStrip} `} style={{ backgroundColor: cell.color }} />}
+
+              <strong>{cell.img && <img src={cell.img} alt="flag" className={`${style.flag} ${getFlagPositionClass(index)}`} />}</strong>
+
               <strong className={style.rent}>{cell.rent ? `$${cell.rent}` : ""}</strong>
 
               {ifCurrentPlayer && canBuild && (
@@ -117,7 +153,8 @@ export const MonoBoard = () => {
                   ) : null
                 )}
               </div>
-              <span>{cell.name}</span>
+
+              <span className={`${style.cityName} ${getTextPositionClass(index)}`}>{cell.name}</span>
             </div>
           );
         })}
@@ -142,7 +179,7 @@ export const MonoBoard = () => {
           </div>
         )}
         {pendingBuyout && (
-          <div className="modal">
+          <div className={style.confirm_window}>
             <p>
               {players.find((p) => p.id === pendingBuyout.buyerId)?.name}, хочеш викупити {pendingBuyout.cell.name} за {pendingBuyout.price}$?
             </p>

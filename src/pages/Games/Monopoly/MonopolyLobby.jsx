@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
+import style from "./styles/MonopolyLobby.module.css";
 
 export const MonopolyLobby = () => {
   const { players, lobbyLoading, isJoined, gameId, handleStartGame, currentPlayer, handleJoinGame } = useOutletContext();
-  // console.log(currentPlayer?.id === players[0]?.id);
+
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
   const [token, setToken] = useState(null);
+  const [customColor, setCustomColor] = useState("#dbffb8");
 
-  const allColors = ["blue", "red", "yellow", "green", "orange", "pink"];
+  const allColors = [customColor, "blue", "red", "yellow", "green", "orange", "pink"];
   const allTokens = [null, "🐱", "🐶", "🐸", "🐰", "🐢", "🐧", "🦊", "🐷", "🐮", "🐔", "🦄", "🐙"];
   const takenColors = players.map((p) => p.color);
   const takenTokens = players.map((p) => p.token);
@@ -30,28 +32,42 @@ export const MonopolyLobby = () => {
   if (!lobbyLoading) return <p>Завантаження...</p>;
 
   return (
-    <div>
+    <div className={style.lobby}>
       <h2>Лобі гри #{gameId.slice(0, 6)}...</h2>
 
       {isJoined ? (
         <>
-          <p>Очікуємо інших гравців...</p>
-          <ul>
+          <p className={style.waiting}>Очікуємо інших гравців...</p>
+          <ul className={style.playerList}>
             {players.map((p) => (
-              <li key={p.id}>
-                {p.name} — <span style={{ color: p.color }}>{p.color}</span> {p.token}
+              <li key={p.id} className={style.playerItem}>
+                {p.name} — <span style={{ color: p.color }}>{p.color}</span> <span className={style.token}>{p.token}</span>
               </li>
             ))}
           </ul>
 
-          {players[0]?.id === currentPlayer?.id && players.length >= 2 && <button onClick={handleStartGame}>Почати гру</button>}
+          {players[0]?.id === currentPlayer?.id && players.length >= 2 && (
+            <button className={style.startButton} onClick={handleStartGame}>
+              Почати гру
+            </button>
+          )}
         </>
       ) : (
-        <div>
-          {/* name */}
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ім'я" />
-          {/* color */}
-          <select value={color} onChange={(e) => setColor(e.target.value)}>
+        <div className={style.joinForm}>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ім'я" className={style.input} />
+
+          <select
+            value={color}
+            onChange={(e) => {
+              const selected = e.target.value;
+              if (selected === "custom") {
+                setColor(customColor);
+              } else {
+                setColor(selected);
+              }
+            }}
+            className={style.select}
+          >
             {availableColors.map((c) => (
               <option key={c} value={c}>
                 {c.charAt(0).toUpperCase() + c.slice(1)}
@@ -60,9 +76,26 @@ export const MonopolyLobby = () => {
             <option value="custom">Кастомний</option>
             {availableColors.length === 0 && <option disabled>Усі кольори зайняті</option>}
           </select>
-          {color === "custom" && <input type="color" onChange={(e) => setColor(e.target.value)} title="Обери свій колір" />}
-          {/* tokens */}
-          <select value={token || ""} onChange={(e) => setToken(e.target.value || null)}>
+
+          {color === customColor && (
+            <div className={style.customColorWrapper}>
+              <label>
+                Обраний колір:
+                <input
+                  type="color"
+                  value={customColor}
+                  onChange={(e) => {
+                    setCustomColor(e.target.value);
+                    setColor(e.target.value);
+                  }}
+                  className={style.colorPicker}
+                />
+              </label>
+              <span className={style.customColorCode}>{customColor}</span>
+            </div>
+          )}
+
+          <select value={token || ""} onChange={(e) => setToken(e.target.value || null)} className={style.select}>
             <option value="">Без токену</option>
             {availableTokens
               .filter((t) => t !== null)
@@ -74,6 +107,7 @@ export const MonopolyLobby = () => {
           </select>
 
           <button
+            className={style.joinButton}
             onClick={() => handleJoinGame(name, color, token)}
             disabled={!color || !name || availableColors.length === 0 || availableTokens.length === 0}
           >

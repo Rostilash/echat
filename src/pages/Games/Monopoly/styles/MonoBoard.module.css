@@ -4,13 +4,10 @@
   align-items: flex-start;
   justify-content: center;
   position: relative;
-}
-
-.player_icons {
-  height: 22px;
-  width: 22px;
-  border-radius: 50%;
-  background-color: white;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(ellipse at center, #1e1e2f 0%, #111120 100%);
+  font-family: "Segoe UI", sans-serif;
 }
 
 .board {
@@ -34,39 +31,72 @@
 }
 
 .cell {
-  border: 1px solid #999;
-  background-color: #00000009;
-  font-size: 0.8rem;
+  border: 2px solid #3a3a50;
+  background-color: #1a1a2b;
+  color: #fff;
+  font-size: 0.95rem;
   text-align: center;
   padding: 6px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.05), 0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   user-select: none;
-  min-width: 7rem;
+  min-width: 6rem;
   min-height: 7rem;
+  transition: all 0.2s ease-in-out;
 }
+
+.cell:hover {
+  transform: scale(1.03);
+  z-index: 2;
+  box-shadow: 0 0 10px #fff2;
+}
+
 .cell[style*="grid-area: roll"] {
   background-color: #ffc;
   font-weight: bold;
   font-size: 1.2rem;
   color: black;
 }
-.number {
+
+.cellBackground {
   position: absolute;
-  left: 5px;
-  top: 5px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  border-radius: inherit;
+  backdrop-filter: blur(20px);
+  /* -webkit-backdrop-filter: blur(4px); */
+  opacity: 0.4;
 }
+.corner {
+  min-width: 14rem;
+  min-height: 10rem;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.colorStrip {
+  width: 100%;
+  height: 20px;
+  border-radius: 6px 6px 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .rent {
   position: absolute;
   right: 5px;
   bottom: 5px;
 }
+
 .aLotOfPlayers {
   display: flex;
   flex-direction: row;
@@ -74,10 +104,12 @@
   top: 10px;
   left: 10px;
 }
+
 .token {
-  font-size: 1rem;
+  font-size: 2rem;
   margin-top: 4px;
-  color: red;
+  z-index: 2;
+  filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.5));
 }
 
 /* user */
@@ -102,6 +134,7 @@
 .roll {
   min-height: 45px;
 }
+
 .roll button {
   padding: 15px 20px;
   border-radius: 10px;
@@ -110,10 +143,12 @@
   transition: all 0.3s;
   box-shadow: inset 1px 1px 5px black;
 }
+
 .roll button:hover {
   transform: scale(1.05);
   box-shadow: 2px 2px 10px black;
 }
+
 .game_logs {
   max-height: 400px;
   overflow: auto;
@@ -129,14 +164,25 @@
   gap: 5px;
   width: 100%;
 }
+
 .updatingItem {
   border: 1px solid black;
   padding: 5px;
 }
+
 .canBuildLabel {
-  display: flex;
-  flex-direction: column;
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px 6px;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
 }
+
 .confirm_window {
   display: flex;
   flex-direction: column;
@@ -145,4 +191,69 @@
 
 .confirm_window button {
   padding: 10px 15px;
+}
+
+.flag {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.flagTop {
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.flagBottom {
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.flagLeft {
+  top: 50%;
+  left: -20px;
+  transform: translateY(-50%);
+}
+
+.flagRight {
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+}
+
+.cityName {
+  position: absolute;
+  z-index: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.9;
+  margin-top: 2px;
+  z-index: 1;
+  pointer-events: none;
+  top: 40%;
+}
+
+.textTop {
+  top: 30px;
+}
+.textBottom {
+  bottom: 30px;
+}
+
+.textRight {
+  top: 40%;
+  right: 40px;
+  transform: rotate(90deg);
+}
+.textLeft {
+  top: 40%;
+  left: 40px;
+  transform: rotate(-90deg);
 }

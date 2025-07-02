@@ -391,13 +391,14 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const fireBaseCreateGame = async (navigate) => {
     const docRef = await addDoc(collection(db, "monogames"), {
       status: "waiting",
-      board: board || defaultBoard,
+      board: defaultBoard || board,
       players: [],
       logs: [],
       currentPlayerIndex: 0,
       currentTurnPlayerId: currentUser?.id || players[0].id,
       gameOver: currentUser?.id,
     });
+    setIsJoined(true);
     navigate(`/games/monopoly/lobby/${docRef.id}`);
   };
 
@@ -577,7 +578,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
       finalBoard = await updateRailroadRents(player.id, updatedBoard);
     }
 
-    updatedBoard[boardIndex] = {
+    finalBoard[boardIndex] = {
       ...cell,
       owner: buyerId,
       color: updatedPlayers[buyerIndex].color,
@@ -643,10 +644,6 @@ export const MonopolyProvider = ({ children, gameId }) => {
         handleJoinGame,
         handleDeleteGame,
         fireBaseCreateGame,
-        // setLogs,
-        // setPlayers,
-        // setBoard,
-        // setCurrentPlayerIndex,
         upgradeCityRent,
         lobbyLoading,
         isJoined,

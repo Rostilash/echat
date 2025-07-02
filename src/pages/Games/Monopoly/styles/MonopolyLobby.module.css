@@ -1,0 +1,110 @@
+.lobby {
+  max-width: 700px;
+  margin: 200px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.waiting {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.playerList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+  margin: auto;
+}
+
+.playerItem {
+  padding: 10px 12px;
+  background: #f5f5f5;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.token {
+  font-size: 26px;
+  margin-left: 8px;
+}
+
+.startButton {
+  display: block;
+  margin: 0 auto;
+  background: radial-gradient(circle, #ff7a00 30%, #ffae42 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.startButton:hover {
+  transform: scale(1.05);
+}
+
+.joinForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.input,
+.select,
+.colorPicker {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+}
+.colorPicker {
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  border: none;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #ffa500;
+  box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.3);
+}
+
+.joinButton {
+  background: radial-gradient(circle, #ff7a00 30%, #ffae42 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.joinButton:disabled {
+  background: #ddd;
+  cursor: not-allowed;
+}
+
+.joinButton:hover:enabled {
+  transform: scale(1.05);
+  background: radial-gradient(circle, #ff8c1a 30%, #ffc266 100%);
+}
