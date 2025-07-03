@@ -10,6 +10,7 @@
   background-color: #f9f9f9;
   padding: 5px 5px;
   border-radius: 8px;
+  color: black;
   border: 1px solid #ddd;
   min-width: 100px;
   text-align: center;
@@ -26,4 +27,74 @@
   border-color: #4caf50;
   background-color: #eaffea;
   font-weight: bold;
+}
+ф.playersContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: stretch;
+  padding: 1rem;
+}
+
+.playerCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  padding: 1rem;
+  border-radius: 1rem;
+  width: 220px;
+  min-height: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.playerCard:hover {
+  transform: translateY(-5px);
+}
+
+.active {
+  outline: 2px solid gold;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+}
+
+.name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.money {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.position {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #ff4444;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.token {
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
 }

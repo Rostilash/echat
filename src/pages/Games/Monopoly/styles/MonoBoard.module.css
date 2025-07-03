@@ -6,7 +6,7 @@
   position: relative;
   margin: 0;
   padding: 0;
-  background: radial-gradient(ellipse at center, #1e1e2f 0%, #111120 100%);
+  background: radial-gradient(ellipse at center, #1d1d25 0%, #111120 100%);
   font-family: "Segoe UI", sans-serif;
 }
 
@@ -48,6 +48,10 @@
   min-width: 6rem;
   min-height: 7rem;
   transition: all 0.2s ease-in-out;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .cell:hover {
@@ -72,23 +76,14 @@
   z-index: 0;
   border-radius: inherit;
   backdrop-filter: blur(20px);
-  /* -webkit-backdrop-filter: blur(4px); */
   opacity: 0.4;
 }
+
 .corner {
   min-width: 14rem;
   min-height: 10rem;
   font-weight: bold;
   font-size: 1rem;
-}
-
-.colorStrip {
-  width: 100%;
-  height: 20px;
-  border-radius: 6px 6px 0 0;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .rent {
@@ -97,66 +92,7 @@
   bottom: 5px;
 }
 
-.aLotOfPlayers {
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-.token {
-  font-size: 2rem;
-  margin-top: 4px;
-  z-index: 2;
-  filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.5));
-}
-
-/* user */
-.userInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
-  max-height: 60vh;
-  overflow-y: hidden;
-  user-select: none;
-  padding: 1rem;
-  background-color: #f5f5f5;
-  gap: 1rem;
-  text-align: center;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.roll {
-  min-height: 45px;
-}
-
-.roll button {
-  padding: 15px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s;
-  box-shadow: inset 1px 1px 5px black;
-}
-
-.roll button:hover {
-  transform: scale(1.05);
-  box-shadow: 2px 2px 10px black;
-}
-
-.game_logs {
-  max-height: 400px;
-  overflow: auto;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-.updatingBlock {
+/* .updatingBlock {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -168,64 +104,7 @@
 .updatingItem {
   border: 1px solid black;
   padding: 5px;
-}
-
-.canBuildLabel {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  right: 4px;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 4px 6px;
-  border-radius: 4px;
-  text-align: center;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
-}
-
-.confirm_window {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.confirm_window button {
-  padding: 10px 15px;
-}
-
-.flag {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-  z-index: 1;
-}
-
-.flagTop {
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.flagBottom {
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.flagLeft {
-  top: 50%;
-  left: -20px;
-  transform: translateY(-50%);
-}
-
-.flagRight {
-  top: 50%;
-  right: -20px;
-  transform: translateY(-50%);
-}
+} */
 
 .cityName {
   position: absolute;
@@ -237,23 +116,27 @@
   margin-top: 2px;
   z-index: 1;
   pointer-events: none;
-  top: 40%;
+}
+
+.textBottom {
+  top: 30px;
 }
 
 .textTop {
-  top: 30px;
-}
-.textBottom {
+  /* position: absolute; */
   bottom: 30px;
 }
 
-.textRight {
-  top: 40%;
+.textLeft {
+  top: 35%;
   right: 40px;
   transform: rotate(90deg);
+  width: 6rem;
 }
-.textLeft {
-  top: 40%;
+
+.textRight {
+  top: 35%;
   left: 40px;
   transform: rotate(-90deg);
+  width: 6rem;
 }

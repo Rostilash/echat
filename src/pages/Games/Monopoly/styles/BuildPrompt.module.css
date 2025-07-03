@@ -1,0 +1,142 @@
+.canBuildLabel {
+  position: absolute;
+  background: rgba(146, 146, 146, 0.288);
+  border-radius: 6px;
+  text-align: center;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: #111;
+  justify-content: center;
+}
+
+.buildTop {
+  top: 0;
+  left: 0;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+}
+
+.buildBottom {
+  bottom: 0;
+  left: 0;
+  height: 80px;
+  width: 100%;
+}
+
+.buildRight {
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  height: 100%;
+  /* transform: rotate(180deg); */
+  writing-mode: sideways-lr;
+  text-orientation: mixed;
+  justify-content: center;
+  align-items: center;
+}
+
+.buildLeft {
+  left: 0;
+  bottom: 0;
+  width: 80px;
+  height: 100%;
+  writing-mode: sideways-rl;
+  text-orientation: mixed;
+  justify-content: center;
+  align-items: center;
+}
+
+.canBuildLabel button {
+  width: 100%;
+  height: 100%;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  color: #000;
+  font-weight: bold;
+  box-shadow: inset 1px 1px 5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.canBuildLabel button:hover {
+  /* background-color: #57e8d2; */
+  /* transform: scale(1.03); */
+}
+
+.colorStrip {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  border-radius: 10px;
+  background-color: #ffffff25;
+}
+
+.stripRight,
+.stripLeft {
+  width: 50px;
+  height: 100%;
+}
+
+.stripTop,
+.stripBottom {
+  width: 100%;
+  height: 50px;
+}
+
+.stripTop {
+  top: 0;
+  left: 0;
+}
+
+.stripBottom {
+  bottom: 0;
+  left: 0;
+}
+
+.stripRight {
+  right: 0;
+  bottom: 0;
+}
+
+.stripLeft {
+  left: 0;
+  bottom: 0;
+}
+
+.price_num {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.priceTop_num,
+.priceBottom_num {
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+.priceRight_num {
+  top: 40%;
+  left: 30%;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.priceLeft_num {
+  bottom: 40%;
+  right: 30%;
+  transform: rotate(90deg);
+  transform-origin: center;
+}
