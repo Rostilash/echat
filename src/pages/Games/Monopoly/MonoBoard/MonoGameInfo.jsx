@@ -37,7 +37,7 @@ export const MonoGameInfo = ({
 
   const gameLogs = logs.map((log, i) => <p key={i}>{log}</p>);
 
-  const isGameEnd = !gameOver && canDeleteGame;
+  const isGameEnd = gameOver && canDeleteGame;
 
   const options = [
     { ifState: isGameEnd, action: handleDeleteGame, text: "Видалити поточну гру" },
@@ -50,12 +50,9 @@ export const MonoGameInfo = ({
       <button className={style.settingsIcon} onClick={() => setIsSettings((prev) => !prev)} aria-label="Налаштування">
         ⚙️
       </button>
-
       {isSettings && <GameSettings options={options} />}
 
-      <span>
-        <PlayersInfo currentPlayerId={currentTurnPlayerId} players={players} />
-      </span>
+      <PlayersInfo currentPlayerId={currentTurnPlayerId} players={players} />
 
       {/* pendingPurchase */}
       <ConfirmModal

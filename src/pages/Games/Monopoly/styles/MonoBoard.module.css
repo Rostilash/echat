@@ -78,6 +78,12 @@
   backdrop-filter: blur(20px);
   opacity: 0.4;
 }
+.cellBackground img {
+  height: 100%;
+  width: 100%;
+  opacity: 0.1;
+  object-fit: cover;
+}
 
 .corner {
   min-width: 14rem;
@@ -86,25 +92,23 @@
   font-size: 1rem;
 }
 
+.corner img {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.corner span {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .rent {
   position: absolute;
   right: 5px;
   bottom: 5px;
 }
-
-/* .updatingBlock {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  width: 100%;
-}
-
-.updatingItem {
-  border: 1px solid black;
-  padding: 5px;
-} */
 
 .cityName {
   position: absolute;
@@ -113,7 +117,6 @@
   font-weight: 700;
   color: #fff;
   opacity: 0.9;
-  margin-top: 2px;
   z-index: 1;
   pointer-events: none;
 }
@@ -123,7 +126,6 @@
 }
 
 .textTop {
-  /* position: absolute; */
   bottom: 30px;
 }
 
@@ -135,8 +137,11 @@
 }
 
 .textRight {
-  top: 35%;
-  left: 40px;
-  transform: rotate(-90deg);
-  width: 6rem;
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  width: 5em;
+  text-align: center;
+  /* white-space: nowrap;  */
 }

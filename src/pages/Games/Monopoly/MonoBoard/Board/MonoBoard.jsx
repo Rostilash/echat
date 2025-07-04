@@ -32,6 +32,10 @@ export const MonoBoard = ({ board, upgradeCityRent, currentPlayer, ifCurrentPlay
                 backgroundColor: `${cell.color}`,
               }}
             />
+            {/* main cell color */}
+            <div className={style.cellBackground}>
+              <img src={cell.img} alt="flag" />
+            </div>
 
             <RenderCellImage cell={cell} position={position} canBuild={canBuild} />
 

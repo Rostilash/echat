@@ -8,7 +8,7 @@ export const getWinDefaultCombo = (properties) => {
     [21, 23, 24],
     [26, 27, 29],
     [31, 32, 34],
-    [37, 40],
+    [37, 39],
   ];
 
   const matchedCombos = win_combo.filter((combo) => combo.every((num) => properties.includes(num)));
