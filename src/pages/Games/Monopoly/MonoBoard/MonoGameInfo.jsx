@@ -23,16 +23,18 @@ export const MonoGameInfo = ({
   handleConfirmBuyout,
   logs,
   dice,
+  statusRolled,
+  setStatusRolled,
 }) => {
   const [rolling, setRolling] = useState(false);
+  const [isTurnInProgress, setIsTurnInProgress] = useState(false);
   const [isSettings, setIsSettings] = useState(false);
 
   const handleRollDice = () => {
-    setRolling(true);
-    setTimeout(() => {
-      setRolling(false);
-      handleMove(currentPlayerIndex);
-    }, 600);
+    setIsTurnInProgress(true);
+    setRolling(true); //first animation
+
+    handleMove(currentPlayerIndex, setRolling, setIsTurnInProgress);
   };
 
   const gameLogs = logs.map((log, i) => <p key={i}>{log}</p>);
@@ -41,7 +43,7 @@ export const MonoGameInfo = ({
 
   const options = [
     { ifState: isGameEnd, action: handleDeleteGame, text: "Видалити поточну гру" },
-    { ifState: isGameEnd, action: handleRestartGame, text: "Переіграти" },
+    { ifState: !isGameEnd, action: handleRestartGame, text: "Переіграти" },
     { ifState: currentTurnPlayerId, action: () => setIsSettings(false), text: "Закрити" },
   ];
 
@@ -72,7 +74,7 @@ export const MonoGameInfo = ({
         confirmText={"Викупити"}
       />
 
-      <Dices dice={dice} ifCurrentPlayer={ifCurrentPlayer} rolling={rolling} handleRollDice={handleRollDice} />
+      <Dices dice={dice} ifCurrentPlayer={ifCurrentPlayer} rolling={rolling} statusRolled={isTurnInProgress} handleRollDice={handleRollDice} />
 
       <Logs logs={gameLogs} />
     </div>

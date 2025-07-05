@@ -29,6 +29,7 @@
 }
 
 .diceRoll {
+  /* infinite for loop */
   animation: rollDice 0.6s ease-in-out;
 }
 

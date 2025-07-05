@@ -271,7 +271,7 @@ export const defaultBoard = [
     img: "https://flagcdn.com/de.svg",
   },
 
-  { id: 30, name: "Іди у в'язницю", type: "go_to_jail", color: "#cdb4b4", img: "https://cdn-icons-png.flaticon.com/128/6732/6732862.png" },
+  { id: 30, name: "Йде до в'язниці", type: "go_to_jail", color: "#cdb4b4", img: "https://cdn-icons-png.flaticon.com/128/6732/6732862.png" },
 
   {
     id: 31,

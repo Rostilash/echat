@@ -16,6 +16,8 @@ export const MonoGameContainer = () => {
     currentPlayerIndex,
     upgradeCityRent,
     isRolled,
+    statusRolled,
+    setStatusRolled,
     gameOver,
     handleRestartGame,
     handleDeleteGame,
@@ -57,6 +59,8 @@ export const MonoGameContainer = () => {
         handleConfirmBuyout={handleConfirmBuyout}
         logs={logs}
         dice={dice}
+        statusRolled={statusRolled}
+        setStatusRolled={setStatusRolled}
       />
     </div>
   );

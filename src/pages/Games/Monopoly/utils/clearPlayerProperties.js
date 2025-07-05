@@ -1,6 +1,4 @@
-export const clearPlayerProperties = (player, setBoard) => {
+export const clearPlayerProperties = (player, board) => {
   const propertiesToClear = [...player.properties];
-  setTimeout(() => {
-    setBoard((prevBoard) => prevBoard.map((cell) => (propertiesToClear.includes(cell.id) ? { ...cell, owner: null, color: "grey" } : cell)));
-  }, 0);
+  return board.map((cell) => (propertiesToClear.includes(cell.id) ? { ...cell, owner: null, color: "grey" } : cell));
 };
