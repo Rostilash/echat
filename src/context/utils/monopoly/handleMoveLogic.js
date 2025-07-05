@@ -34,7 +34,7 @@ export const handleMoveLogic = async ({
 
   const diceArr = rollDice();
   const steps = diceArr[0] + diceArr[1];
-  // const steps = 7;
+
   await updateDoc(updateMonoDoc, { player_status: "rolling", dice: diceArr });
 
   let logsBuffer = [];
@@ -54,21 +54,22 @@ export const handleMoveLogic = async ({
   let landedSquare = updatedBoard[newPosition];
   let finalPosition = newPosition;
 
+  const diceArrChance = rollDice();
   if (landedSquare.type === "chance") {
-    setRolling(true); //second animation
+    // setRolling(true); //second animation
 
     await delay(1000);
 
-    setRolling(false);
-    const diceArrChance = rollDice();
-    console.log(diceArrChance);
-    console.log(diceArr);
-    // setDice(diceArr);
+    // setRolling(false);
+
+    // console.log(diceArrChance);
+    // console.log(diceArr);
+    // setDice(diceArrChance);
 
     const bonusSteps = diceArrChance[0] + diceArrChance[1];
     finalPosition = (newPosition + bonusSteps) % board.length;
 
-    updateDoc(updateMonoDoc, { dice: diceArr });
+    // updateDoc(updateMonoDoc, { dice: diceArr });
     await movePlayerStepByStep(currentPlayerIndex, bonusSteps, setPlayers, board);
     landedSquare = updatedBoard[finalPosition];
     logsBuffer.push(
@@ -124,6 +125,7 @@ export const handleMoveLogic = async ({
         cell: landedSquare,
         boardIndex: finalPosition,
         logs: [...logs, ...logsBuffer],
+        dice: diceArrChance,
       });
       setIsRolled(false);
       return;
@@ -139,6 +141,7 @@ export const handleMoveLogic = async ({
           price: buyoutPrice,
           boardIndex: finalPosition,
           logs: [...logs, ...logsBuffer],
+          dice: diceArrChance,
         });
         return;
       }
@@ -171,6 +174,7 @@ export const handleMoveLogic = async ({
     currentPlayerIndex: nextPlayerIndex,
     currentTurnPlayerId: nextPlayerId,
     player_status: "waiting",
+    dice: diceArrChance,
   });
 
   setIsRolled(false);

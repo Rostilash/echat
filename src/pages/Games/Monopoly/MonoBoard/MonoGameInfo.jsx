@@ -31,10 +31,10 @@ export const MonoGameInfo = ({
   const [isSettings, setIsSettings] = useState(false);
 
   const handleRollDice = () => {
-    setIsTurnInProgress(true);
-    setRolling(true); //first animation
+    setStatusRolled(true);
+    // setRolling(true); //first animation
 
-    handleMove(currentPlayerIndex, setRolling, setIsTurnInProgress);
+    handleMove(currentPlayerIndex, setRolling);
   };
 
   const gameLogs = logs.map((log, i) => <p key={i}>{log}</p>);
@@ -74,7 +74,7 @@ export const MonoGameInfo = ({
         confirmText={"Викупити"}
       />
 
-      <Dices dice={dice} ifCurrentPlayer={ifCurrentPlayer} rolling={rolling} statusRolled={isTurnInProgress} handleRollDice={handleRollDice} />
+      <Dices dice={dice} ifCurrentPlayer={ifCurrentPlayer} rolling={statusRolled} handleRollDice={handleRollDice} />
 
       <Logs logs={gameLogs} />
     </div>

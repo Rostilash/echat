@@ -16,21 +16,26 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
+  // lobby states firebase
   const [games, setGames] = useState([]);
+  const [status, setStatus] = useState(null);
+  const [lobbyLoading, setLobbyLoading] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
+
+  // game states firebase
   const [players, setPlayers] = useState([]);
   const [board, setBoard] = useState(defaultBoard);
   const [logs, setLogs] = useState([]);
   const [dice, setDice] = useState([0, 0]);
-  const [gameOver, setGameOver] = useState(false);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentTurnPlayerId, setCurrentTurnPlayerId] = useState(null);
-  const [lobbyLoading, setLobbyLoading] = useState(false);
-  const [isJoined, setIsJoined] = useState(false);
-  const [isRolled, setIsRolled] = useState(false);
-  const [statusRolled, setStatusRolled] = useState(null);
-  const [status, setStatus] = useState(null);
+
+  // local states
   const [pendingPurchase, setPendingPurchase] = useState(null);
   const [pendingBuyout, setPendingBuyout] = useState(null);
+  const [gameOver, setGameOver] = useState(false);
+  const [isRolled, setIsRolled] = useState(false);
+  const [statusRolled, setStatusRolled] = useState(null);
 
   const updateMonoDoc = doc(db, "monogames", gameId);
 
@@ -115,11 +120,12 @@ export const MonopolyProvider = ({ children, gameId }) => {
         setCurrentTurnPlayerId(data.currentTurnPlayerId);
         setStatus(data.status);
         setDice(data.dice);
-        setStatusRolled(data.player_status);
 
-        // if ((data.player_status = "rolling")) {
-        //   console.log("setStatusRolled");
-        // }
+        if (data.player_status === "rolling") {
+          setStatusRolled(true);
+        } else {
+          setStatusRolled(false);
+        }
 
         if (data.status === "started") {
           navigate(`/games/monopoly/board/${gameId}`);
@@ -167,7 +173,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     return [d1, d2];
   };
 
-  const handleMove = async (id, setRolling, setIsTurnInProgress) => {
+  const handleMove = async (id, setRolling) => {
     await handleMoveLogic({
       currentPlayerIndex: id,
       players,
@@ -186,8 +192,9 @@ export const MonopolyProvider = ({ children, gameId }) => {
       setDice,
       setRolling,
       rollDice,
+      setStatusRolled,
     });
-    setIsTurnInProgress(false);
+    setStatusRolled(false);
   };
 
   const upgradeCityRent = async (cityId, price, upgradeLevel) => {
@@ -333,9 +340,11 @@ export const MonopolyProvider = ({ children, gameId }) => {
       board: defaultBoard || board,
       players: playerState,
       logs: [],
+      dice: [0, 0],
       currentPlayerIndex: 0,
       currentTurnPlayerId: currentUser?.id || players[0].id,
       gameOver: currentUser?.id,
+      player_status: null,
     });
 
     setGameOver(false);
@@ -349,7 +358,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const confirmPurchaseHandler = async () => {
     if (!pendingPurchase) return;
 
-    const { playerId, cell, boardIndex, logs } = pendingPurchase;
+    const { playerId, cell, boardIndex, logs, dice } = pendingPurchase;
     const updatedPlayers = [...players];
     const updatedBoardCopy = [...board];
     const playerIndex = updatedPlayers.findIndex((p) => p.id === playerId);
@@ -398,7 +407,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
       logs: [...logs, `${player.name} купив ${cell.name} за ${cell.price}`],
       currentPlayerIndex: nextPlayerIndex,
       currentTurnPlayerId: nextPlayerId,
-      player_status: "waiting",
+      player_status: null,
+      dice: dice,
     });
 
     setPendingPurchase(null);
@@ -407,7 +417,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const handleConfirmBuyout = async () => {
     if (!pendingBuyout) return;
 
-    const { buyerId, ownerId, cell, price, boardIndex } = pendingBuyout;
+    const { buyerId, ownerId, cell, price, boardIndex, dice } = pendingBuyout;
 
     const updatedPlayers = [...players];
     const updatedBoard = [...board];
@@ -469,7 +479,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
       currentPlayerIndex: nextPlayerIndex,
       currentTurnPlayerId: nextPlayerId,
       logs: [...updatedLogs, `${buyer.name} викупив ${cell.name} у ${owner.name} за ${price}$`],
-      player_status: "waiting",
+      player_status: null,
+      dice: dice,
     });
   };
 
