@@ -42,7 +42,7 @@ export const MonoGameInfo = ({
   const isGameEnd = gameOver && canDeleteGame;
 
   const options = [
-    { ifState: isGameEnd, action: handleDeleteGame, text: "Видалити поточну гру" },
+    { ifState: !isGameEnd, action: handleDeleteGame, text: "Видалити поточну гру" },
     { ifState: !isGameEnd, action: handleRestartGame, text: "Переіграти" },
     { ifState: currentTurnPlayerId, action: () => setIsSettings(false), text: "Закрити" },
   ];

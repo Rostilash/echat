@@ -1,7 +1,7 @@
 import React from "react";
 import style from "../styles/Dices.module.css";
 
-export const Dices = ({ dice, ifCurrentPlayer, rolling, handleRollDice }) => {
+export const Dices = ({ dice = [], ifCurrentPlayer, rolling, handleRollDice }) => {
   const diceImage = [
     "https://cdn-icons-png.flaticon.com/128/12482/12482261.png",
     "https://cdn-icons-png.flaticon.com/128/12482/12482272.png",

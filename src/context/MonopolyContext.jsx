@@ -37,6 +37,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const [isRolled, setIsRolled] = useState(false);
   const [statusRolled, setStatusRolled] = useState(null);
   const [movement, setMovement] = useState(null);
+
   const updateMonoDoc = doc(db, "monogames", gameId);
 
   useEffect(() => {
@@ -147,19 +148,19 @@ export const MonopolyProvider = ({ children, gameId }) => {
   }, [gameId, currentUser?.id, navigate, status]);
 
   // Watching for lobby by onSnapshot
-  useEffect(() => {
-    const q = query(collection(db, "monogames"), where("status", "==", "waiting"));
+  // useEffect(() => {
+  //   const q = query(collection(db, "monogames"), where("status", "==", "waiting"));
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setGames(list);
-    });
+  //   const unsub = onSnapshot(q, (snapshot) => {
+  //     const list = snapshot.docs.map((doc) => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+  //     setGames(list);
+  //   });
 
-    return () => unsub();
-  }, []);
+  //   return () => unsub();
+  // }, []);
 
   // Player moves step by step
   useEffect(() => {
@@ -169,11 +170,13 @@ export const MonopolyProvider = ({ children, gameId }) => {
     if (playerIndex === -1) return;
 
     const moveStepByStep = async () => {
-      const { start, steps } = movement;
-      const finalPosition = (start + steps) % (board.length || 40);
+      const { start, steps, bonusSteps = 0, target } = movement;
 
-      for (let i = 1; i <= steps; i++) {
-        await new Promise((res) => setTimeout(res, 300));
+      const stepsWithBonus = steps + bonusSteps;
+      let finalPosition = (start + stepsWithBonus) % (board.length || 40);
+
+      for (let i = 1; i <= stepsWithBonus; i++) {
+        await new Promise((res) => setTimeout(res, 200));
 
         setPlayers((prev) => {
           const updated = [...prev];
@@ -189,14 +192,22 @@ export const MonopolyProvider = ({ children, gameId }) => {
         });
       }
 
-      const updatedPlayers = players.map((p) => (p.id === currentTurnPlayerId ? { ...p, position: finalPosition } : p));
+      if (finalPosition === 30) {
+        finalPosition = 10;
+      }
 
-      await updateDoc(updateMonoDoc, {
-        players: updatedPlayers,
-        movement: {
-          ...movement,
-          phase: "idle",
-        },
+      setPlayers((prevPlayers) => {
+        const updated = prevPlayers.map((p) => (p.id === currentTurnPlayerId ? { ...p, position: target } : p));
+
+        updateDoc(updateMonoDoc, {
+          players: updated,
+          movement: {
+            ...movement,
+            phase: "idle",
+          },
+        });
+
+        return updated;
       });
     };
 
@@ -297,19 +308,19 @@ export const MonopolyProvider = ({ children, gameId }) => {
     }
   };
 
-  const fireBaseCreateGame = async (navigate) => {
-    const docRef = await addDoc(collection(db, "monogames"), {
-      status: "waiting",
-      board: defaultBoard || board,
-      players: [],
-      logs: [],
-      currentPlayerIndex: 0,
-      currentTurnPlayerId: currentUser?.id || players[0].id,
-      gameOver: currentUser?.id,
-    });
-    setIsJoined(true);
-    navigate(`/games/monopoly/lobby/${docRef.id}`);
-  };
+  // const fireBaseCreateGame = async (navigate) => {
+  //   const docRef = await addDoc(collection(db, "monogames"), {
+  //     status: "waiting",
+  //     board: defaultBoard || board,
+  //     players: [],
+  //     logs: [],
+  //     currentPlayerIndex: 0,
+  //     currentTurnPlayerId: currentUser?.id || players[0].id,
+  //     gameOver: currentUser?.id,
+  //   });
+  //   setIsJoined(true);
+  //   navigate(`/games/monopoly/lobby/${docRef.id}`);
+  // };
 
   const handleStartGame = async () => {
     await updateDoc(doc(db, "monogames", gameId), {
@@ -329,7 +340,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
       return;
     }
 
-    if (players.some((p) => p.token === token)) {
+    if (token !== "" && token !== null && players.some((p) => p.token === token)) {
       alert("Цей токен вже зайнятий. Оберіть інший.");
       return;
     }
@@ -559,7 +570,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     });
   };
 
-  const player = players.find((player) => player.id === currentUser.id);
+  const player = players.find((player) => player.id === currentUser?.id);
 
   return (
     <MonopolyContext.Provider
@@ -579,7 +590,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
         handleStartGame,
         handleJoinGame,
         handleDeleteGame,
-        fireBaseCreateGame,
+        // fireBaseCreateGame,
         upgradeCityRent,
         lobbyLoading,
         isJoined,

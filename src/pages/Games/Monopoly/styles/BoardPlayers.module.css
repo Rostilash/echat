@@ -11,3 +11,87 @@
   z-index: 2;
   filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.5));
 }
+
+.token svg {
+  height: 30px;
+  width: 30px;
+}
+
+.userIconStyle {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  z-index: 2;
+  filter: drop-shadow(3px 5px 15px rgba(0, 0, 0, 0.9));
+  position: relative;
+}
+
+.eye_1,
+.eye_2 {
+  height: 20px !important;
+  width: 20px;
+  border-radius: 50%;
+  position: absolute;
+  background: linear-gradient(5deg, #fff, #ccc);
+}
+
+.eye_1 {
+  left: 0px;
+  top: 5px;
+}
+.eye_2 {
+  right: 0px;
+  top: 5px;
+}
+
+.eye_1::after,
+.eye_2::after {
+  content: "";
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background-color: rgb(5, 5, 5);
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+.eye_1::before,
+.eye_2::before {
+  content: "";
+  position: absolute;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.404);
+  transform: translate(-50%, -50%);
+  top: 20%;
+  left: 60%;
+  z-index: 2;
+}
+
+.mouse {
+  height: 12px !important;
+  width: 12px;
+  border-radius: 50%;
+  position: absolute;
+  left: 40%;
+  bottom: -15%;
+  transform: translate(-50%, -50%);
+  /* border: 1px solid white; */
+  background-color: black;
+}
+
+.mouse::after {
+  content: "";
+  height: 20px;
+  width: 6px;
+  /* background-color: rgb(54, 32, 16); */
+  overflow: hidden;
+  border-radius: 0px 0px 10px 10px;
+  border-radius: 8px;
+  position: absolute;
+  top: 10%;
+  left: -2px;
+  transform: rotate(45deg);
+}

@@ -12,8 +12,9 @@ export const MonopolyLobby = () => {
 
   const allColors = [customColor, "blue", "red", "yellow", "green", "orange", "pink"];
   const allTokens = [null, "🐱", "🐶", "🐸", "🐰", "🐢", "🐧", "🦊", "🐷", "🐮", "🐔", "🦄", "🐙"];
+
   const takenColors = players.map((p) => p.color);
-  const takenTokens = players.map((p) => p.token);
+  const takenTokens = players.map((p) => p.token).filter((t) => t !== null);
 
   const availableColors = allColors.filter((c) => !takenColors?.includes(c));
   const availableTokens = allTokens.filter((t) => !takenTokens?.includes(t));
@@ -76,7 +77,6 @@ export const MonopolyLobby = () => {
             <option value="custom">Кастомний</option>
             {availableColors.length === 0 && <option disabled>Усі кольори зайняті</option>}
           </select>
-
           {color === customColor && (
             <div className={style.customColorWrapper}>
               <label>
@@ -97,6 +97,7 @@ export const MonopolyLobby = () => {
 
           <select value={token || ""} onChange={(e) => setToken(e.target.value || null)} className={style.select}>
             <option value="">Без токену</option>
+
             {availableTokens
               .filter((t) => t !== null)
               .map((t) => (

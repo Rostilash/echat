@@ -1,13 +1,20 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { MonopolyList } from "./MonopolyList";
 import style from "./styles/MonopolyLanding.module.css";
+import { useCreateGame } from "./MonoBoard/hooks/useCreateGame";
+import { useLobbyGames } from "./MonoBoard/hooks/useLobbyGames";
 
 export const MonopolyLanding = () => {
-  const { fireBaseCreateGame, games, handleJoin } = useOutletContext();
   const navigate = useNavigate();
+  const outletContext = useOutletContext() || {};
+  const { handleJoin } = outletContext;
+  const { fireBaseCreateGame } = useCreateGame();
+  const { games, loading } = useLobbyGames();
+
   const handleCreateGame = async () => {
     await fireBaseCreateGame(navigate);
   };
+
   return (
     <div className={style.list_block}>
       {/* list from fireBase */}

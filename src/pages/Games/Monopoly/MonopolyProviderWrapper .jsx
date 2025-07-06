@@ -5,6 +5,10 @@ import { MonopolyContainer } from "./MonopolyContainer";
 export const MonopolyProviderWrapper = () => {
   const { id } = useParams();
 
+  if (!id) {
+    return <MonopolyContainer />;
+  }
+
   return (
     <MonopolyProvider gameId={id}>
       <MonopolyContainer />

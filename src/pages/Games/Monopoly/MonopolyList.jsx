@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import style from "./styles/MonopolyLanding.module.css";
 
 export const MonopolyList = ({ games }) => {
+  if (!games) return;
+
   const navigate = useNavigate();
+
   const handleJoin = (id) => {
     navigate(`/games/monopoly/lobby/${id}`);
   };

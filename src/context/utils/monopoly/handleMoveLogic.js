@@ -30,7 +30,7 @@ export const handleMoveLogic = async ({
   if (status !== "started" && status !== "ingame") return;
   if (!currentPlayer || currentPlayer.isBankrupt) return;
 
-  const diceArr = rollDice();
+  let diceArr = rollDice();
   const steps = diceArr[0] + diceArr[1];
   // const steps = 1;
 
@@ -48,17 +48,17 @@ export const handleMoveLogic = async ({
   // player.animationPosition = (startPosision + steps) % board.length;
 
   const passedStart = player.position + steps >= board.length;
+
   if (passedStart) {
     player.money += 200;
     logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
   }
-
   let newPosition = (player.position + steps) % board.length;
   let landedSquare = updatedBoard[newPosition];
   let finalPosition = newPosition;
 
-  const diceArrChance = rollDice();
-  const bonusSteps = 0;
+  let diceArrChance = rollDice();
+  let bonusSteps = 0;
 
   if (landedSquare.type === "chance") {
     // setRolling(true); //second animation
@@ -78,19 +78,6 @@ export const handleMoveLogic = async ({
       `${player.name} потрапив на ${updatedBoard[newPosition].name} і його переность на "${landedSquare.name}" — у вас бонус ${bonusSteps} кроків`
     );
   }
-
-  await updateDoc(updateMonoDoc, {
-    player_status: "rolling",
-    dice: diceArr,
-    currentTurnPlayerId: player.id,
-    movement: {
-      start,
-      steps,
-      bonusSteps: landedSquare.type === "chance" ? bonusSteps : 0,
-      target: finalPosition,
-      phase: "moving",
-    },
-  });
 
   player.position = finalPosition;
 
@@ -125,6 +112,27 @@ export const handleMoveLogic = async ({
       break;
   }
 
+  if (player.money < 0) {
+    logsBuffer.push(`${player.name} збанкрутував 💸`);
+    player.isBankrupt = true;
+    player.position = null;
+    player.properties = [];
+    updatedBoard = clearPlayerProperties(player, board);
+  }
+
+  await updateDoc(updateMonoDoc, {
+    player_status: "rolling",
+    dice: diceArr,
+    currentTurnPlayerId: player.id,
+    movement: {
+      start,
+      steps,
+      bonusSteps: landedSquare.type === "chance" ? bonusSteps : 0,
+      target: finalPosition,
+      phase: "moving",
+    },
+  });
+
   if (landedSquare.owner && landedSquare.owner !== player.id) {
     const ownerIndex = updatedPlayers.findIndex((p) => p.id === landedSquare.owner);
     const rent = landedSquare.rent || 25;
@@ -133,7 +141,7 @@ export const handleMoveLogic = async ({
     logsBuffer.push(`${player.name} заплатив ${rent}$ гравцю ${updatedPlayers[ownerIndex].name}`);
   }
 
-  await delay(2500);
+  await delay(2000);
   if (["property", "railroad", "utility"].includes(landedSquare.type)) {
     if (!landedSquare.owner && player.money >= landedSquare.price) {
       // // 🔧 1. оновлюємо position у локальному масиві гравців
@@ -173,14 +181,6 @@ export const handleMoveLogic = async ({
         return;
       }
     }
-  }
-
-  if (player.money < 0) {
-    logsBuffer.push(`${player.name} збанкрутував 💸`);
-    player.isBankrupt = true;
-    player.position = null;
-    player.properties = [];
-    updatedBoard = clearPlayerProperties(player, board);
   }
 
   updatedPlayers[currentPlayerIndex] = player;
