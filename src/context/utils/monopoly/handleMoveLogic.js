@@ -1,5 +1,3 @@
-// src/pages/Games/Monopoly/logic/handleMove.js
-
 import { updateDoc } from "firebase/firestore";
 import { movePlayerStepByStep } from "../../../pages/Games/Monopoly/utils/movePlayerStepByStep";
 import { clearPlayerProperties } from "../../../pages/Games/Monopoly/utils/clearPlayerProperties";
@@ -34,15 +32,20 @@ export const handleMoveLogic = async ({
 
   const diceArr = rollDice();
   const steps = diceArr[0] + diceArr[1];
-
-  await updateDoc(updateMonoDoc, { player_status: "rolling", dice: diceArr });
+  // const steps = 1;
 
   let logsBuffer = [];
   let updatedBoard = [...board];
   let updatedPlayers = [...players];
   let player = { ...currentPlayer };
+  // const startPosision = player.position;
+  // player.animationPosition = startPosision;
 
-  await movePlayerStepByStep(currentPlayerIndex, steps, setPlayers, board);
+  const start = currentPlayer.position;
+  // const target = (start + steps) % board.length;
+
+  // await movePlayerStepByStep(currentPlayerIndex, steps, setPlayers, board);
+  // player.animationPosition = (startPosision + steps) % board.length;
 
   const passedStart = player.position + steps >= board.length;
   if (passedStart) {
@@ -55,27 +58,39 @@ export const handleMoveLogic = async ({
   let finalPosition = newPosition;
 
   const diceArrChance = rollDice();
+  const bonusSteps = 0;
+
   if (landedSquare.type === "chance") {
     // setRolling(true); //second animation
 
     await delay(1000);
 
+    bonusSteps = diceArrChance[0] + diceArrChance[1];
     // setRolling(false);
 
-    // console.log(diceArrChance);
-    // console.log(diceArr);
-    // setDice(diceArrChance);
-
-    const bonusSteps = diceArrChance[0] + diceArrChance[1];
     finalPosition = (newPosition + bonusSteps) % board.length;
-
+    diceArr = diceArrChance;
     // updateDoc(updateMonoDoc, { dice: diceArr });
-    await movePlayerStepByStep(currentPlayerIndex, bonusSteps, setPlayers, board);
+    // await movePlayerStepByStep(currentPlayerIndex, bonusSteps, setPlayers, board);
+    // player.animationPosition = finalPosition;
     landedSquare = updatedBoard[finalPosition];
     logsBuffer.push(
       `${player.name} потрапив на ${updatedBoard[newPosition].name} і його переность на "${landedSquare.name}" — у вас бонус ${bonusSteps} кроків`
     );
   }
+
+  await updateDoc(updateMonoDoc, {
+    player_status: "rolling",
+    dice: diceArr,
+    currentTurnPlayerId: player.id,
+    movement: {
+      start,
+      steps,
+      bonusSteps: landedSquare.type === "chance" ? bonusSteps : 0,
+      target: finalPosition,
+      phase: "moving",
+    },
+  });
 
   player.position = finalPosition;
 
@@ -118,16 +133,28 @@ export const handleMoveLogic = async ({
     logsBuffer.push(`${player.name} заплатив ${rent}$ гравцю ${updatedPlayers[ownerIndex].name}`);
   }
 
+  await delay(2500);
   if (["property", "railroad", "utility"].includes(landedSquare.type)) {
     if (!landedSquare.owner && player.money >= landedSquare.price) {
+      // // 🔧 1. оновлюємо position у локальному масиві гравців
+      // updatedPlayers[currentPlayerIndex] = player;
+      // setPlayers(updatedPlayers);
+
+      // // 🔥 Записуємо позицію в Firebase, ЩОБ ВСІ БАЧИЛИ
+      // await updateDoc(updateMonoDoc, {
+      //   players: updatedPlayers,
+      // });
+
+      // 🔧 3. потім уже ставимо pendingPurchase
       setPendingPurchase({
         playerId: player.id,
         cell: landedSquare,
         boardIndex: finalPosition,
         logs: [...logs, ...logsBuffer],
-        dice: diceArrChance,
+        dice: diceArr,
       });
-      setIsRolled(false);
+
+      // setIsRolled(false);
       return;
     }
 
@@ -141,7 +168,7 @@ export const handleMoveLogic = async ({
           price: buyoutPrice,
           boardIndex: finalPosition,
           logs: [...logs, ...logsBuffer],
-          dice: diceArrChance,
+          dice: diceArr,
         });
         return;
       }
@@ -174,7 +201,7 @@ export const handleMoveLogic = async ({
     currentPlayerIndex: nextPlayerIndex,
     currentTurnPlayerId: nextPlayerId,
     player_status: "waiting",
-    dice: diceArrChance,
+    dice: diceArr,
   });
 
   setIsRolled(false);

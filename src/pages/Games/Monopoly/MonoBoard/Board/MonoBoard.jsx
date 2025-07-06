@@ -41,7 +41,7 @@ export const MonoBoard = ({ board, upgradeCityRent, currentPlayer, ifCurrentPlay
 
             <BuildPrompt cell={cell} onBuild={handleUpgradeCity} position={position} ifCurrentPlayer={ifCurrentPlayer} canBuild={canBuild} />
 
-            <GetBoardPlayers players={players} cell={cell} />
+            <GetBoardPlayers players={players} cell={cell} ifCurrentPlayer={ifCurrentPlayer} />
 
             <span className={`${style.cityName} ${style[`text${position}`]}`}>{cell.name}</span>
           </div>

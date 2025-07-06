@@ -1,6 +1,7 @@
 export const movePlayerStepByStep = async (playerIndex, steps, setPlayers, board) => {
   return new Promise((resolve) => {
     let step = 0;
+    let currentPos;
 
     const interval = setInterval(() => {
       setPlayers((prev) => {
@@ -8,6 +9,7 @@ export const movePlayerStepByStep = async (playerIndex, steps, setPlayers, board
         const player = { ...updated[playerIndex] };
 
         player.position = (player.position + 1) % board.length;
+        currentPos = player.position;
         updated[playerIndex] = player;
 
         return updated;
@@ -17,7 +19,7 @@ export const movePlayerStepByStep = async (playerIndex, steps, setPlayers, board
 
       if (step >= steps) {
         clearInterval(interval);
-        resolve();
+        resolve(currentPos);
       }
     }, 200);
   });

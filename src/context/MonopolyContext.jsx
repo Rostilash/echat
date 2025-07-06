@@ -36,7 +36,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const [gameOver, setGameOver] = useState(false);
   const [isRolled, setIsRolled] = useState(false);
   const [statusRolled, setStatusRolled] = useState(null);
-
+  const [movement, setMovement] = useState(null);
   const updateMonoDoc = doc(db, "monogames", gameId);
 
   useEffect(() => {
@@ -120,6 +120,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
         setCurrentTurnPlayerId(data.currentTurnPlayerId);
         setStatus(data.status);
         setDice(data.dice);
+        setMovement(data.movement);
 
         if (data.player_status === "rolling") {
           setStatusRolled(true);
@@ -159,6 +160,48 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     return () => unsub();
   }, []);
+
+  // Player moves step by step
+  useEffect(() => {
+    if (!movement || movement.phase !== "moving") return;
+
+    const playerIndex = players.findIndex((p) => p.id === currentTurnPlayerId);
+    if (playerIndex === -1) return;
+
+    const moveStepByStep = async () => {
+      const { start, steps } = movement;
+      const finalPosition = (start + steps) % (board.length || 40);
+
+      for (let i = 1; i <= steps; i++) {
+        await new Promise((res) => setTimeout(res, 300));
+
+        setPlayers((prev) => {
+          const updated = [...prev];
+          const targetPlayer = updated.find((p) => p.id === currentTurnPlayerId);
+          if (!targetPlayer) return prev;
+
+          const updatedPlayer = {
+            ...targetPlayer,
+            position: (start + i) % (board.length || 40),
+          };
+
+          return updated.map((p) => (p.id === currentTurnPlayerId ? updatedPlayer : p));
+        });
+      }
+
+      const updatedPlayers = players.map((p) => (p.id === currentTurnPlayerId ? { ...p, position: finalPosition } : p));
+
+      await updateDoc(updateMonoDoc, {
+        players: updatedPlayers,
+        movement: {
+          ...movement,
+          phase: "idle",
+        },
+      });
+    };
+
+    moveStepByStep();
+  }, [movement?.phase]);
 
   const rollDice = () => {
     const d1 = Math.ceil(Math.random() * 6);
@@ -341,6 +384,13 @@ export const MonopolyProvider = ({ children, gameId }) => {
       players: playerState,
       logs: [],
       dice: [0, 0],
+      movement: {
+        bonusSteps: 0,
+        start: 0,
+        steps: 0,
+        target: 0,
+        phase: "restart",
+      },
       currentPlayerIndex: 0,
       currentTurnPlayerId: currentUser?.id || players[0].id,
       gameOver: currentUser?.id,
@@ -371,6 +421,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     player.money -= cell.price;
     player.properties.push(cell.id);
+    player.position = boardIndex;
 
     updatedBoardCopy[boardIndex] = {
       ...cell,
@@ -384,6 +435,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
       const previousBuildable = player.buildableCells || [];
       const newBuildable = [...new Set(matchedCombos.flat())];
       const willUpdate = previousBuildable.length < newBuildable.length;
+
       if (willUpdate) {
         player.buildableCells = newBuildable;
         logs.push([...prev, `У ${player.name} з'явилася монополія!`]);
@@ -503,6 +555,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
       logs: updatedLogs,
       currentPlayerIndex: nextPlayerIndex,
       currentTurnPlayerId: nextPlayerId,
+      player_status: "cancel_parchase",
     });
   };
 

@@ -12,7 +12,8 @@ export const GetBoardPlayers = ({ players, cell }) => {
       {players.map((p, i) =>
         p.position === cell.id ? (
           <div key={p.id || i} className={style.token}>
-            {p.isBankrupt && i === 0 ? { userIcon } : p.token !== "" ? <p>{p.token}</p> : { userIcon }}
+            {p.isBankrupt && i === 0 ? userIcon : p.token !== "" ? <p>{p.token}</p> : userIcon}
+            <p>{p.position}</p>
           </div>
         ) : null
       )}
