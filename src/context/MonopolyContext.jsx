@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "./../firebase/config";
-import { collection, addDoc, where, doc, updateDoc, deleteDoc, onSnapshot, query, arrayUnion } from "firebase/firestore";
+import { doc, updateDoc, deleteDoc, onSnapshot, arrayUnion } from "firebase/firestore";
 import { getNextActivePlayerIndex } from "./../pages/Games/Monopoly/utils/getNextActivePlayerIndex";
 import { clearPlayerProperties } from "./../pages/Games/Monopoly/utils/clearPlayerProperties";
 import { defaultBoard } from "../pages/Games/Monopoly/utils/defaultBoard";
@@ -17,7 +17,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const navigate = useNavigate();
 
   // lobby states firebase
-  const [games, setGames] = useState([]);
+  // const [games, setGames] = useState([]);
   const [status, setStatus] = useState(null);
   const [lobbyLoading, setLobbyLoading] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
@@ -40,6 +40,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
   const updateMonoDoc = doc(db, "monogames", gameId);
 
+  // Roles for end game when players are === 1 and for preson
   useEffect(() => {
     const handleTurnState = async () => {
       if (status !== "ingame") return;
@@ -47,6 +48,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
       if (alivePlayers.length === 1 && !gameOver) {
         const winner = alivePlayers[0];
+        winner.position = 0;
+        winner.inJail = false;
         const updatedLogs = [...logs, `🎉 ${winner.name} переміг з сумою ${winner.money}$!`];
         const clearedBoard = clearPlayerProperties(winner, board);
 
@@ -129,6 +132,11 @@ export const MonopolyProvider = ({ children, gameId }) => {
           setStatusRolled(false);
         }
 
+        if (data.status === "restarting") {
+          // Наприклад: можна відобразити "Перезапуск гри..." або зробити navigate на лобі
+          return;
+        }
+
         if (data.status === "started") {
           navigate(`/games/monopoly/board/${gameId}`);
         }
@@ -146,21 +154,6 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     return () => unsub();
   }, [gameId, currentUser?.id, navigate, status]);
-
-  // Watching for lobby by onSnapshot
-  // useEffect(() => {
-  //   const q = query(collection(db, "monogames"), where("status", "==", "waiting"));
-
-  //   const unsub = onSnapshot(q, (snapshot) => {
-  //     const list = snapshot.docs.map((doc) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-  //     setGames(list);
-  //   });
-
-  //   return () => unsub();
-  // }, []);
 
   // Player moves step by step
   useEffect(() => {
@@ -228,6 +221,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
   };
 
   const handleMove = async (id, setRolling) => {
+    if (status !== "started" && status !== "ingame") return;
+
     await handleMoveLogic({
       currentPlayerIndex: id,
       players,
@@ -244,7 +239,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
       status,
       logs,
       setDice,
-      setRolling,
+      // setRolling,
       rollDice,
       setStatusRolled,
     });
@@ -308,20 +303,6 @@ export const MonopolyProvider = ({ children, gameId }) => {
     }
   };
 
-  // const fireBaseCreateGame = async (navigate) => {
-  //   const docRef = await addDoc(collection(db, "monogames"), {
-  //     status: "waiting",
-  //     board: defaultBoard || board,
-  //     players: [],
-  //     logs: [],
-  //     currentPlayerIndex: 0,
-  //     currentTurnPlayerId: currentUser?.id || players[0].id,
-  //     gameOver: currentUser?.id,
-  //   });
-  //   setIsJoined(true);
-  //   navigate(`/games/monopoly/lobby/${docRef.id}`);
-  // };
-
   const handleStartGame = async () => {
     await updateDoc(doc(db, "monogames", gameId), {
       status: "started",
@@ -377,20 +358,8 @@ export const MonopolyProvider = ({ children, gameId }) => {
       isBankrupt: false,
     }));
 
-    setPlayers(playerState);
-    setBoard((prev) =>
-      prev.map((cell) => ({
-        ...cell,
-        owner: null,
-        color: "",
-      }))
-    );
-    setLogs([]);
-    setDice([0, 0]);
-    setCurrentPlayerIndex(0);
-    setPendingPurchase(null);
     await updateDoc(updateMonoDoc, {
-      status: "started",
+      status: "restarting",
       board: defaultBoard || board,
       players: playerState,
       logs: [],
@@ -408,6 +377,11 @@ export const MonopolyProvider = ({ children, gameId }) => {
       player_status: null,
     });
 
+    setTimeout(async () => {
+      await updateDoc(updateMonoDoc, {
+        status: "started",
+      });
+    }, 200);
     setGameOver(false);
   };
 
@@ -481,7 +455,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     if (!pendingBuyout) return;
 
     const { buyerId, ownerId, cell, price, boardIndex, dice } = pendingBuyout;
-
+    debugger;
     const updatedPlayers = [...players];
     const updatedBoard = [...board];
     const updatedLogs = [...logs];
@@ -495,6 +469,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     const owner = updatedPlayers[ownerIndex];
 
     if (cell.owner !== buyerId) {
+      console.log("cell.owner !== buyerId");
       buyer.money -= cell.rent;
       owner.money += cell.rent;
       updatedLogs.push(`${buyer.name} заплатив за ${cell.name} оренду в ${cell.rent}$`);
@@ -577,7 +552,6 @@ export const MonopolyProvider = ({ children, gameId }) => {
       value={{
         gameId,
         players,
-        games,
         board,
         currentPlayer: player,
         currentTurnPlayerId,
@@ -587,10 +561,11 @@ export const MonopolyProvider = ({ children, gameId }) => {
         gameOver,
         handleMove,
         handleRestartGame,
+
         handleStartGame,
         handleJoinGame,
+
         handleDeleteGame,
-        // fireBaseCreateGame,
         upgradeCityRent,
         lobbyLoading,
         isJoined,

@@ -26,24 +26,19 @@ export const MonoGameInfo = ({
   statusRolled,
   setStatusRolled,
 }) => {
-  const [rolling, setRolling] = useState(false);
-  const [isTurnInProgress, setIsTurnInProgress] = useState(false);
   const [isSettings, setIsSettings] = useState(false);
 
   const handleRollDice = () => {
     setStatusRolled(true);
-    // setRolling(true); //first animation
-
-    handleMove(currentPlayerIndex, setRolling);
+    handleMove(currentPlayerIndex);
   };
 
   const gameLogs = logs.map((log, i) => <p key={i}>{log}</p>);
-
   const isGameEnd = gameOver && canDeleteGame;
 
   const options = [
-    { ifState: !isGameEnd, action: handleDeleteGame, text: "Видалити поточну гру" },
-    { ifState: !isGameEnd, action: handleRestartGame, text: "Переіграти" },
+    { ifState: isGameEnd, action: handleDeleteGame, text: "Видалити поточну гру" },
+    { ifState: isGameEnd, action: handleRestartGame, text: "Переіграти" },
     { ifState: currentTurnPlayerId, action: () => setIsSettings(false), text: "Закрити" },
   ];
 
@@ -59,6 +54,7 @@ export const MonoGameInfo = ({
       {/* pendingPurchase */}
       <ConfirmModal
         pending={pendingPurchase}
+        price={pendingPurchase?.cell.price}
         currentTurnPlayerId={currentTurnPlayerId}
         onConfirm={confirmPurchaseHandler}
         onCancel={cancelPurchase}
@@ -67,8 +63,9 @@ export const MonoGameInfo = ({
 
       {/* pendingBuyout */}
       <ConfirmModal
-        currentTurnPlayerId={currentTurnPlayerId}
         pending={pendingBuyout}
+        price={pendingBuyout?.cell.price * 2}
+        currentTurnPlayerId={currentTurnPlayerId}
         onConfirm={handleConfirmBuyout}
         onCancel={cancelPurchase}
         confirmText={"Викупити"}

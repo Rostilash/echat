@@ -1,0 +1,63 @@
+.hub-wrapper {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+  background-color: #0d0d1f;
+}
+
+.background-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.hub-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+
+.neon-title {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  color: #f2f2f2;
+  /* text-shadow: 0 0 10px #7f5af0, 0 0 20px #7f5af0; */
+}
+
+.neon-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.neon-button {
+  display: inline-block;
+  margin: 1rem;
+  padding: 1rem 2rem;
+  background-color: transparent;
+  border: 2px solid #7f5af0;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(127, 90, 240, 0.4);
+}
+
+.neon-button:hover {
+  background-color: #7f5af0;
+  color: #0d0d1f;
+  box-shadow: 0 0 20px #7f5af0, 0 0 40px #7f5af0;
+  transform: scale(1.05);
+}

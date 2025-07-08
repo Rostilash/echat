@@ -13,7 +13,7 @@ export const defaultBoard = [
     city: "Медитеран",
     img: "https://flagcdn.com/me.svg",
   },
-  { id: 2, name: "Скриня громади", type: "chest", color: "#ddf3f7", gift: 500, img: "https://cdn-icons-png.flaticon.com/128/1651/1651898.png" },
+  { id: 2, name: "Скриня громади", type: "chest", color: "", gift: 200, img: "https://cdn-icons-png.flaticon.com/128/1651/1651898.png" },
   {
     id: 3,
     name: "Цетинє",
@@ -51,7 +51,7 @@ export const defaultBoard = [
     city: "Орієнтал",
     img: "https://flagcdn.com/ca.svg",
   },
-  { id: 7, name: "Шанс", type: "chance", color: "#fff4b6", img: "https://cdn-icons-png.flaticon.com/128/8286/8286876.png" },
+  { id: 7, name: "Шанс", type: "chance", color: "", img: "https://cdn-icons-png.flaticon.com/128/15387/15387721.png" },
   {
     id: 8,
     name: "Монреаль",
@@ -77,7 +77,7 @@ export const defaultBoard = [
     img: "https://flagcdn.com/ca.svg",
   },
 
-  { id: 10, name: "В'язниця ", type: "jail", color: "#cdb4b4", img: "https://cdn-icons-png.flaticon.com/128/189/189489.png" },
+  { id: 10, name: "В'язниця ", type: "jail", color: "", img: "https://cdn-icons-png.flaticon.com/128/189/189489.png" },
 
   {
     id: 11,
@@ -149,7 +149,7 @@ export const defaultBoard = [
     city: "Сент-Джеймс",
     img: "https://flagcdn.com/it.svg",
   },
-  { id: 17, name: "Скриня громади", type: "chest", color: "#ddf3f7", gift: 500, img: "https://cdn-icons-png.flaticon.com/128/1651/1651898.png" },
+  { id: 17, name: "Скриня громади", type: "chest", color: "", gift: 300, img: "https://cdn-icons-png.flaticon.com/128/1651/1651898.png" },
   {
     id: 18,
     name: "Мілан",
@@ -189,7 +189,7 @@ export const defaultBoard = [
     city: "Кентуккі",
     img: "https://flagcdn.com/es.svg",
   },
-  { id: 22, name: "Шанс", type: "chance", color: "#fff4b6", img: "https://cdn-icons-png.flaticon.com/128/8286/8286876.png" },
+  { id: 22, name: "Шанс", type: "chance", color: "", img: "https://cdn-icons-png.flaticon.com/128/15387/15387721.png" },
   {
     id: 23,
     name: "Барселона",
@@ -271,7 +271,7 @@ export const defaultBoard = [
     img: "https://flagcdn.com/de.svg",
   },
 
-  { id: 30, name: "Йде до в'язниці", type: "go_to_jail", color: "#cdb4b4", img: "https://cdn-icons-png.flaticon.com/128/6732/6732862.png" },
+  { id: 30, name: "Йде до в'язниці", type: "go_to_jail", color: "", img: "https://cdn-icons-png.flaticon.com/128/6732/6732862.png" },
 
   {
     id: 31,
@@ -297,7 +297,7 @@ export const defaultBoard = [
     city: "Північна Кароліна",
     img: "https://flagcdn.com/gb.svg",
   },
-  { id: 33, name: "Скриня короля", type: "chest", color: "#ddf3f7", gift: 1000, img: "https://cdn-icons-png.flaticon.com/128/18036/18036705.png" },
+  { id: 33, name: "Скриня короля", type: "chest", color: "", gift: 500, img: "https://cdn-icons-png.flaticon.com/128/18036/18036705.png" },
   {
     id: 34,
     name: "Бірмінгем",
@@ -321,7 +321,7 @@ export const defaultBoard = [
     img: "https://cdn-icons-png.flaticon.com/512/3448/3448339.png",
   },
 
-  { id: 36, name: "Шанс", type: "chance", color: "#fff4b6", img: "https://cdn-icons-png.flaticon.com/128/8286/8286876.png" },
+  { id: 36, name: "Шанс", type: "chance", color: "", img: "https://cdn-icons-png.flaticon.com/128/15387/15387721.png" },
   {
     id: 37,
     name: "Токіо",
@@ -334,14 +334,14 @@ export const defaultBoard = [
     city: "Парк-Плейс",
     img: "https://flagcdn.com/jp.svg",
   },
-  { id: 38, name: "Розкішний податок", type: "tax", amount: 1000, img: "https://cdn-icons-png.flaticon.com/128/3257/3257334.png" },
+  { id: 38, name: "Розкішний податок", type: "tax", amount: 500, img: "https://cdn-icons-png.flaticon.com/128/3257/3257334.png" },
   {
     id: 39,
     name: "Осака",
     type: "property",
     color: "",
     price: 400,
-    rent: 800,
+    rent: 45,
     owner: null,
     country: "Японія",
     city: "Бродвей",

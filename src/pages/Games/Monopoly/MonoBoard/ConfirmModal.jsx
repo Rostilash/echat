@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./../styles/MonoGameInfo.module.css";
 
-export const ConfirmModal = ({ currentTurnPlayerId, pending, onConfirm, confirmText, onCancel }) => {
+export const ConfirmModal = ({ currentTurnPlayerId, pending, onConfirm, confirmText, onCancel, price }) => {
   if (!pending) return;
 
   return (
@@ -11,7 +11,7 @@ export const ConfirmModal = ({ currentTurnPlayerId, pending, onConfirm, confirmT
           <div className={style.modal_window}>
             <div className={style.confirm_window}>
               <p>
-                {currentTurnPlayerId === pending?.playerId?.name} Купити {pending?.cell.name} за {pending?.cell.price}
+                {currentTurnPlayerId === pending?.playerId?.name} Купити {pending?.cell.name} за {price}
                 $?
               </p>
               <button onClick={onConfirm}>{confirmText}</button>

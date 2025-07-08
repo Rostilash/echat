@@ -6,7 +6,7 @@ import { useLobbyGames } from "./MonoBoard/hooks/useLobbyGames";
 
 export const MonopolyLanding = () => {
   const navigate = useNavigate();
-  const outletContext = useOutletContext() || {};
+  const outletContext = useOutletContext() || {}; // For testing in progress
   const { handleJoin } = outletContext;
   const { fireBaseCreateGame } = useCreateGame();
   const { games, loading } = useLobbyGames();

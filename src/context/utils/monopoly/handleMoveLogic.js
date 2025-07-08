@@ -2,8 +2,7 @@ import { updateDoc } from "firebase/firestore";
 import { movePlayerStepByStep } from "../../../pages/Games/Monopoly/utils/movePlayerStepByStep";
 import { clearPlayerProperties } from "../../../pages/Games/Monopoly/utils/clearPlayerProperties";
 import { getNextActivePlayerIndex } from "../../../pages/Games/Monopoly/utils/getNextActivePlayerIndex";
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import { delay } from "./useDelay";
 
 export const handleMoveLogic = async ({
   currentPlayerIndex,
@@ -18,41 +17,32 @@ export const handleMoveLogic = async ({
   setPendingBuyout,
   setIsRolled,
   updateMonoDoc,
-  status,
   logs,
   rollDice,
-  setRolling,
-  setDice,
 }) => {
   const currentPlayer = players[currentPlayerIndex];
   await delay(600);
-  setRolling(false);
-  if (status !== "started" && status !== "ingame") return;
+
   if (!currentPlayer || currentPlayer.isBankrupt) return;
 
   let diceArr = rollDice();
-  const steps = diceArr[0] + diceArr[1];
-  // const steps = 1;
-
+  // const steps = diceArr[0] + diceArr[1];
+  const steps = 1;
   let logsBuffer = [];
   let updatedBoard = [...board];
   let updatedPlayers = [...players];
   let player = { ...currentPlayer };
-  // const startPosision = player.position;
-  // player.animationPosition = startPosision;
 
   const start = currentPlayer.position;
-  // const target = (start + steps) % board.length;
 
   // await movePlayerStepByStep(currentPlayerIndex, steps, setPlayers, board);
-  // player.animationPosition = (startPosision + steps) % board.length;
 
   const passedStart = player.position + steps >= board.length;
-
   if (passedStart) {
     player.money += 200;
     logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
   }
+
   let newPosition = (player.position + steps) % board.length;
   let landedSquare = updatedBoard[newPosition];
   let finalPosition = newPosition;
@@ -61,18 +51,16 @@ export const handleMoveLogic = async ({
   let bonusSteps = 0;
 
   if (landedSquare.type === "chance") {
-    // setRolling(true); //second animation
-
     await delay(1000);
-
     bonusSteps = diceArrChance[0] + diceArrChance[1];
-    // setRolling(false);
-
     finalPosition = (newPosition + bonusSteps) % board.length;
+    console.log(finalPosition);
+    if (finalPosition) {
+      player.money += 200;
+      logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
+    }
+
     diceArr = diceArrChance;
-    // updateDoc(updateMonoDoc, { dice: diceArr });
-    // await movePlayerStepByStep(currentPlayerIndex, bonusSteps, setPlayers, board);
-    // player.animationPosition = finalPosition;
     landedSquare = updatedBoard[finalPosition];
     logsBuffer.push(
       `${player.name} потрапив на ${updatedBoard[newPosition].name} і його переность на "${landedSquare.name}" — у вас бонус ${bonusSteps} кроків`
@@ -80,14 +68,16 @@ export const handleMoveLogic = async ({
   }
 
   player.position = finalPosition;
-
   // Handle square types...
+  // await delay(100);
   switch (landedSquare.type) {
     case "go_to_jail":
       player.position = 10;
       player.jailTurns = 1;
       player.inJail = true;
       logsBuffer.push(`${player.name} відправлений у в'язницю на 1 хід`);
+      finalPosition = 10;
+      break;
       break;
     case "jail":
       player.jailTurns = 2;
@@ -141,34 +131,33 @@ export const handleMoveLogic = async ({
     logsBuffer.push(`${player.name} заплатив ${rent}$ гравцю ${updatedPlayers[ownerIndex].name}`);
   }
 
-  await delay(2000);
+  await delay(2500);
   if (["property", "railroad", "utility"].includes(landedSquare.type)) {
     if (!landedSquare.owner && player.money >= landedSquare.price) {
-      // // 🔧 1. оновлюємо position у локальному масиві гравців
-      // updatedPlayers[currentPlayerIndex] = player;
-      // setPlayers(updatedPlayers);
-
-      // // 🔥 Записуємо позицію в Firebase, ЩОБ ВСІ БАЧИЛИ
+      // return(pause game) and throw this for options player
+      updatedPlayers[currentPlayerIndex] = player;
       // await updateDoc(updateMonoDoc, {
       //   players: updatedPlayers,
       // });
 
-      // 🔧 3. потім уже ставимо pendingPurchase
       setPendingPurchase({
         playerId: player.id,
         cell: landedSquare,
+        players: updatedPlayers,
         boardIndex: finalPosition,
         logs: [...logs, ...logsBuffer],
         dice: diceArr,
       });
-
-      // setIsRolled(false);
       return;
     }
 
     if (landedSquare.owner && player.money >= landedSquare.price && landedSquare.owner !== player.id) {
       const buyoutPrice = landedSquare.price * 2;
       if (player.money >= buyoutPrice) {
+        // return(pause game) and throw this for options player
+        updatedPlayers[currentPlayerIndex] = player;
+        setPlayers(updatedPlayers);
+
         setPendingBuyout({
           buyerId: player.id,
           ownerId: landedSquare.owner,

@@ -6,6 +6,7 @@ export const Logs = ({ logs }) => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
+
   return (
     <>
       {logs.length > 0 && (
