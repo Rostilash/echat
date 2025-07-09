@@ -54,7 +54,7 @@ export const handleMoveLogic = async ({
     await delay(1000);
     bonusSteps = diceArrChance[0] + diceArrChance[1];
     finalPosition = (newPosition + bonusSteps) % board.length;
-    console.log(finalPosition);
+    // console.log(finalPosition);
     if (finalPosition) {
       player.money += 200;
       logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
@@ -131,14 +131,14 @@ export const handleMoveLogic = async ({
     logsBuffer.push(`${player.name} заплатив ${rent}$ гравцю ${updatedPlayers[ownerIndex].name}`);
   }
 
-  await delay(2500);
+  await delay(1500);
+  // if (landedSquare.type === "start") {
+  //   return;
+  // }
+  // Buying
   if (["property", "railroad", "utility"].includes(landedSquare.type)) {
     if (!landedSquare.owner && player.money >= landedSquare.price) {
-      // return(pause game) and throw this for options player
       updatedPlayers[currentPlayerIndex] = player;
-      // await updateDoc(updateMonoDoc, {
-      //   players: updatedPlayers,
-      // });
 
       setPendingPurchase({
         playerId: player.id,
@@ -150,26 +150,44 @@ export const handleMoveLogic = async ({
       });
       return;
     }
+    // auction
+    // if (!landedSquare.owner && player.money < landedSquare.price) {
+    //   updatedPlayers[currentPlayerIndex] = player;
+    //   await updateDoc(updateMonoDoc, {
+    //     players: updatedPlayers,
+    //     auction: {
+    //       cell: landedSquare,
+    //       startedBy: player.id,
+    //       boardIndex: finalPosition,
+    //       bids: [],
+    //       passed: [],
+    //     },
+    //     logs: [...logs, ...logsBuffer, `${player.name} не зміг купити ${landedSquare.name}, починається аукціон`],
+    //   });
+    //   await delay(2000);
+    //   return;
+    // }
+    // buyout
+    // if (landedSquare.owner && player.money >= landedSquare.price && landedSquare.owner !== player.id) {
+    //   const buyoutPrice = landedSquare.price * 2;
+    //   if (player.money >= buyoutPrice) {
+    //     console.log("buyout");
+    //     // return(pause game) and throw this for options player
+    //     updatedPlayers[currentPlayerIndex] = player;
+    //     setPlayers(updatedPlayers);
 
-    if (landedSquare.owner && player.money >= landedSquare.price && landedSquare.owner !== player.id) {
-      const buyoutPrice = landedSquare.price * 2;
-      if (player.money >= buyoutPrice) {
-        // return(pause game) and throw this for options player
-        updatedPlayers[currentPlayerIndex] = player;
-        setPlayers(updatedPlayers);
-
-        setPendingBuyout({
-          buyerId: player.id,
-          ownerId: landedSquare.owner,
-          cell: landedSquare,
-          price: buyoutPrice,
-          boardIndex: finalPosition,
-          logs: [...logs, ...logsBuffer],
-          dice: diceArr,
-        });
-        return;
-      }
-    }
+    //     setPendingBuyout({
+    //       buyerId: player.id,
+    //       ownerId: landedSquare.owner,
+    //       cell: landedSquare,
+    //       price: buyoutPrice,
+    //       boardIndex: finalPosition,
+    //       logs: [...logs, ...logsBuffer],
+    //       dice: diceArr,
+    //     });
+    //     return;
+    //   }
+    // }
   }
 
   updatedPlayers[currentPlayerIndex] = player;
@@ -179,7 +197,7 @@ export const handleMoveLogic = async ({
 
   setPlayers(updatedPlayers);
   setBoard(updatedBoard);
-  setLogs([...logs, ...logsBuffer]);
+  // setLogs([...logs, ...logsBuffer]);
   setCurrentPlayerIndex(nextPlayerIndex);
   setCurrentTurnPlayerId(nextPlayerId);
 

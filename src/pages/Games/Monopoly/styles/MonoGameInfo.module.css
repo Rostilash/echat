@@ -106,3 +106,8 @@
   transform: rotate(90deg) scale(1.1);
   box-shadow: 0 0 10px cyan;
 }
+
+.confirm_window button:last-child {
+  background-color: crimson;
+  color: white;
+}

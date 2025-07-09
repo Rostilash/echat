@@ -26,6 +26,9 @@ export const MonoGameContainer = () => {
     handleConfirmBuyout,
     pendingPurchase,
     pendingBuyout,
+    auction,
+    handlePlaceBid,
+    handlePassBid,
   } = useOutletContext();
 
   const ifcurUser = currentPlayer?.id === currentTurnPlayerId;
@@ -61,6 +64,9 @@ export const MonoGameContainer = () => {
         dice={dice}
         statusRolled={statusRolled}
         setStatusRolled={setStatusRolled}
+        auction={auction}
+        handlePlaceBid={handlePlaceBid}
+        handlePassBid={handlePassBid}
       />
     </div>
   );

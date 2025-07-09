@@ -21,9 +21,9 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const [status, setStatus] = useState(null);
   const [lobbyLoading, setLobbyLoading] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
-
-  // game states firebase
   const [players, setPlayers] = useState([]);
+
+  // player states firebase
   const [board, setBoard] = useState(defaultBoard);
   const [logs, setLogs] = useState([]);
   const [dice, setDice] = useState([0, 0]);
@@ -33,6 +33,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
   // local states
   const [pendingPurchase, setPendingPurchase] = useState(null);
   const [pendingBuyout, setPendingBuyout] = useState(null);
+  const [auction, setAuction] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [isRolled, setIsRolled] = useState(false);
   const [statusRolled, setStatusRolled] = useState(null);
@@ -105,7 +106,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     handleTurnState();
   }, [status, currentPlayerIndex, players]);
 
-  // 🔁 Listen game onSnapshot, if status === started then all players will navigate to board id from params
+  // // 🔁 Listen game onSnapshot, if status === started then all players will navigate to board id from params
   useEffect(() => {
     if (!gameId) return;
     setIsRolled(true);
@@ -125,6 +126,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
         setStatus(data.status);
         setDice(data.dice);
         setMovement(data.movement);
+        setAuction(data.auction || null);
 
         if (data.player_status === "rolling") {
           setStatusRolled(true);
@@ -155,7 +157,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     return () => unsub();
   }, [gameId, currentUser?.id, navigate, status]);
 
-  // Player moves step by step
+  // // Player moves step by step
   useEffect(() => {
     if (!movement || movement.phase !== "moving") return;
 
@@ -207,6 +209,84 @@ export const MonopolyProvider = ({ children, gameId }) => {
     moveStepByStep();
   }, [movement?.phase]);
 
+  useEffect(() => {
+    if (!auction) return;
+
+    const bids = auction.bids || [];
+    const passed = auction.passed || [];
+    const allPlayerIds = players.map((p) => p.id);
+    const activePlayers = allPlayerIds.filter((id) => !passed.includes(id));
+    const highestBid = Math.max(...bids.map((b) => b.amount), 0);
+    const winnerBid = bids.find((b) => b.amount === highestBid);
+
+    const isAuctionFinished = (activePlayers.length === 0 && bids.length === 0) || (activePlayers.length > 1 && winnerBid && bids.length > 1);
+
+    // debugger;
+    if (!isAuctionFinished) return;
+    // if (auction.finished) return;
+    const finishAuction = async () => {
+      const updatedLogs = [...logs];
+
+      if (!winnerBid) {
+        updatedLogs.push("Ніхто не зробив ставку — ділянка не куплена");
+        await updateDoc(updateMonoDoc, {
+          auction: null,
+          logs: updatedLogs,
+          player_status: null,
+        });
+        setAuction(null);
+        await continueMoveAfterRefusal();
+        return;
+      }
+
+      const updatedPlayers = [...players];
+      const updatedBoard = [...board];
+      const winnerIndex = updatedPlayers.findIndex((p) => p.id === winnerBid.playerId);
+      const winner = updatedPlayers[winnerIndex];
+      const { cell, boardIndex } = auction;
+
+      if (!winner || winner.money < highestBid) {
+        updatedLogs.push(`${winner?.name || "Гравець"} не зміг оплатити ставку`);
+        await updateDoc(updateMonoDoc, {
+          auction: { ...auction, finished: true },
+          logs: updatedLogs,
+          player_status: null,
+        });
+        setAuction(null);
+        await continueMoveAfterRefusal(updatedPlayers, updatedBoard, updatedLogs);
+        return;
+      }
+
+      winner.money -= highestBid;
+      winner.properties.push(cell.id);
+
+      updatedBoard[boardIndex] = {
+        ...cell,
+        owner: winner.id,
+        color: winner.color,
+      };
+
+      updatedLogs.push(`${winner.name} виграв аукціон на ${cell.name} за ${highestBid}$`);
+
+      await updateDoc(updateMonoDoc, {
+        players: updatedPlayers,
+        board: updatedBoard,
+        logs: updatedLogs,
+        auction: null,
+        player_status: null,
+      });
+
+      setPlayers(updatedPlayers);
+      setBoard(updatedBoard);
+      setLogs(updatedLogs);
+      setAuction(null);
+
+      await continueMoveAfterRefusal(updatedPlayers, updatedBoard, updatedLogs);
+    };
+
+    finishAuction();
+  }, [auction?.bids, auction?.passed]);
+
   const rollDice = () => {
     const d1 = Math.ceil(Math.random() * 6);
     const d2 = Math.ceil(Math.random() * 6);
@@ -220,7 +300,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     return [d1, d2];
   };
 
-  const handleMove = async (id, setRolling) => {
+  const handleMove = async (id) => {
     if (status !== "started" && status !== "ingame") return;
 
     await handleMoveLogic({
@@ -239,68 +319,10 @@ export const MonopolyProvider = ({ children, gameId }) => {
       status,
       logs,
       setDice,
-      // setRolling,
       rollDice,
       setStatusRolled,
     });
     setStatusRolled(false);
-  };
-
-  const upgradeCityRent = async (cityId, price, upgradeLevel) => {
-    const player = players.find((p) => p.id === currentUser.id);
-
-    if (!player) {
-      console.warn("Гравець не знайдений");
-      return;
-    }
-
-    if ((upgradeLevel || 0) >= 5) {
-      setLogs([...logs, `Максимальний рівень апгрейду досягнуто`]);
-      return;
-    }
-
-    if (player.money < price) {
-      setLogs([`У вас не виставчає грошей для оновлення`]);
-      return;
-    }
-
-    const updatedBoard = board.map((cell) => {
-      if (cell.id === cityId) {
-        return {
-          ...cell,
-          rent: cell.rent * 3,
-          price: cell.price * 2,
-          upgradeLevel: (cell.upgradeLevel || 0) + 1,
-        };
-      }
-      return cell;
-    });
-
-    const updatedPlayers = players.map((p) => {
-      if (p.id === currentUser.id) {
-        return { ...p, money: p.money - price };
-      }
-      return p;
-    });
-
-    setBoard(updatedBoard);
-    setPlayers(updatedPlayers);
-
-    try {
-      await updateDoc(updateMonoDoc, {
-        board: updatedBoard,
-        players: updatedPlayers,
-        logs: [...logs, `Успішне оновлення ${board[cityId]?.name} за ${price}$`],
-      });
-    } catch (error) {
-      if (player.money < price) {
-        setLogs([...logs, `У вас не достатньо коштів ${price - player.money} щоб оновити ${board[cityId]?.name}`]);
-      }
-
-      if ((upgradeLevel || 0) >= 5) {
-        setLogs([...logs, `Максимальний рівень будівлі ${board[cityId]?.name}`]);
-      }
-    }
   };
 
   const handleStartGame = async () => {
@@ -364,6 +386,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
       players: playerState,
       logs: [],
       dice: [0, 0],
+      auction: null,
       movement: {
         bonusSteps: 0,
         start: 0,
@@ -388,6 +411,63 @@ export const MonopolyProvider = ({ children, gameId }) => {
   const handleDeleteGame = async () => {
     await deleteDoc(doc(db, "monogames", gameId));
     navigate(`/games/monopoly/list`);
+  };
+
+  const upgradeCityRent = async (cityId, price, upgradeLevel) => {
+    const player = players.find((p) => p.id === currentUser.id);
+
+    if (!player) {
+      console.warn("Гравець не знайдений");
+      return;
+    }
+
+    if ((upgradeLevel || 0) >= 5) {
+      // setLogs([...logs, `Максимальний рівень апгрейду досягнуто`]);
+      return;
+    }
+
+    if (player.money < price) {
+      // setLogs([...logs, `У вас не виставчає грошей для оновлення`]);
+      return;
+    }
+
+    const updatedBoard = board.map((cell) => {
+      if (cell.id === cityId) {
+        return {
+          ...cell,
+          rent: cell.rent * 3,
+          price: cell.price * 2,
+          upgradeLevel: (cell.upgradeLevel || 0) + 1,
+        };
+      }
+      return cell;
+    });
+
+    const updatedPlayers = players.map((p) => {
+      if (p.id === currentUser.id) {
+        return { ...p, money: p.money - price };
+      }
+      return p;
+    });
+
+    setBoard(updatedBoard);
+    setPlayers(updatedPlayers);
+
+    try {
+      await updateDoc(updateMonoDoc, {
+        board: updatedBoard,
+        players: updatedPlayers,
+        logs: [...logs, `Успішне оновлення ${board[cityId]?.name} за ${price}$`],
+      });
+    } catch (error) {
+      if (player.money < price) {
+        setLogs([...logs, `У вас не достатньо коштів ${price - player.money} щоб оновити ${board[cityId]?.name}`]);
+      }
+
+      if ((upgradeLevel || 0) >= 5) {
+        setLogs([...logs, `Максимальний рівень будівлі ${board[cityId]?.name}`]);
+      }
+    }
   };
 
   const confirmPurchaseHandler = async () => {
@@ -423,7 +503,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
       if (willUpdate) {
         player.buildableCells = newBuildable;
-        logs.push([...prev, `У ${player.name} з'явилася монополія!`]);
+        logs.push(`У ${player.name} з'явилася монополія!`);
       }
     }
 
@@ -545,6 +625,30 @@ export const MonopolyProvider = ({ children, gameId }) => {
     });
   };
 
+  const handlePlaceBid = async (amount) => {
+    const prevBids = auction.bids || [];
+
+    const updatedBids = prevBids.some((bid) => bid.playerId === currentUser.id)
+      ? prevBids.map((bid) => (bid.playerId === currentUser.id ? { ...bid, amount } : bid))
+      : [...prevBids, { playerId: currentUser.id, amount }];
+
+    await updateDoc(updateMonoDoc, {
+      "auction.bids": updatedBids,
+    });
+  };
+
+  const handlePassBid = async () => {
+    const passed = auction.passed || [];
+
+    if (passed.includes(currentUser.id)) return;
+
+    const updatedPasses = [...passed, currentUser.id];
+
+    await updateDoc(updateMonoDoc, {
+      "auction.passed": updatedPasses,
+    });
+  };
+
   const player = players.find((player) => player.id === currentUser?.id);
 
   return (
@@ -578,6 +682,10 @@ export const MonopolyProvider = ({ children, gameId }) => {
         pendingPurchase,
         pendingBuyout,
         setPendingBuyout,
+        auction,
+        setAuction,
+        handlePlaceBid,
+        handlePassBid,
       }}
     >
       {children}
