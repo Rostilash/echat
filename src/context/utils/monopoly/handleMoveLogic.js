@@ -3,6 +3,7 @@ import { movePlayerStepByStep } from "../../../pages/Games/Monopoly/utils/movePl
 import { clearPlayerProperties } from "../../../pages/Games/Monopoly/utils/clearPlayerProperties";
 import { getNextActivePlayerIndex } from "../../../pages/Games/Monopoly/utils/getNextActivePlayerIndex";
 import { delay } from "./useDelay";
+import { updateRailroadRents } from "../../../pages/Games/Monopoly/utils/updateRailroadRents";
 
 export const handleMoveLogic = async ({
   currentPlayerIndex,
@@ -26,17 +27,17 @@ export const handleMoveLogic = async ({
   if (!currentPlayer || currentPlayer.isBankrupt) return;
 
   let diceArr = rollDice();
-  // const steps = diceArr[0] + diceArr[1];
-  const steps = 1;
+  const steps = diceArr[0] + diceArr[1];
+  // const steps = 20;
+
   let logsBuffer = [];
   let updatedBoard = [...board];
   let updatedPlayers = [...players];
   let player = { ...currentPlayer };
 
   const start = currentPlayer.position;
-
+  // for local state player moves
   // await movePlayerStepByStep(currentPlayerIndex, steps, setPlayers, board);
-
   const passedStart = player.position + steps >= board.length;
   if (passedStart) {
     player.money += 200;
@@ -54,7 +55,6 @@ export const handleMoveLogic = async ({
     await delay(1000);
     bonusSteps = diceArrChance[0] + diceArrChance[1];
     finalPosition = (newPosition + bonusSteps) % board.length;
-    // console.log(finalPosition);
     if (finalPosition) {
       player.money += 200;
       logsBuffer.push(`${player.name} отримав 200$ за проходження старту`);
@@ -69,7 +69,7 @@ export const handleMoveLogic = async ({
 
   player.position = finalPosition;
   // Handle square types...
-  // await delay(100);
+  let finalBoard = updatedBoard;
   switch (landedSquare.type) {
     case "go_to_jail":
       player.position = 10;
@@ -100,6 +100,18 @@ export const handleMoveLogic = async ({
     case "parking":
       logsBuffer.push(`${player.name} відпочиває на стоянці`);
       break;
+    case "railroad":
+      finalBoard = await updateRailroadRents(player.id, updatedBoard);
+      // console.log("works");
+      break;
+  }
+
+  if (landedSquare.owner && landedSquare.owner !== player.id) {
+    const ownerIndex = updatedPlayers.findIndex((p) => p.id === landedSquare.owner);
+    const rent = landedSquare.rent || 25;
+    player.money -= rent;
+    updatedPlayers[ownerIndex].money += rent;
+    logsBuffer.push(`${player.name} заплатив ${rent}$ гравцю ${updatedPlayers[ownerIndex].name}`);
   }
 
   if (player.money < 0) {
@@ -123,18 +135,8 @@ export const handleMoveLogic = async ({
     },
   });
 
-  if (landedSquare.owner && landedSquare.owner !== player.id) {
-    const ownerIndex = updatedPlayers.findIndex((p) => p.id === landedSquare.owner);
-    const rent = landedSquare.rent || 25;
-    player.money -= rent;
-    updatedPlayers[ownerIndex].money += rent;
-    logsBuffer.push(`${player.name} заплатив ${rent}$ гравцю ${updatedPlayers[ownerIndex].name}`);
-  }
-
   await delay(1500);
-  // if (landedSquare.type === "start") {
-  //   return;
-  // }
+
   // Buying
   if (["property", "railroad", "utility"].includes(landedSquare.type)) {
     if (!landedSquare.owner && player.money >= landedSquare.price) {
@@ -151,22 +153,23 @@ export const handleMoveLogic = async ({
       return;
     }
     // auction
-    // if (!landedSquare.owner && player.money < landedSquare.price) {
-    //   updatedPlayers[currentPlayerIndex] = player;
-    //   await updateDoc(updateMonoDoc, {
-    //     players: updatedPlayers,
-    //     auction: {
-    //       cell: landedSquare,
-    //       startedBy: player.id,
-    //       boardIndex: finalPosition,
-    //       bids: [],
-    //       passed: [],
-    //     },
-    //     logs: [...logs, ...logsBuffer, `${player.name} не зміг купити ${landedSquare.name}, починається аукціон`],
-    //   });
-    //   await delay(2000);
-    //   return;
-    // }
+    if (!landedSquare.owner && player.money < landedSquare.price) {
+      updatedPlayers[currentPlayerIndex] = player;
+      await updateDoc(updateMonoDoc, {
+        players: updatedPlayers,
+        auction: {
+          cell: landedSquare,
+          startedBy: player.id,
+          boardIndex: finalPosition,
+          bids: [],
+          passed: [],
+        },
+        logs: [...logs, ...logsBuffer, `${player.name} не зміг купити ${landedSquare.name}, починається аукціон`],
+      });
+      await delay(2000);
+      return;
+    }
+
     // buyout
     // if (landedSquare.owner && player.money >= landedSquare.price && landedSquare.owner !== player.id) {
     //   const buyoutPrice = landedSquare.price * 2;
@@ -196,14 +199,14 @@ export const handleMoveLogic = async ({
   const nextPlayerId = updatedPlayers[nextPlayerIndex]?.id;
 
   setPlayers(updatedPlayers);
-  setBoard(updatedBoard);
+  setBoard(finalBoard);
   // setLogs([...logs, ...logsBuffer]);
   setCurrentPlayerIndex(nextPlayerIndex);
   setCurrentTurnPlayerId(nextPlayerId);
 
   await updateDoc(updateMonoDoc, {
     players: updatedPlayers,
-    board: updatedBoard,
+    board: finalBoard,
     logs: [...logs, ...logsBuffer],
     currentPlayerIndex: nextPlayerIndex,
     currentTurnPlayerId: nextPlayerId,

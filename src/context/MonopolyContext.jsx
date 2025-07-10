@@ -135,7 +135,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
         }
 
         if (data.status === "restarting") {
-          // Наприклад: можна відобразити "Перезапуск гри..." або зробити navigate на лобі
+          navigate(`/games/monopoly/lobby/${gameId}`);
           return;
         }
 
@@ -208,7 +208,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     moveStepByStep();
   }, [movement?.phase]);
-
+  // auction
   useEffect(() => {
     if (!auction) return;
 
@@ -219,11 +219,9 @@ export const MonopolyProvider = ({ children, gameId }) => {
     const highestBid = Math.max(...bids.map((b) => b.amount), 0);
     const winnerBid = bids.find((b) => b.amount === highestBid);
 
-    const isAuctionFinished = (activePlayers.length === 0 && bids.length === 0) || (activePlayers.length > 1 && winnerBid && bids.length > 1);
+    const isAuctionFinished = activePlayers.length === 0 || (activePlayers.length === 1 && bids.length >= 1);
 
-    // debugger;
     if (!isAuctionFinished) return;
-    // if (auction.finished) return;
     const finishAuction = async () => {
       const updatedLogs = [...logs];
 
@@ -234,6 +232,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
           logs: updatedLogs,
           player_status: null,
         });
+
         setAuction(null);
         await continueMoveAfterRefusal();
         return;
@@ -508,10 +507,13 @@ export const MonopolyProvider = ({ children, gameId }) => {
     }
 
     let finalBoard = updatedBoardCopy;
+
     if (cell.type === "railroad") {
       finalBoard = await updateRailroadRents(player.id, updatedBoardCopy);
+      logs.push(`У ${player.name} у вас з'явилося комбінація із залізницями!`);
     }
     setBoard(finalBoard);
+
     const nextPlayerIndex = getNextActivePlayerIndex(updatedPlayers, currentPlayerIndex);
     const nextPlayerId = updatedPlayers[nextPlayerIndex]?.id || null;
 
@@ -549,7 +551,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
     const owner = updatedPlayers[ownerIndex];
 
     if (cell.owner !== buyerId) {
-      console.log("cell.owner !== buyerId");
+      // console.log("cell.owner !== buyerId");
       buyer.money -= cell.rent;
       owner.money += cell.rent;
       updatedLogs.push(`${buyer.name} заплатив за ${cell.name} оренду в ${cell.rent}$`);
@@ -634,6 +636,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     await updateDoc(updateMonoDoc, {
       "auction.bids": updatedBids,
+      logs: [...logs, `Користувач ${currentUser.name} робить ставу в ${amount}$`],
     });
   };
 
@@ -646,6 +649,7 @@ export const MonopolyProvider = ({ children, gameId }) => {
 
     await updateDoc(updateMonoDoc, {
       "auction.passed": updatedPasses,
+      logs: [...logs, `Користувач ${currentUser.name} натиснув "пас"`],
     });
   };
 

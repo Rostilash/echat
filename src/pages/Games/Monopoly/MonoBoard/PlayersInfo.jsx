@@ -8,7 +8,7 @@ export const PlayersInfo = ({ players, currentPlayerId }) => {
         const isCurrent = player.id === currentPlayerId;
         const isBankrupt = player.isBankrupt;
         const isInJail = player.inJail;
-
+        const isResting = player.position === 20;
         return (
           <div
             key={player.id || index}
@@ -26,7 +26,7 @@ export const PlayersInfo = ({ players, currentPlayerId }) => {
             ) : (
               <>
                 {isInJail && <div className={style.status}>🚓 У в'язниці</div>}
-
+                {isResting && <div className={style.name}>🏖️ Відпочиває</div>}
                 <div className={style.token}>{player.token}</div>
 
                 <div className={style.name}>

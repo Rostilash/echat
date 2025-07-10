@@ -56,6 +56,7 @@ export const MonoGameContainer = () => {
         cancelPurchase={cancelPurchase}
         pendingBuyout={pendingBuyout}
         ifCurrentPlayer={ifCurrentPlayer}
+        currentPlayer={currentPlayer}
         handleMove={handleMove}
         handleDeleteGame={handleDeleteGame}
         handleRestartGame={handleRestartGame}
